@@ -1,25 +1,20 @@
 name: Deploy to GitHub Pages
 
 on:
-  # 每当 push 到 main 分支时触发部署
   push:
     branches: [main]
-  # 允许手动触发
   workflow_dispatch:
 
-# 设置 GITHUB_TOKEN 的权限
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# 并发控制
 concurrency:
   group: pages
   cancel-in-progress: false
 
 jobs:
-  # 构建任务
   build:
     runs-on: ubuntu-latest
     steps:
@@ -28,14 +23,16 @@ jobs:
         with:
           fetch-depth: 0
 
+      # 先安装 pnpm
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      # 再设置 Node，并开启 pnpm 缓存
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: pnpm
-
-      - name: Install pnpm
-        run: npm install -g pnpm
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -51,7 +48,6 @@ jobs:
         with:
           path: docs/.vitepress/dist
 
-  # 部署任务
   deploy:
     environment:
       name: github-pages

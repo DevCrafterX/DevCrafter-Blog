@@ -6,6 +6,7 @@ import {zhConfig} from './theme/config/zh'
 import {enConfig} from './theme/config/en'
 
 // https://vitepress.dev/reference/site-config
+// @ts-ignore
 export default defineConfigWithTheme({
   // 继承 escook 主题配置
   extends: escookConfig,
