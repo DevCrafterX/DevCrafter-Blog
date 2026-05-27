@@ -6,7 +6,7 @@
 
 ## 在线预览
 
-[https://github.com/DevCrafterX/DevCrafter-Blog](https://github.com/DevCrafterX/DevCrafter-Blog)
+[https://DevCrafterX.github.io/DevCrafter-Blog/](https://DevCrafterX.github.io/DevCrafter-Blog/)
 
 ## 技术栈
 
