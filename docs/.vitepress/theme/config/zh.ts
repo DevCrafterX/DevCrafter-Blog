@@ -1,5 +1,5 @@
-import {zhNav} from '../nav/index'
-import {zhSidebar} from '../sidebar/index'
+import {zhNav} from '../nav'
+import {zhSidebar} from '../sidebar'
 import type {DefaultTheme, LocaleSpecificConfig} from 'vitepress'
 
 export const zhConfig: LocaleSpecificConfig<DefaultTheme.Config> = {
