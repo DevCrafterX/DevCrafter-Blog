@@ -6,7 +6,7 @@
 
 ## 在线预览
 
-[https://github.com/DevCrafter-GZF/DevCrafter-Blog](https://github.com/DevCrafter-GZF/DevCrafter-Blog)
+[https://github.com/DevCrafterX/DevCrafter-Blog](https://github.com/DevCrafterX/DevCrafter-Blog)
 
 ## 技术栈
 
@@ -97,7 +97,7 @@
 
 ```bash
 # 克隆项目
-git clone https://github.com/DevCrafter-GZF/DevCrafter-Blog.git
+git clone https://github.com/DevCrafterX/DevCrafter-Blog.git
 
 # 进入目录
 cd DevCrafter-Blog
@@ -155,4 +155,4 @@ VitePress x.x.x（外链）
 
 ---
 
-Made with by [DevCrafter](https://github.com/DevCrafter-GZF)
+Made with by [DevCrafter](https://github.com/DevCrafterX)
