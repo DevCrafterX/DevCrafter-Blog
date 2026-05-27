@@ -29,7 +29,7 @@ hero:
       link: /en/guide/start.md
     - theme: alt
       text: GitHub
-      link: https://github.com/DevCrafter-GZF/DevCrafter-Blog
+      link: https://github.com/DevCrafterX/DevCrafter-Blog
 
 features:
   - icon: 🌐
