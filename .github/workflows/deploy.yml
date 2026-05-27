@@ -23,25 +23,20 @@ jobs:
         with:
           fetch-depth: 0
 
-      # 先安装 pnpm
-      - name: Install pnpm
-        run: npm install -g pnpm
-
-      # 再设置 Node，并开启 pnpm 缓存
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: pnpm
+          cache: npm   # 改用 npm 缓存
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
       - name: Install dependencies
-        run: pnpm install
+        run: npm ci   # 用 npm ci（更快、更严格）
 
       - name: Build with VitePress
-        run: pnpm run docs:build
+        run: npm run docs:build   # 对应 package.json scripts
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
