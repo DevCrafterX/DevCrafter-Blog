@@ -103,11 +103,11 @@ graph LR
 
 | 文档 | 说明 | 难度 |
 |------|------|------|
-| [WebGIS 概述](../WebGIS/index.md) | 地图开发入门指南 | ⭐⭐ |
-| [百度地图](../WebGIS/baidu.md) | 百度地图 JavaScript API | ⭐⭐ |
-| [高德地图](../WebGIS/gaode.md) | 高德地图 JS API | ⭐⭐ |
-| [天地图](../WebGIS/tianditu.md) | 国家地理信息公共服务平台 | ⭐⭐ |
-| [ECharts 地图](../WebGIS/echarts-map.md) | 数据可视化地图 | ⭐⭐ |
+| [WebGIS 概述](../Webgis/index.md) | 地图开发入门指南 | ⭐⭐ |
+| [百度地图](../Webgis/baidu.md) | 百度地图 JavaScript API | ⭐⭐ |
+| [高德地图](../Webgis/gaode.md) | 高德地图 JS API | ⭐⭐ |
+| [天地图](../Webgis/tianditu.md) | 国家地理信息公共服务平台 | ⭐⭐ |
+| [ECharts 地图](../Webgis/echarts-map.md) | 数据可视化地图 | ⭐⭐ |
 
 ## 🖥️ 后端开发
 

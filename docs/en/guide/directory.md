@@ -95,11 +95,11 @@ graph LR
 
 | Document | Description | Level |
 |----------|-------------|-------|
-| [WebGIS Overview](../WebGIS/index.md) | Map development introduction | ⭐⭐ |
-| [Baidu Map](../WebGIS/baidu.md) | Baidu Map JavaScript API | ⭐⭐ |
-| [AMap](../WebGIS/gaode.md) | AMap JS API | ⭐⭐ |
-| [Tianditu](../WebGIS/tianditu.md) | National Geographic Information Platform | ⭐⭐ |
-| [ECharts Map](../WebGIS/echarts-map.md) | Data visualization maps | ⭐⭐ |
+| [WebGIS Overview](../Webgis/index.md) | Map development introduction | ⭐⭐ |
+| [Baidu Map](../Webgis/baidu.md) | Baidu Map JavaScript API | ⭐⭐ |
+| [AMap](../Webgis/gaode.md) | AMap JS API | ⭐⭐ |
+| [Tianditu](../Webgis/tianditu.md) | National Geographic Information Platform | ⭐⭐ |
+| [ECharts Map](../Webgis/echarts-map.md) | Data visualization maps | ⭐⭐ |
 
 ## 🖥️ Backend Development
 
