@@ -45,6 +45,7 @@ export default {
     const route = useRoute()
     
     // 提供自定义的亮暗色切换动画（圆形扩散效果）
+    // @ts-ignore
     provide('toggle-appearance', async ({clientX: x, clientY: y}: MouseEvent) => {
       if (!enableTransitions()) {
         isDark.value = !isDark.value
