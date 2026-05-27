@@ -3,16 +3,16 @@ import {
   toArray,
   tryOnScopeDispose,
   unrefElement
-} from "./chunk-IIT3QOUC.js";
+} from "./chunk-WVJEE35X.js";
 import {
   computed,
-  shallowRef,
+  ref,
   toValue,
   watch
-} from "./chunk-5LWNXWP3.js";
-import "./chunk-DC5AMYBS.js";
+} from "./chunk-D5ULJWEV.js";
+import "./chunk-RGOVJRZA.js";
 
-// node_modules/tabbable/dist/index.esm.js
+// node_modules/.pnpm/tabbable@6.4.0/node_modules/tabbable/dist/index.esm.js
 var candidateSelectors = ["input:not([inert]):not([inert] *)", "select:not([inert]):not([inert] *)", "textarea:not([inert]):not([inert] *)", "a[href]:not([inert]):not([inert] *)", "button:not([inert]):not([inert] *)", "[tabindex]:not(slot):not([inert]):not([inert] *)", "audio[controls]:not([inert]):not([inert] *)", "video[controls]:not([inert]):not([inert] *)", '[contenteditable]:not([contenteditable="false"]):not([inert]):not([inert] *)', "details>summary:first-of-type:not([inert]):not([inert] *)", "details:not([inert]):not([inert] *)"];
 var candidateSelector = candidateSelectors.join(",");
 var NoElement = typeof Element === "undefined";
@@ -362,7 +362,7 @@ var isFocusable = function isFocusable2(node, options) {
   return isNodeMatchingSelectorFocusable(options, node);
 };
 
-// node_modules/focus-trap/dist/focus-trap.esm.js
+// node_modules/.pnpm/focus-trap@7.8.0/node_modules/focus-trap/dist/focus-trap.esm.js
 function _arrayLikeToArray(r, a) {
   (null == a || a > r.length) && (a = r.length);
   for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
@@ -1273,12 +1273,12 @@ var createFocusTrap = function createFocusTrap2(elements, userOptions) {
   return trap;
 };
 
-// node_modules/@vueuse/integrations/useFocusTrap.mjs
+// node_modules/.pnpm/@vueuse+integrations@12.4.0_async-validator@4.2.5_axios@1.16.1_focus-trap@7.8.0_typescript@4.9.3/node_modules/@vueuse/integrations/useFocusTrap.mjs
 function useFocusTrap(target, options = {}) {
   let trap;
   const { immediate, ...focusTrapOptions } = options;
-  const hasFocus = shallowRef(false);
-  const isPaused = shallowRef(false);
+  const hasFocus = ref(false);
+  const isPaused = ref(false);
   const activate = (opts) => trap && trap.activate(opts);
   const deactivate = (opts) => trap && trap.deactivate(opts);
   const pause = () => {

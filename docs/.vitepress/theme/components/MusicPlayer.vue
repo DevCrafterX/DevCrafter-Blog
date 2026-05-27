@@ -1,8 +1,11 @@
 <template>
+  <!-- 使用 Teleport 将组件渲染到 body，避免被父组件样式影响 -->
   <Teleport to="body">
     <div :class="{ dark: isDark }" class="music-player">
-      <!-- 悬浮控制球 -->
+      <!-- ==================== 悬浮控制球 ==================== -->
+      <!-- 点击封面可播放/暂停，点击背景可展开面板 -->
       <div class="control-ball">
+        <!-- 有封面时显示封面图片 -->
         <img
             v-if="currentSong.cover"
             :src="currentSong.cover"
@@ -10,27 +13,32 @@
             class="ball-cover"
             @click="togglePlay"
         />
+        <!-- 无封面时显示默认图标 -->
         <div v-else class="ball-inner" @click="togglePanel">
           <span class="ball-icon">♪</span>
         </div>
-        <!-- 播放/暂停状态指示器 -->
+
+        <!-- 播放/暂停状态指示器（有封面时显示在左下角） -->
         <div v-if="currentSong.cover" :class="['play-pause-indicator', { 'playing': isPlaying }]" @click="togglePlay">
           <span></span>
           <span></span>
           <span></span>
         </div>
-        <!-- 展开面板按钮（当有封面时显示） -->
+
+        <!-- 展开面板按钮（有封面时显示在右下角） -->
         <div v-if="currentSong.cover" class="expand-btn" @click="togglePanel">
           <span>☰</span>
         </div>
       </div>
 
-      <!-- 播放器面板 -->
+      <!-- ==================== 播放器面板 ==================== -->
+      <!-- 点击面板外部可关闭，点击面板内部不会触发关闭 -->
       <div v-if="isExpanded" class="player-panel" @click.stop>
         <!-- 关闭按钮 -->
         <button class="panel-close" @click="isExpanded = false">✕</button>
 
-        <!-- 搜索框 -->
+        <!-- ==================== 搜索区域 ==================== -->
+        <!-- 用户可以搜索歌曲，搜索结果会显示在下方 -->
         <div class="search-section">
           <div class="search-box">
             <input
@@ -45,7 +53,7 @@
             </button>
           </div>
 
-          <!-- 搜索结果 -->
+          <!-- 搜索结果列表 -->
           <div v-if="searchResults.length > 0" class="search-results">
             <div
                 v-for="(song, index) in searchResults"
@@ -72,37 +80,64 @@
           </div>
         </div>
 
-        <!-- 当前播放 -->
+        <!-- ==================== 当前播放信息 ==================== -->
+        <!-- 显示当前正在播放的歌曲信息和控制按钮 -->
         <div v-if="currentSong.id" class="now-playing-card">
-          <img
-              v-if="currentSong.cover"
-              :src="currentSong.cover"
-              alt="cover"
-              class="npc-cover"
-          />
-          <div v-else class="npc-cover default-cover">♪</div>
-          <div class="npc-info">
-            <div class="npc-name">{{ currentSong.name }}</div>
-            <div class="npc-artist">{{ currentSong.artist }}</div>
+          <!-- 第一行：封面 + 歌曲信息 + 按钮 -->
+          <div class="npc-row">
+            <!-- 歌曲封面 -->
+            <img
+                v-if="currentSong.cover"
+                :src="currentSong.cover"
+                alt="cover"
+                class="npc-cover"
+            />
+            <div v-else class="npc-cover default-cover">♪</div>
+
+            <!-- 歌曲信息 -->
+            <div class="npc-info">
+              <div class="npc-name">{{ currentSong.name }}</div>
+              <div class="npc-artist">{{ currentSong.artist }}</div>
+              <div class="npc-server">{{ getCurrentServerName() }}</div>
+            </div>
+
+            <!-- 控制按钮组 -->
+            <div class="npc-buttons">
+              <!-- 数据源切换按钮（网易云音乐/QQ音乐） -->
+              <button
+                  class="npc-switch-btn"
+                  :title="`当前: ${getCurrentServerName()}，点击切换`"
+                  @click="switchServer"
+              >
+                <span class="switch-icon"></span>
+              </button>
+
+              <!-- 歌词显示/隐藏按钮 -->
+              <button
+                  :class="{ active: showLyrics }"
+                  class="npc-lyric-btn"
+                  title="歌词"
+                  @click="showLyrics = !showLyrics"
+              >
+                <svg fill="currentColor" height="20" viewBox="0 0 24 24" width="20">
+                  <path
+                      d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z"/>
+                </svg>
+              </button>
+            </div>
           </div>
-          <!-- 歌词切换按钮 -->
-          <button
-              :class="{ active: showLyrics }"
-              class="npc-lyric-btn"
-              title="歌词"
-              @click="showLyrics = !showLyrics"
-          >
-            <svg fill="currentColor" height="20" viewBox="0 0 24 24" width="20">
-              <path
-                  d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z"/>
-            </svg>
-          </button>
         </div>
 
-        <!-- 歌词显示区域 -->
+        <!-- ==================== 歌词显示区域 ==================== -->
+        <!-- 点击歌词按钮后展开，显示当前歌曲的歌词 -->
         <div v-if="showLyrics && currentSong.id" class="lyrics-container">
           <div v-if="lyrics.length > 0" ref="lyricsRef" class="lyrics-scroll">
-            <div
+            <!-- 如果是单行歌词（纯文本，无时间戳） -->
+            <div v-if="lyrics.length === 1 && lyrics[0].time === 0" class="lyric-text-only">
+              {{ lyrics[0].text }}
+            </div>
+            <!-- 如果是标准 LRC 格式歌词（带时间戳，会高亮当前行） -->
+            <div v-else
                 v-for="(line, index) in lyrics"
                 :key="index"
                 :class="{ active: index === currentLyricIndex }"
@@ -114,7 +149,8 @@
           <div v-else class="lyrics-empty">暂无歌词</div>
         </div>
 
-        <!-- 播放控制 -->
+        <!-- ==================== 播放控制按钮 ==================== -->
+        <!-- 上一首、播放/暂停、下一首 -->
         <div class="player-controls">
           <button class="ctrl-btn" title="上一首" @click="prevSong">
             <svg fill="currentColor" height="20" viewBox="0 0 24 24" width="20">
@@ -136,7 +172,8 @@
           </button>
         </div>
 
-        <!-- 热歌榜列表 -->
+        <!-- ==================== 热歌榜列表 ==================== -->
+        <!-- 显示当前数据源的热歌榜，点击可播放对应歌曲 -->
         <div class="hot-songs-section">
           <div class="section-title">
             热歌榜
@@ -153,7 +190,7 @@
               <span class="song-index">{{ index + 1 }}</span>
               <span class="song-name">{{ song.name }}</span>
               <span class="song-artist">{{ song.artist }}</span>
-              <!-- 播放中图标 -->
+              <!-- 播放中动画图标（三条跳动的竖线） -->
               <span v-if="currentSong.id === song.id && isPlaying" class="playing-icon">
                 <span></span>
                 <span></span>
@@ -166,7 +203,9 @@
           </div>
         </div>
 
-        <!-- 进度条和音量控制 -->
+        <!-- ==================== 进度条和音量控制 ==================== -->
+        <!-- 第一行：播放进度条 -->
+        <!-- 第二行：音量控制条 -->
         <div class="progress-section">
           <!-- 第一行：时间 + 歌曲进度条 -->
           <div class="progress-row">
@@ -180,6 +219,7 @@
 
           <!-- 第二行：音量图标 + 音量进度条 -->
           <div class="progress-row">
+            <!-- 音量图标（根据音量大小显示不同图标） -->
             <svg class="vol-icon-small" fill="currentColor" height="14" viewBox="0 0 24 24" width="14">
               <path v-if="volume > 50"
                     d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
@@ -220,114 +260,155 @@
 </template>
 
 <script lang="ts" setup>
-import {ref, computed, watch, onMounted, nextTick} from 'vue'
+import {computed, nextTick, onMounted, ref, watch} from 'vue'
 import {useData} from 'vitepress'
 
-const {isDark} = useData() // 获取当前主题模式
+/**
+ * ==================== 音乐播放器组件 ====================
+ *
+ * 功能说明：
+ * 1. 悬浮球控制：点击可播放/暂停或展开面板
+ * 2. 搜索歌曲：通过 Meting API 搜索歌曲
+ * 3. 热歌榜：显示网易云/QQ音乐热歌榜
+ * 4. 歌词显示：支持 LRC 格式歌词，自动高亮当前行
+ * 5. 数据源切换：可在网易云音乐和 QQ 音乐之间切换
+ * 6. 播放控制：上一首、播放/暂停、下一首、进度条、音量控制
+ */
 
-const isExpanded = ref(false)
-const isPlaying = ref(false)
-const searchKeyword = ref('')
-const searchResults = ref<any[]>([])
-const currentSong = ref({id: '', name: '', artist: '', cover: '', url: ''})
-const audioRef = ref<HTMLAudioElement>()
-const currentTime = ref(0)
-const duration = ref(0)
-const volume = ref(50)
-const playlist = ref<any[]>([])
-const currentIndex = ref(-1)
-const hotSongs = ref<any[]>([]) // 热歌榜
+// 获取 VitePress 当前主题模式（用于深色/浅色主题适配）
+const {isDark} = useData()
+
+// ==================== 状态管理 ====================
+const isExpanded = ref(false) // 是否展开播放器面板
+const isPlaying = ref(false) // 是否正在播放
+const searchKeyword = ref('') // 搜索关键词
+const searchResults = ref<any[]>([]) // 搜索结果列表
+const currentSong = ref({id: '', name: '', artist: '', cover: '', url: ''}) // 当前播放歌曲
+const audioRef = ref<HTMLAudioElement>() // 音频元素引用
+const currentTime = ref(0) // 当前播放时间（秒）
+const duration = ref(0) // 歌曲总时长（秒）
+const volume = ref(50) // 音量（0-100）
+const playlist = ref<any[]>([]) // 播放列表
+const currentIndex = ref(-1) // 当前播放索引
+const hotSongs = ref<any[]>([]) // 热歌榜歌曲列表
 const hotSongsIndex = ref(0) // 热歌榜当前播放索引
-const lyrics = ref<{ time: number; text: string }[]>([]) // 歌词列表
-const currentLyricIndex = ref(-1) // 当前歌词索引
-const showLyrics = ref(false) // 是否显示歌词面板
-const lyricsRef = ref<HTMLElement>() // 歌词容器ref
-const autoPlayBlocked = ref(false) // 自动播放是否被阻止
+const lyrics = ref<{ time: number; text: string }[]>([]) // 歌词列表（带时间戳）
+const currentLyricIndex = ref(-1) // 当前歌词索引（用于高亮）
+const showLyrics = ref(false) // 是否显示歌词区域
+const lyricsRef = ref<HTMLElement>() // 歌词容器 DOM 引用
+const autoPlayBlocked = ref(false) // 自动播放是否被浏览器阻止
 
+// 计算属性：音频源（当前播放歌曲的 URL）
 const audioSrc = computed(() => currentSong.value.url)
 
-// 加载热歌榜
+// ==================== API 配置 ====================
+/**
+ * Meting API 说明：
+ * - 搜索：https://api.injahow.cn/meting?type=search&keywords=关键词
+ * - 播放：https://api.injahow.cn/meting?type=url&id=歌曲ID
+ * - 歌词：https://api.injahow.cn/meting?type=lrc&id=歌曲ID
+ * - 歌单：https://api.injahow.cn/meting?server=数据源&type=playlist&id=歌单ID
+ */
+const API_BASE = 'https://api.injahow.cn/meting'
+const API_SOURCES = {
+  netease: { name: '网易云音乐', server: 'netease' },
+  tencent: { name: 'QQ音乐', server: 'tencent' }
+}
+let currentServer = 'netease' // 当前数据源
+
+// 获取当前服务器配置
+const getCurrentServer = () => API_SOURCES[currentServer as keyof typeof API_SOURCES].server
+const getCurrentServerName = () => API_SOURCES[currentServer as keyof typeof API_SOURCES].name
+
+/**
+ * 从歌曲对象中提取 ID
+ * Meting API 返回的数据中，ID 可能为空，需要从 URL 中提取
+ * @param song - 歌曲对象
+ * @returns 歌曲 ID
+ */
+const extractSongId = (song: any): string => {
+  let songId = song.id?.toString() || song.pid?.toString() || ''
+
+  // 如果 ID 为空，尝试从 URL 中提取
+  if (!songId && song.url) {
+    const urlMatch = song.url.match(/id=(\d+)/)
+    if (urlMatch) songId = urlMatch[1]
+  }
+
+  // 如果还没有，尝试从封面 URL 中提取
+  if (!songId && song.pic) {
+    const picMatch = song.pic.match(/id=(\d+)/)
+    if (picMatch) songId = picMatch[1]
+  }
+
+  return songId
+}
+
+/**
+ * 切换数据源（网易云音乐 <-> QQ音乐）
+ * 切换后会清空当前状态并重新加载热歌榜
+ */
+const switchServer = () => {
+  currentServer = currentServer === 'netease' ? 'tencent' : 'netease'
+
+  // 清空当前状态
+  currentSong.value = {id: '', name: '', artist: '', cover: '', url: ''}
+  hotSongs.value = []
+  searchResults.value = []
+  searchKeyword.value = ''
+  lyrics.value = []
+
+  // 重新加载热歌榜
+  loadHotSongs()
+}
+
+/**
+ * 加载热歌榜
+ * 根据当前数据源加载对应的热歌榜歌单
+ * - 网易云音乐：歌单ID 3778678
+ * - QQ音乐：歌单ID 1777745160
+ */
 const loadHotSongs = async () => {
   try {
-    console.log('开始加载热歌榜...')
-    const response = await fetch('https://music-api.heheda.top/playlist/detail?id=3778678')
+    // 根据数据源选择对应的歌单 ID
+    const playlistId = currentServer === 'netease' ? '3778678' : '1777745160'
+    const response = await fetch(`${API_BASE}/?server=${getCurrentServer()}&type=playlist&id=${playlistId}`)
     const data = await response.json()
-    console.log('热歌榜API返回:', data)
 
-    // 适配不同的API返回结构
-    let tracks: any[] = []
-    if (data.result?.tracks) {
-      tracks = data.result.tracks
-    } else if (data.playlist?.tracks) {
-      tracks = data.playlist.tracks
-    } else if (Array.isArray(data.tracks)) {
-      tracks = data.tracks
-    }
+    if (Array.isArray(data) && data.length > 0) {
+      // 转换数据格式，提取歌曲 ID
+      hotSongs.value = data.map((song: any) => ({
+        id: extractSongId(song),
+        name: song.name || song.title || '未知歌曲',
+        artist: song.artist || song.author || '未知歌手',
+        cover: song.pic || song.cover || '',
+        url: song.url || '',
+        canPlay: !!song.url
+      }))
 
-    if (tracks.length > 0) {
-      console.log(`获取到${tracks.length}首歌曲，检查可播放性...`)
-      // 检查所有歌曲的可播放性
-      const songsWithStatus = await Promise.all(
-          tracks.map(async (song: any) => {
-            let canPlay = false
-            let url = ''
-
-            try {
-              // 检查是否有播放URL
-              const urlRes = await fetch(`https://music-api.heheda.top/song/url?id=${song.id}`)
-              const urlData = await urlRes.json()
-              url = urlData.data?.[0]?.url || urlData.url || ''
-              canPlay = !!url
-            } catch (e) {
-              canPlay = false
-            }
-
-            // 获取封面
-            const cover = song.al?.picUrl || song.album?.picUrl || song.cover || ''
-            // 获取歌手名
-            const artist = song.ar?.map((a: any) => a.name).join('/') ||
-                song.artists?.map((a: any) => a.name).join('/') ||
-                song.artist || '未知歌手'
-
-            return {
-              id: song.id.toString(),
-              name: song.name,
-              artist,
-              cover,
-              url,
-              canPlay
-            }
-          })
-      )
-
-      // 只保留可播放的歌曲
-      hotSongs.value = songsWithStatus.filter(song => song.canPlay)
-      console.log('热歌榜加载完成，可播放歌曲:', hotSongs.value.length, '首')
-
-      // 自动播放第一首（圆球状态，不打开面板）
+      // 自动播放第一首（在悬浮球状态，不打开面板）
       if (hotSongs.value.length > 0) {
-        console.log('自动播放第一首:', hotSongs.value[0].name)
-        // 确保面板保持关闭状态
         isExpanded.value = false
         playHotSong(0)
-      } else {
-        console.warn('没有可播放的歌曲')
       }
-    } else {
-      console.warn('API返回中没有歌曲数据')
     }
   } catch (error) {
     console.error('加载热歌榜失败:', error)
   }
 }
 
-// 解析歌词
+/**
+ * 解析 LRC 格式歌词
+ * LRC 格式示例：[00:12.34]歌词内容
+ * @param lyricStr - LRC 格式的歌词文本
+ * @returns 解析后的歌词数组 [{time: 秒数, text: '歌词'}]
+ */
 const parseLyrics = (lyricStr: string) => {
   if (!lyricStr) return []
   const lines = lyricStr.split('\n')
   const result: { time: number; text: string }[] = []
 
-  const timeRegex = /\[(\d{2}):(\d{2})\.(\d{2,3})\]/
+  const timeRegex = /\[(\d{2}):(\d{2})\.(\d{2,3})]/
 
   lines.forEach(line => {
     const match = line.match(timeRegex)
@@ -346,13 +427,26 @@ const parseLyrics = (lyricStr: string) => {
   return result.sort((a, b) => a.time - b.time)
 }
 
-// 获取歌词
+/**
+ * 获取歌词
+ * 调用 Meting API 获取歌词，支持 LRC 格式和纯文本格式
+ * @param songId - 歌曲 ID
+ */
 const fetchLyrics = async (songId: string) => {
   try {
-    const response = await fetch(`https://music-api.heheda.top/lyric?id=${songId}`)
-    const data = await response.json()
-    if (data.lrc?.lyric) {
-      lyrics.value = parseLyrics(data.lrc.lyric)
+    // 歌词 API：type=lrc&id=歌曲ID
+    const response = await fetch(`${API_BASE}/?type=lrc&id=${songId}`)
+    const text = await response.text()
+
+    // 检查是否是有效的 LRC 格式（包含时间戳）
+    const hasTimestamps = (text.match(/\[\d{2}:\d{2}\.\d{2}]/g) || []).length > 0
+
+    if (text && hasTimestamps) {
+      // LRC 格式，解析为带时间戳的数组
+      lyrics.value = parseLyrics(text)
+    } else if (text && text.trim()) {
+      // 纯文本格式（如纯音乐提示），作为单行显示
+      lyrics.value = [{ time: 0, text: text.trim() }]
     } else {
       lyrics.value = []
     }
@@ -362,13 +456,17 @@ const fetchLyrics = async (songId: string) => {
   }
 }
 
-// 更新当前歌词
+/**
+ * 更新当前歌词索引
+ * 根据当前播放时间，找到对应的歌词行并高亮，同时自动滚动
+ */
 const updateCurrentLyric = () => {
   if (lyrics.value.length === 0) return
 
   const current = currentTime.value
   let index = -1
 
+  // 遍历歌词，找到当前时间对应的歌词行
   for (let i = 0; i < lyrics.value.length; i++) {
     if (current >= lyrics.value[i].time) {
       index = i
@@ -377,10 +475,11 @@ const updateCurrentLyric = () => {
     }
   }
 
+  // 如果歌词索引发生变化，更新并滚动
   if (index !== currentLyricIndex.value) {
     currentLyricIndex.value = index
 
-    // 自动滚动到当前歌词
+    // 自动滚动到当前歌词（平滑滚动，居中显示）
     if (showLyrics.value && lyricsRef.value && index >= 0) {
       const activeLine = lyricsRef.value.children[index] as HTMLElement
       if (activeLine) {
@@ -390,11 +489,14 @@ const updateCurrentLyric = () => {
   }
 }
 
-// 播放热歌榜歌曲
+/**
+ * 播放热歌榜中的指定歌曲
+ * @param index - 歌曲在热歌榜中的索引
+ */
 const playHotSong = async (index: number) => {
   if (hotSongs.value.length === 0) return
 
-  // 确保索引在范围内
+  // 确保索引在有效范围内
   if (index >= hotSongs.value.length) index = 0
   if (index < 0) index = hotSongs.value.length - 1
 
@@ -463,7 +565,11 @@ const playNextHotSong = () => {
   playHotSong(hotSongsIndex.value + 1)
 }
 
-// 组件挂载时加载热歌榜
+/**
+ * 组件挂载时初始化
+ * 1. 加载热歌榜
+ * 2. 监听用户首次交互（用于恢复被浏览器阻止的自动播放）
+ */
 onMounted(() => {
   loadHotSongs()
 
@@ -492,25 +598,29 @@ onMounted(() => {
   document.addEventListener('touchstart', handleFirstInteraction)
 })
 
+// 计算属性：播放进度百分比
 const progressPercent = computed(() => {
   if (duration.value === 0) return 0
   return (currentTime.value / duration.value) * 100
 })
 
+/**
+ * 切换面板展开/收起状态
+ */
 const togglePanel = () => {
-  // 如果有歌曲正在播放或已暂停，点击悬浮球展开面板
-  // 如果没有歌曲，也展开面板
   isExpanded.value = !isExpanded.value
 }
 
+/**
+ * 播放/暂停切换
+ * 如果没有歌曲，则播放热歌榜第一首
+ */
 const togglePlay = () => {
   // 如果没有歌曲或歌曲URL为空，播放热歌榜第一首
   if (!currentSong.value.url) {
-    // 如果热歌榜已加载，播放第一首
     if (hotSongs.value.length > 0) {
       playHotSong(0)
     } else {
-      // 热歌榜未加载完成，等待加载后播放
       console.log('热歌榜加载中，请稍后再试')
     }
     return
@@ -527,141 +637,105 @@ const togglePlay = () => {
   }
 }
 
+/**
+ * 搜索歌曲
+ * 调用 Meting API 搜索功能
+ */
 const search = async () => {
-  console.log('开始搜索:', searchKeyword.value)
-  // 搜索时关闭歌词面板
   showLyrics.value = false
 
   if (!searchKeyword.value.trim()) {
     searchResults.value = []
     return
   }
+
   try {
+    // Meting API 搜索：type=search&keywords=关键词
     const response = await fetch(
-        `https://music-api.heheda.top/search?keywords=${encodeURIComponent(searchKeyword.value)}&limit=20`
+      `${API_BASE}/?type=search&keywords=${encodeURIComponent(searchKeyword.value)}`
     )
     const data = await response.json()
-    console.log('搜索结果:', data)
-    if (data.result?.songs) {
-      // 检查每首歌是否有播放资源
-      const songsWithStatus = await Promise.all(
-          data.result.songs.map(async (song: any) => {
-            let canPlay = false
-            let url = ''
 
-            try {
-              // 检查是否有播放URL
-              const urlRes = await fetch(`https://music-api.heheda.top/song/url?id=${song.id}`)
-              const urlData = await urlRes.json()
-              url = urlData.data?.[0]?.url
-              canPlay = !!url
-            } catch (e) {
-              canPlay = false
-            }
-
-            // 获取封面
-            let cover = ''
-            try {
-              const detailRes = await fetch(`https://music-api.heheda.top/song/detail?ids=${song.id}`)
-              const detailData = await detailRes.json()
-              cover = detailData.songs?.[0]?.al?.picUrl || ''
-            } catch (e) {
-            }
-
-            return {
-              id: song.id,
-              name: song.name,
-              artist: song.artists?.map((a: any) => a.name).join('/') || '未知歌手',
-              cover,
-              url,
-              canPlay
-            }
-          })
-      )
-
-      searchResults.value = songsWithStatus
-      console.log('搜索结果（含播放状态）:', searchResults.value)
+    if (Array.isArray(data) && data.length > 0) {
+      searchResults.value = data.map((song: any) => ({
+        id: extractSongId(song),
+        name: song.name || song.title || '未知歌曲',
+        artist: song.artist || song.author || '未知歌手',
+        cover: song.pic || song.cover || '',
+        url: song.url || '',
+        canPlay: !!song.url
+      }))
+    } else {
+      searchResults.value = []
     }
   } catch (error) {
     console.error('搜索失败:', error)
-  }
-}
-
-const playSong = async (song: any) => {
-  console.log('点击播放:', song)
-  try {
-    // 使用缓存的URL，如果没有则重新获取
-    let url = song.url
-    if (!url) {
-      const urlRes = await fetch(`https://music-api.heheda.top/song/url?id=${song.id}`)
-      const urlData = await urlRes.json()
-      url = urlData.data?.[0]?.url
-    }
-
-    if (!url) {
-      alert('该歌曲暂无播放资源')
-      return
-    }
-
-    // 获取封面（如果没有）
-    let cover = song.cover
-    if (!cover) {
-      try {
-        const detailRes = await fetch(`https://music-api.heheda.top/song/detail?ids=${song.id}`)
-        const detailData = await detailRes.json()
-        cover = detailData.songs?.[0]?.al?.picUrl || ''
-      } catch (e) {
-      }
-    }
-
-    currentSong.value = {...song, url, cover}
-
-    // 获取歌词
-    await fetchLyrics(song.id)
-
-    // 添加到播放列表
-    const existingIndex = playlist.value.findIndex(s => s.id === song.id)
-    if (existingIndex === -1) {
-      playlist.value.push({...song, cover})
-      currentIndex.value = playlist.value.length - 1
-    } else {
-      currentIndex.value = existingIndex
-    }
-
     searchResults.value = []
-    searchKeyword.value = ''
-
-    // 关闭面板
-    isExpanded.value = false
-
-    // 自动播放
-    setTimeout(() => {
-      if (audioRef.value) {
-        console.log('开始播放，音频源:', audioRef.value.src)
-        audioRef.value.play().catch(err => {
-          console.error('播放失败:', err)
-          alert('播放失败，请检查音频资源')
-        })
-      }
-    }, 500)
-  } catch (error) {
-    console.error('播放失败:', error)
   }
 }
 
+/**
+ * 播放指定歌曲（从搜索结果或点击歌曲）
+ * @param song - 歌曲对象
+ */
+const playSong = async (song: any) => {
+  // 直接使用歌曲数据
+  if (!song.url) {
+    console.warn('该歌曲暂无播放资源:', song.name)
+    return
+  }
+
+  currentSong.value = {...song}
+
+  // 获取歌词
+  await fetchLyrics(song.id)
+
+  // 添加到播放列表
+  const existingIndex = playlist.value.findIndex(s => s.id === song.id)
+  if (existingIndex === -1) {
+    playlist.value.push(song)
+    currentIndex.value = playlist.value.length - 1
+  } else {
+    currentIndex.value = existingIndex
+  }
+
+  searchResults.value = []
+  searchKeyword.value = ''
+  isExpanded.value = false
+
+  // 自动播放
+  setTimeout(() => {
+    if (audioRef.value) {
+      audioRef.value.play().catch(err => {
+        console.error('播放失败:', err)
+      })
+    }
+  }, 500)
+}
+
+/**
+ * 上一首
+ * 在热歌榜中循环播放
+ */
 const prevSong = () => {
-  // 播放上一首热歌
   if (hotSongs.value.length === 0) return
   let newIndex = hotSongsIndex.value - 1
   if (newIndex < 0) newIndex = hotSongs.value.length - 1
   playHotSong(newIndex)
 }
 
+/**
+ * 下一首
+ * 在热歌榜中循环播放
+ */
 const nextSong = () => {
-  // 播放下一首热歌
   playNextHotSong()
 }
 
+/**
+ * 音频时间更新事件
+ * 更新当前播放时间，并同步歌词高亮
+ */
 const onTimeUpdate = () => {
   if (audioRef.value) {
     currentTime.value = audioRef.value.currentTime
@@ -669,17 +743,28 @@ const onTimeUpdate = () => {
   }
 }
 
+/**
+ * 音频元数据加载完成事件
+ * 获取歌曲总时长
+ */
 const onLoadedMetadata = () => {
   if (audioRef.value) {
     duration.value = audioRef.value.duration
   }
 }
 
+/**
+ * 音频播放结束事件
+ * 自动播放下一首
+ */
 const onEnded = () => {
-  // 播放下一首热歌
   playNextHotSong()
 }
 
+/**
+ * 点击进度条跳转
+ * @param e - 鼠标点击事件
+ */
 const seek = (e: MouseEvent) => {
   if (!audioRef.value || duration.value === 0) return
   const rect = (e.target as HTMLElement).getBoundingClientRect()
@@ -687,6 +772,11 @@ const seek = (e: MouseEvent) => {
   audioRef.value.currentTime = percent * duration.value
 }
 
+/**
+ * 格式化时间（秒数 -> mm:ss）
+ * @param time - 秒数
+ * @returns 格式化后的时间字符串
+ */
 const formatTime = (time: number) => {
   if (!time || isNaN(time)) return '0:00'
   const minutes = Math.floor(time / 60)
@@ -694,6 +784,10 @@ const formatTime = (time: number) => {
   return `${minutes}:${seconds.toString().padStart(2, '0')}`
 }
 
+/**
+ * 监听音量变化
+ * 同步更新音频元素的音量
+ */
 watch(volume, (val) => {
   if (audioRef.value) {
     audioRef.value.volume = val / 100
@@ -1072,8 +1166,8 @@ watch(volume, (val) => {
 /* 当前播放卡片 */
 .now-playing-card {
   display: flex;
-  align-items: center;
-  gap: 12px;
+  flex-direction: column;
+  gap: 10px;
   margin-bottom: 16px;
   padding: 12px;
   background: white;
@@ -1084,6 +1178,13 @@ watch(volume, (val) => {
 .music-player.dark .now-playing-card {
   background: #333;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* 歌曲信息和按钮行 */
+.npc-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .npc-cover {
@@ -1097,6 +1198,12 @@ watch(volume, (val) => {
 .npc-info {
   flex: 1;
   min-width: 0;
+}
+
+.npc-buttons {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 .npc-name {
@@ -1116,6 +1223,56 @@ watch(volume, (val) => {
   font-size: 12px;
   color: #999;
   margin-top: 4px;
+}
+
+/* 数据源显示 */
+.npc-server {
+  font-size: 11px;
+  color: #4CAF50;
+  margin-top: 2px;
+  font-weight: 500;
+}
+
+.music-player.dark .npc-server {
+  color: #66BB6A;
+}
+
+/* 数据源切换按钮 */
+.npc-switch-btn {
+  width: 36px;
+  height: 36px;
+  background: #2196F3;
+  border: none;
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  padding: 0;
+  box-shadow: 0 2px 6px rgba(33, 150, 243, 0.3);
+}
+
+.npc-switch-btn:hover {
+  transform: scale(1.05) rotate(180deg);
+  box-shadow: 0 3px 8px rgba(33, 150, 243, 0.4);
+}
+
+.switch-icon {
+  width: 18px;
+  height: 18px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.music-player.dark .npc-switch-btn {
+  background: #1976D2;
+}
+
+.music-player.dark .npc-switch-btn:hover {
+  background: #1565C0;
 }
 
 /* 歌词切换按钮 */
@@ -1151,23 +1308,36 @@ watch(volume, (val) => {
 
 /* 歌词区域 */
 .lyrics-container {
-  max-height: 150px;
-  overflow-y: scroll;
+  max-height: 180px;
+  overflow-y: auto;
   background: rgba(0, 0, 0, 0.03);
   border-radius: 8px;
   padding: 12px;
   margin-bottom: 16px;
   text-align: center;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  scrollbar-width: thin;
+  scrollbar-color: #ff6b6b transparent;
 }
 
 .lyrics-container::-webkit-scrollbar {
-  display: none;
+  width: 4px;
+}
+
+.lyrics-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.lyrics-container::-webkit-scrollbar-thumb {
+  background: #ff6b6b;
+  border-radius: 2px;
 }
 
 .music-player.dark .lyrics-container {
   background: rgba(255, 255, 255, 0.06);
+}
+
+.music-player.dark .lyrics-container::-webkit-scrollbar-thumb {
+  background: #ff6b6b;
 }
 
 .lyrics-scroll {
@@ -1181,7 +1351,12 @@ watch(volume, (val) => {
   color: #999;
   line-height: 2;
   transition: all 0.3s;
-  opacity: 0.7;
+  opacity: 0.6;
+  padding: 4px 0;
+}
+
+.lyric-line:hover {
+  opacity: 0.8;
 }
 
 .lyric-line.active {
@@ -1190,6 +1365,7 @@ watch(volume, (val) => {
   font-weight: 600;
   opacity: 1;
   transform: scale(1.05);
+  text-shadow: 0 0 10px rgba(255, 107, 107, 0.3);
 }
 
 .music-player.dark .lyric-line {
@@ -1204,6 +1380,16 @@ watch(volume, (val) => {
   font-size: 13px;
   color: #999;
   padding: 20px 0;
+}
+
+/* 纯文本歌词样式 */
+.lyric-text-only {
+  color: #ff6b6b;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+  padding: 20px;
+  line-height: 1.8;
 }
 
 /* 播放控制 */

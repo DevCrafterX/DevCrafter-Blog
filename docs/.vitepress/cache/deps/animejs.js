@@ -1,8 +1,8 @@
 import {
   __export
-} from "./chunk-DC5AMYBS.js";
+} from "./chunk-RGOVJRZA.js";
 
-// node_modules/animejs/dist/modules/core/consts.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/core/consts.js
 var isBrowser = typeof window !== "undefined";
 var win = isBrowser ? (
   /** @type {AnimeJSWindow} */
@@ -37,7 +37,6 @@ var isRegisteredTargetSymbol = Symbol();
 var isDomSymbol = Symbol();
 var isSvgSymbol = Symbol();
 var transformsSymbol = Symbol();
-var morphPointsSymbol = Symbol();
 var proxyTargetSymbol = Symbol();
 var minValue = 1e-11;
 var maxValue = 1e12;
@@ -53,6 +52,7 @@ var shortTransforms = (() => {
   return map;
 })();
 var validTransforms = [
+  "perspective",
   "translateX",
   "translateY",
   "translateZ",
@@ -66,10 +66,7 @@ var validTransforms = [
   "scaleZ",
   "skew",
   "skewX",
-  "skewY",
-  "matrix",
-  "matrix3d",
-  "perspective"
+  "skewY"
 ];
 var transformsFragmentStrings = validTransforms.reduce((a, v) => ({ ...a, [v]: v + "(" }), {});
 var noop = () => {
@@ -83,11 +80,10 @@ var hslaExecRgx = /hsla\(\s*(-?\d+|-?\d*.\d+)\s*,\s*(-?\d+|-?\d*.\d+)%\s*,\s*(-?
 var digitWithExponentRgx = /[-+]?\d*\.?\d+(?:e[-+]?\d)?/gi;
 var unitsExecRgx = /^([-+]?\d*\.?\d+(?:e[-+]?\d+)?)([a-z]+|%)$/i;
 var lowerCaseRgx = /([a-z])([A-Z])/g;
-var transformsExecRgx = /(\w+)(\([^)]+\)+)/g;
 var relativeValuesExecRgx = /(\*=|\+=|-=)/;
 var cssVariableMatchRgx = /var\(\s*(--[\w-]+)(?:\s*,\s*([^)]+))?\s*\)/;
 
-// node_modules/animejs/dist/modules/core/globals.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/core/globals.js
 var defaults = {
   id: null,
   keyframes: null,
@@ -127,16 +123,17 @@ var globals = {
   /** @type {Number} equals 1 in ms mode, 0.001 in s mode */
   timeScale: 1,
   /** @type {Number} */
-  tickThreshold: 200
+  tickThreshold: 200,
+  /** @type {EditorGlobals|null} */
+  editor: null
 };
-var devTools = isBrowser && win.AnimeJSDevTools;
-var globalVersions = { version: "4.3.5", engine: null };
+var globalVersions = { version: "4.4.1", engine: null };
 if (isBrowser) {
   if (!win.AnimeJS) win.AnimeJS = [];
   win.AnimeJS.push(globalVersions);
 }
 
-// node_modules/animejs/dist/modules/core/helpers.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/core/helpers.js
 var toLowerCase = (str) => str.replace(lowerCaseRgx, "$1-$2").toLowerCase();
 var stringStartsWith = (str, sub) => str.indexOf(sub) === 0;
 var now = Date.now;
@@ -189,12 +186,10 @@ var atan2 = Math.atan2;
 var PI = Math.PI;
 var _round = Math.round;
 var clamp = (v, min, max2) => v < min ? min : v > max2 ? max2 : v;
-var powCache = {};
 var round = (v, decimalLength) => {
   if (decimalLength < 0) return v;
   if (!decimalLength) return _round(v);
-  let p = powCache[decimalLength];
-  if (!p) p = powCache[decimalLength] = 10 ** decimalLength;
+  const p = 10 ** decimalLength;
   return _round(v * p) / p;
 };
 var snap = (v, increment) => isArr(increment) ? increment.reduce((closest, cv) => abs(cv - v) < abs(closest - v) ? cv : closest) : increment ? _round(v / increment) * increment : v;
@@ -250,29 +245,123 @@ var addChild = (parent, child, sortMethod, prevProp = "_prev", nextProp = "_next
   child[nextProp] = next;
 };
 
-// node_modules/animejs/dist/modules/core/transforms.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/core/transforms.js
 var parseInlineTransforms = (target, propName, animationInlineStyles) => {
   const inlineTransforms = target.style.transform;
-  let inlinedStylesPropertyValue;
   if (inlineTransforms) {
     const cachedTransforms = target[transformsSymbol];
-    let t;
-    while (t = transformsExecRgx.exec(inlineTransforms)) {
-      const inlinePropertyName = t[1];
-      const inlinePropertyValue = t[2].slice(1, -1);
-      cachedTransforms[inlinePropertyName] = inlinePropertyValue;
-      if (inlinePropertyName === propName) {
-        inlinedStylesPropertyValue = inlinePropertyValue;
-        if (animationInlineStyles) {
-          animationInlineStyles[propName] = inlinePropertyValue;
+    let pos = 0;
+    const len = inlineTransforms.length;
+    let fullTranslateValue;
+    while (pos < len) {
+      while (pos < len && inlineTransforms.charCodeAt(pos) === 32) pos++;
+      if (pos >= len) break;
+      const nameStart = pos;
+      while (pos < len && inlineTransforms.charCodeAt(pos) !== 40) pos++;
+      if (pos >= len) break;
+      const name = inlineTransforms.substring(nameStart, pos);
+      let depth = 1;
+      const valueStart = pos + 1;
+      let c1 = -1, c2 = -1;
+      pos++;
+      while (pos < len && depth > 0) {
+        const c = inlineTransforms.charCodeAt(pos);
+        if (c === 40) depth++;
+        else if (c === 41) depth--;
+        else if (c === 44 && depth === 1) {
+          if (c1 === -1) c1 = pos;
+          else if (c2 === -1) c2 = pos;
         }
+        pos++;
+      }
+      const valueEnd = pos - 1;
+      if (name === "translate" || name === "translate3d") {
+        if (c1 === -1) {
+          cachedTransforms.translateX = inlineTransforms.substring(valueStart, valueEnd).trim();
+        } else {
+          cachedTransforms.translateX = inlineTransforms.substring(valueStart, c1).trim();
+          if (c2 === -1) {
+            cachedTransforms.translateY = inlineTransforms.substring(c1 + 1, valueEnd).trim();
+          } else {
+            cachedTransforms.translateY = inlineTransforms.substring(c1 + 1, c2).trim();
+            cachedTransforms.translateZ = inlineTransforms.substring(c2 + 1, valueEnd).trim();
+          }
+        }
+        fullTranslateValue = inlineTransforms.substring(valueStart, valueEnd);
+      } else if (name === "scale" || name === "scale3d") {
+        if (c1 === -1) {
+          cachedTransforms.scale = inlineTransforms.substring(valueStart, valueEnd).trim();
+        } else {
+          cachedTransforms.scaleX = inlineTransforms.substring(valueStart, c1).trim();
+          if (c2 === -1) {
+            cachedTransforms.scaleY = inlineTransforms.substring(c1 + 1, valueEnd).trim();
+          } else {
+            cachedTransforms.scaleY = inlineTransforms.substring(c1 + 1, c2).trim();
+            cachedTransforms.scaleZ = inlineTransforms.substring(c2 + 1, valueEnd).trim();
+          }
+        }
+      } else {
+        cachedTransforms[name] = inlineTransforms.substring(valueStart, valueEnd);
       }
     }
+    if (propName === "translate3d" && fullTranslateValue) {
+      if (animationInlineStyles) animationInlineStyles[propName] = fullTranslateValue;
+      return fullTranslateValue;
+    }
+    const cached = cachedTransforms[propName];
+    if (!isUnd(cached)) {
+      if (animationInlineStyles) animationInlineStyles[propName] = cached;
+      return cached;
+    }
   }
-  return inlineTransforms && !isUnd(inlinedStylesPropertyValue) ? inlinedStylesPropertyValue : stringStartsWith(propName, "scale") ? "1" : stringStartsWith(propName, "rotate") || stringStartsWith(propName, "skew") ? "0deg" : "0px";
+  return propName === "translate3d" ? "0px, 0px, 0px" : propName === "rotate3d" ? "0, 0, 0, 0deg" : stringStartsWith(propName, "scale") ? "1" : stringStartsWith(propName, "rotate") || stringStartsWith(propName, "skew") ? "0deg" : "0px";
+};
+var buildTransformString = (props) => {
+  let str = emptyString;
+  for (let i = 0, l = validTransforms.length; i < l; i++) {
+    const key2 = validTransforms[i];
+    const val = props[key2];
+    if (val !== void 0) {
+      if (key2 === "translateX") {
+        const next = props.translateY;
+        if (next !== void 0) {
+          const next2 = props.translateZ;
+          if (next2 !== void 0) {
+            str += `translate3d(${val},${next},${next2}) `;
+            i += 2;
+          } else {
+            str += `translate(${val},${next}) `;
+            i += 1;
+          }
+          continue;
+        }
+      }
+      if (key2 === "scaleX" && props.scale === void 0) {
+        const next = props.scaleY;
+        if (next !== void 0) {
+          const next2 = props.scaleZ;
+          if (next2 !== void 0) {
+            str += `scale3d(${val},${next},${next2}) `;
+            i += 2;
+          } else {
+            str += `scale(${val},${next}) `;
+            i += 1;
+          }
+          continue;
+        }
+      }
+      str += `${transformsFragmentStrings[key2]}${val}) `;
+    }
+    if (key2 === "rotateZ") {
+      if (props.rotate3d !== void 0) str += `rotate3d(${props.rotate3d}) `;
+    }
+  }
+  if (props.matrix !== void 0) str += `matrix(${props.matrix}) `;
+  if (props.matrix3d !== void 0) str += `matrix3d(${props.matrix3d}) `;
+  return str;
 };
 
-// node_modules/animejs/dist/modules/core/colors.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/core/colors.js
 var rgbToRgba = (rgbValue) => {
   const rgba = rgbExecRgx.exec(rgbValue) || rgbaExecRgx.exec(rgbValue);
   const a = !isUnd(rgba[4]) ? +rgba[4] : 1;
@@ -320,17 +409,17 @@ var convertColorStringValuesToRgbaArray = (colorString) => {
   return isRgb(colorString) ? rgbToRgba(colorString) : isHex(colorString) ? hexToRgba(colorString) : isHsl(colorString) ? hslToRgba(colorString) : [0, 0, 0, 1];
 };
 
-// node_modules/animejs/dist/modules/core/values.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/core/values.js
 var setValue = (targetValue, defaultValue) => {
   return isUnd(targetValue) ? defaultValue : targetValue;
 };
-var getFunctionValue = (value, target, index, total, store) => {
+var getFunctionValue = (value, target, index, targets, store, prevTween) => {
   let func;
   if (isFnc(value)) {
     func = () => {
       const computed = (
         /** @type {Function} */
-        value(target, index, total)
+        value(target, index, targets, prevTween)
       );
       return !isNaN(+computed) ? +computed : computed || 0;
     };
@@ -384,10 +473,20 @@ var getCSSValue = (target, propName, animationInlineStyles) => {
 };
 var getOriginalAnimatableValue = (target, propName, tweenType, animationInlineStyles) => {
   const type = !isUnd(tweenType) ? tweenType : getTweenType(target, propName);
-  return type === tweenTypes.OBJECT ? target[propName] || 0 : type === tweenTypes.ATTRIBUTE ? (
-    /** @type {DOMTarget} */
-    target.getAttribute(propName)
-  ) : type === tweenTypes.TRANSFORM ? parseInlineTransforms(
+  if (type === tweenTypes.OBJECT) {
+    const value = target[propName];
+    if (value && animationInlineStyles) animationInlineStyles[propName] = value;
+    return value || 0;
+  }
+  if (type === tweenTypes.ATTRIBUTE) {
+    const value = (
+      /** @type {DOMTarget} */
+      target.getAttribute(propName)
+    );
+    if (value && animationInlineStyles) animationInlineStyles[propName] = value;
+    return value;
+  }
+  return type === tweenTypes.TRANSFORM ? parseInlineTransforms(
     /** @type {DOMTarget} */
     target,
     propName,
@@ -471,8 +570,65 @@ var decomposeTweenValue = (tween, targetObject) => {
   return targetObject;
 };
 var decomposedOriginalValue = createDecomposedValueTargetObject();
+var composeColorValue = (tween, progress, precision) => {
+  const mod = tween._modifier;
+  const fn = tween._fromNumbers;
+  const tn = tween._toNumbers;
+  const r = round(clamp(
+    /** @type {Number} */
+    mod(lerp(fn[0], tn[0], progress)),
+    0,
+    255
+  ), 0);
+  const g = round(clamp(
+    /** @type {Number} */
+    mod(lerp(fn[1], tn[1], progress)),
+    0,
+    255
+  ), 0);
+  const b = round(clamp(
+    /** @type {Number} */
+    mod(lerp(fn[2], tn[2], progress)),
+    0,
+    255
+  ), 0);
+  const a = clamp(
+    /** @type {Number} */
+    mod(round(lerp(fn[3], tn[3], progress), precision)),
+    0,
+    1
+  );
+  if (tween._composition !== compositionTypes.none) {
+    const ns = tween._numbers;
+    ns[0] = r;
+    ns[1] = g;
+    ns[2] = b;
+    ns[3] = a;
+  }
+  return `rgba(${r},${g},${b},${a})`;
+};
+var composeComplexValue = (tween, progress, precision) => {
+  const mod = tween._modifier;
+  const fn = tween._fromNumbers;
+  const tn = tween._toNumbers;
+  const ts = tween._strings;
+  const hasComposition = tween._composition !== compositionTypes.none;
+  let v = ts[0];
+  for (let j = 0, l = tn.length; j < l; j++) {
+    const n = (
+      /** @type {Number} */
+      mod(round(lerp(fn[j], tn[j], progress), precision))
+    );
+    const s = ts[j + 1];
+    v += `${s ? n + s : n}`;
+    if (hasComposition) {
+      tween._numbers[j] = n;
+    }
+  }
+  return v;
+};
 
-// node_modules/animejs/dist/modules/core/render.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/core/render.js
 var render = (tickable, time, muteCallbacks, internalRender, tickMode) => {
   const parent = tickable.parent;
   const duration = tickable.duration;
@@ -584,53 +740,9 @@ var render = (tickable, time, muteCallbacks, internalRender, tickMode) => {
             tweenModifier(round(lerp(tween._fromNumber, tween._toNumber, tweenProgress), tweenPrecision));
             value = `${number}${tween._unit}`;
           } else if (tweenValueType === valueTypes.COLOR) {
-            const fn = tween._fromNumbers;
-            const tn = tween._toNumbers;
-            const r = round(clamp(
-              /** @type {Number} */
-              tweenModifier(lerp(fn[0], tn[0], tweenProgress)),
-              0,
-              255
-            ), 0);
-            const g = round(clamp(
-              /** @type {Number} */
-              tweenModifier(lerp(fn[1], tn[1], tweenProgress)),
-              0,
-              255
-            ), 0);
-            const b = round(clamp(
-              /** @type {Number} */
-              tweenModifier(lerp(fn[2], tn[2], tweenProgress)),
-              0,
-              255
-            ), 0);
-            const a = clamp(
-              /** @type {Number} */
-              tweenModifier(round(lerp(fn[3], tn[3], tweenProgress), tweenPrecision)),
-              0,
-              1
-            );
-            value = `rgba(${r},${g},${b},${a})`;
-            if (tweenHasComposition) {
-              const ns = tween._numbers;
-              ns[0] = r;
-              ns[1] = g;
-              ns[2] = b;
-              ns[3] = a;
-            }
+            value = composeColorValue(tween, tweenProgress, tweenPrecision);
           } else if (tweenValueType === valueTypes.COMPLEX) {
-            value = tween._strings[0];
-            for (let j = 0, l = tween._toNumbers.length; j < l; j++) {
-              const n = (
-                /** @type {Number} */
-                tweenModifier(round(lerp(tween._fromNumbers[j], tween._toNumbers[j], tweenProgress), tweenPrecision))
-              );
-              const s = tween._strings[j + 1];
-              value += `${s ? n + s : n}`;
-              if (tweenHasComposition) {
-                tween._numbers[j] = n;
-              }
-            }
+            value = composeComplexValue(tween, tweenProgress, tweenPrecision);
           }
           if (tweenHasComposition) {
             tween._number = number;
@@ -672,11 +784,7 @@ var render = (tickable, time, muteCallbacks, internalRender, tickMode) => {
           }
         }
         if (tweenTransformsNeedUpdate && tween._renderTransforms) {
-          let str = emptyString;
-          for (let key2 in tweenTargetTransformsProperties) {
-            str += `${transformsFragmentStrings[key2]}${tweenTargetTransformsProperties[key2]}) `;
-          }
-          tweenStyle.transform = str;
+          tweenStyle.transform = buildTransformString(tweenTargetTransformsProperties);
           tweenTransformsNeedUpdate = 0;
         }
         tween = tween._next;
@@ -794,7 +902,7 @@ var tick = (tickable, time, muteCallbacks, internalRender, tickMode) => {
   }
 };
 
-// node_modules/animejs/dist/modules/core/styles.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/core/styles.js
 var propertyNamesCache = {};
 var sanitizePropertyName = (propertyName, target, tweenType) => {
   if (tweenType === tweenTypes.TRANSFORM) {
@@ -816,9 +924,9 @@ var sanitizePropertyName = (propertyName, target, tweenType) => {
     return propertyName;
   }
 };
-var cleanInlineStyles = (renderable) => {
+var revertValues = (renderable, inlineStylesOnly = false) => {
   if (renderable._hasChildren) {
-    forEachChildren(renderable, cleanInlineStyles, true);
+    forEachChildren(renderable, (child) => revertValues(child, inlineStylesOnly), true);
   } else {
     const animation = (
       /** @type {JSAnimation} */
@@ -828,52 +936,68 @@ var cleanInlineStyles = (renderable) => {
     forEachChildren(animation, (tween) => {
       const tweenProperty = tween.property;
       const tweenTarget = tween.target;
-      if (tweenTarget[isDomSymbol]) {
-        const targetStyle = (
-          /** @type {DOMTarget} */
-          tweenTarget.style
-        );
-        const originalInlinedValue = tween._inlineValue;
-        const tweenHadNoInlineValue = isNil(originalInlinedValue) || originalInlinedValue === emptyString;
-        if (tween._tweenType === tweenTypes.TRANSFORM) {
-          const cachedTransforms = tweenTarget[transformsSymbol];
-          if (tweenHadNoInlineValue) {
-            delete cachedTransforms[tweenProperty];
-          } else {
-            cachedTransforms[tweenProperty] = originalInlinedValue;
-          }
-          if (tween._renderTransforms) {
-            if (!Object.keys(cachedTransforms).length) {
-              targetStyle.removeProperty("transform");
+      const tweenType = tween._tweenType;
+      const originalInlinedValue = tween._inlineValue;
+      const tweenHadNoInlineValue = isNil(originalInlinedValue) || originalInlinedValue === emptyString;
+      if (tweenType === tweenTypes.OBJECT) {
+        if (!inlineStylesOnly && !tweenHadNoInlineValue) {
+          tweenTarget[tweenProperty] = originalInlinedValue;
+        }
+      } else if (tweenTarget[isDomSymbol]) {
+        if (tweenType === tweenTypes.ATTRIBUTE) {
+          if (!inlineStylesOnly) {
+            if (tweenHadNoInlineValue) {
+              tweenTarget.removeAttribute(tweenProperty);
             } else {
-              let str = emptyString;
-              for (let key2 in cachedTransforms) {
-                str += transformsFragmentStrings[key2] + cachedTransforms[key2] + ") ";
-              }
-              targetStyle.transform = str;
+              tweenTarget.setAttribute(
+                tweenProperty,
+                /** @type {String} */
+                originalInlinedValue
+              );
             }
           }
         } else {
-          if (tweenHadNoInlineValue) {
-            targetStyle.removeProperty(toLowerCase(tweenProperty));
+          const targetStyle = (
+            /** @type {DOMTarget} */
+            tweenTarget.style
+          );
+          if (tweenType === tweenTypes.TRANSFORM) {
+            const cachedTransforms = tweenTarget[transformsSymbol];
+            if (tweenHadNoInlineValue) {
+              delete cachedTransforms[tweenProperty];
+            } else {
+              cachedTransforms[tweenProperty] = originalInlinedValue;
+            }
+            if (tween._renderTransforms) {
+              if (!Object.keys(cachedTransforms).length) {
+                targetStyle.removeProperty("transform");
+              } else {
+                targetStyle.transform = buildTransformString(cachedTransforms);
+              }
+            }
           } else {
-            targetStyle[tweenProperty] = originalInlinedValue;
+            if (tweenHadNoInlineValue) {
+              targetStyle.removeProperty(toLowerCase(tweenProperty));
+            } else {
+              targetStyle[tweenProperty] = originalInlinedValue;
+            }
           }
         }
-        if (animation._tail === tween) {
-          animation.targets.forEach((t) => {
-            if (t.getAttribute && t.getAttribute("style") === emptyString) {
-              t.removeAttribute("style");
-            }
-          });
-        }
+      }
+      if (tweenTarget[isDomSymbol] && animation._tail === tween) {
+        animation.targets.forEach((t) => {
+          if (t.getAttribute && t.getAttribute("style") === emptyString) {
+            t.removeAttribute("style");
+          }
+        });
       }
     });
   }
   return renderable;
 };
+var cleanInlineStyles = (renderable) => revertValues(renderable, true);
 
-// node_modules/animejs/dist/modules/core/clock.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/core/clock.js
 var Clock = class {
   /** @param {Number} [initTime] */
   constructor(initTime = 0) {
@@ -935,7 +1059,7 @@ var Clock = class {
   }
 };
 
-// node_modules/animejs/dist/modules/animation/additive.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/animation/additive.js
 var additive = {
   animation: null,
   update: noop
@@ -981,7 +1105,7 @@ var addAdditiveAnimation = (lookups2) => {
   return animation;
 };
 
-// node_modules/animejs/dist/modules/engine/engine.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/engine/engine.js
 var engineTickMethod = (() => isBrowser ? requestAnimationFrame : setImmediate)();
 var engineCancelMethod = (() => isBrowser ? cancelAnimationFrame : clearImmediate)();
 var Engine = class extends Clock {
@@ -1107,7 +1231,7 @@ var killEngine = () => {
   return engine;
 };
 
-// node_modules/animejs/dist/modules/animation/composition.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/animation/composition.js
 var lookups = {
   /** @type {TweenReplaceLookups} */
   _rep: /* @__PURE__ */ new WeakMap(),
@@ -1339,7 +1463,7 @@ var removeTargetsFromRenderable = (targetsArray, renderable, propertyName) => {
   }
 };
 
-// node_modules/animejs/dist/modules/timer/timer.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/timer/timer.js
 var resetTimerProperties = (timer) => {
   timer.paused = true;
   timer.began = false;
@@ -1361,6 +1485,7 @@ var reviveTimer = (timer) => {
   return timer;
 };
 var timerId = 0;
+var sortByPriority = (prev, child) => prev._priority > child._priority;
 var Timer = class extends Clock {
   /**
    * @param {TimerParams} [parameters]
@@ -1381,6 +1506,7 @@ var Timer = class extends Clock {
       autoplay,
       frameRate,
       playbackRate,
+      priority,
       onComplete,
       onLoop,
       onPause,
@@ -1403,15 +1529,6 @@ var Timer = class extends Clock {
       /** @type {Number} */
       timerLoop + 1
     );
-    if (devTools) {
-      const isInfinite = timerIterationCount === Infinity;
-      const registered = devTools.register(this, parameters, isInfinite);
-      if (registered && isInfinite) {
-        const minIterations = alternate ? 2 : 1;
-        const iterations = parent ? devTools.maxNestedInfiniteLoops : devTools.maxInfiniteLoops;
-        timerIterationCount = Math.max(iterations, minIterations);
-      }
-    }
     let offsetPosition = 0;
     if (parent) {
       offsetPosition = parentPosition;
@@ -1453,6 +1570,7 @@ var Timer = class extends Clock {
     this._lastTime = timerInitTime;
     this._fps = setValue(frameRate, timerDefaults.frameRate);
     this._speed = setValue(playbackRate, timerDefaults.playbackRate);
+    this._priority = +setValue(priority, 1);
   }
   get cancelled() {
     return !!this._cancelled;
@@ -1564,7 +1682,7 @@ var Timer = class extends Clock {
       tick(this, minValue, 0, 0, tickModes.FORCE);
     } else {
       if (!this._running) {
-        addChild(engine, this);
+        addChild(engine, this, sortByPriority);
         engine._hasChildren = true;
         this._running = true;
       }
@@ -1693,7 +1811,7 @@ var Timer = class extends Clock {
 };
 var createTimer = (parameters) => new Timer(parameters, null, 0).init();
 
-// node_modules/animejs/dist/modules/core/targets.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/core/targets.js
 function getNodeList(v) {
   const n = isStr(v) ? scope.root.querySelectorAll(v) : v;
   if (n instanceof NodeList || n instanceof HTMLCollection) return n;
@@ -1780,7 +1898,7 @@ function registerTargets(targets) {
   return parsedTargetsArray;
 }
 
-// node_modules/animejs/dist/modules/core/units.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/core/units.js
 var angleUnitsMap = { "deg": 1, "rad": 180 / PI, "turn": 360 };
 var convertedValuesCache = {};
 var convertValueUnit = (el, decomposedValue, unit, force = false) => {
@@ -1829,10 +1947,10 @@ var convertValueUnit = (el, decomposedValue, unit, force = false) => {
   return decomposedValue;
 };
 
-// node_modules/animejs/dist/modules/easings/none.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/easings/none.js
 var none = (t) => t;
 
-// node_modules/animejs/dist/modules/easings/eases/parser.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/easings/eases/parser.js
 var easeInPower = (p = 1.68) => (t) => pow(t, +p);
 var easeTypes = {
   in: (easeIn) => (t) => easeIn(t),
@@ -1931,7 +2049,7 @@ var parseEase = (ease) => {
   return easeFunc;
 };
 
-// node_modules/animejs/dist/modules/animation/animation.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/animation/animation.js
 var fromTargetObject = createDecomposedValueTargetObject();
 var toTargetObject = createDecomposedValueTargetObject();
 var inlineStylesStore = {};
@@ -2039,9 +2157,9 @@ var JSAnimation = class extends Timer {
    * @param {Number} [parentPosition]
    * @param {Boolean} [fastSet=false]
    * @param {Number} [index=0]
-   * @param {Number} [length=0]
+   * @param {TargetsArray} [allTargets]
    */
-  constructor(targets, parameters, parent, parentPosition, fastSet = false, index = 0, length = 0) {
+  constructor(targets, parameters, parent, parentPosition, fastSet = false, index = 0, allTargets) {
     super(
       /** @type {TimerParams & AnimationParams} */
       parameters,
@@ -2101,7 +2219,7 @@ var JSAnimation = class extends Timer {
     for (let targetIndex = 0; targetIndex < targetsLength; targetIndex++) {
       const target = parsedTargets[targetIndex];
       const ti = index || targetIndex;
-      const tl = length || targetsLength;
+      const tl = allTargets || parsedTargets;
       let lastTransformGroupIndex = NaN;
       let lastTransformGroupLength = NaN;
       for (let p in params) {
@@ -2163,7 +2281,12 @@ var JSAnimation = class extends Timer {
             }
             toFunctionStore.func = null;
             fromFunctionStore.func = null;
-            const computedToValue = getFunctionValue(key.to, target, ti, tl, toFunctionStore);
+            const computedComposition = getFunctionValue(setValue(key.composition, tComposition), target, ti, tl, null, null);
+            const tweenComposition = isNum(computedComposition) ? computedComposition : compositionTypes[computedComposition];
+            if (!siblings && tweenComposition !== compositionTypes.none) siblings = getTweenSiblings(target, propName);
+            const tailTween = siblings ? siblings._tail : null;
+            const prevSiblingTween = parent && tailTween && tailTween.parent.parent === parent ? tailTween : prevTween;
+            const computedToValue = getFunctionValue(key.to, target, ti, tl, toFunctionStore, prevSiblingTween);
             let tweenToValue;
             if (isObj(computedToValue) && !isUnd(computedToValue.to)) {
               key = computedToValue;
@@ -2171,9 +2294,9 @@ var JSAnimation = class extends Timer {
             } else {
               tweenToValue = computedToValue;
             }
-            const tweenFromValue = getFunctionValue(key.from, target, ti, tl);
+            const tweenFromValue = getFunctionValue(key.from, target, ti, tl, null, prevSiblingTween);
             const easeToParse = key.ease || tEasing;
-            const easeFunctionResult = getFunctionValue(easeToParse, target, ti, tl);
+            const easeFunctionResult = getFunctionValue(easeToParse, target, ti, tl, null, prevSiblingTween);
             const keyEasing = isFnc(easeFunctionResult) || isStr(easeFunctionResult) ? easeFunctionResult : easeToParse;
             const hasSpring2 = !isUnd(keyEasing) && !isUnd(
               /** @type {Spring} */
@@ -2186,10 +2309,8 @@ var JSAnimation = class extends Timer {
             const tweenDuration = hasSpring2 ? (
               /** @type {Spring} */
               keyEasing.settlingDuration
-            ) : getFunctionValue(setValue(key.duration, l > 1 ? getFunctionValue(tDuration, target, ti, tl) / l : tDuration), target, ti, tl);
-            const tweenDelay = getFunctionValue(setValue(key.delay, !tweenIndex ? tDelay : 0), target, ti, tl);
-            const computedComposition = getFunctionValue(setValue(key.composition, tComposition), target, ti, tl);
-            const tweenComposition = isNum(computedComposition) ? computedComposition : compositionTypes[computedComposition];
+            ) : getFunctionValue(setValue(key.duration, l > 1 ? getFunctionValue(tDuration, target, ti, tl, null, prevSiblingTween) / l : tDuration), target, ti, tl, null, prevSiblingTween);
+            const tweenDelay = getFunctionValue(setValue(key.delay, !tweenIndex ? tDelay : 0), target, ti, tl, null, prevSiblingTween);
             const tweenModifier = key.modifier || tModifier;
             const hasFromvalue = !isUnd(tweenFromValue);
             const hasToValue = !isUnd(tweenToValue);
@@ -2200,7 +2321,6 @@ var JSAnimation = class extends Timer {
             if (!shouldTriggerRender && (hasFromvalue || isFromToArray)) shouldTriggerRender = 1;
             let prevSibling = prevTween;
             if (tweenComposition !== compositionTypes.none) {
-              if (!siblings) siblings = getTweenSiblings(target, propName);
               let nextSibling = siblings._head;
               while (nextSibling && !nextSibling._isOverridden && nextSibling._absoluteStartTime <= absoluteStartTime) {
                 prevSibling = nextSibling;
@@ -2214,8 +2334,8 @@ var JSAnimation = class extends Timer {
               }
             }
             if (isFromToValue) {
-              decomposeRawValue(isFromToArray ? getFunctionValue(tweenToValue[0], target, ti, tl, fromFunctionStore) : tweenFromValue, fromTargetObject);
-              decomposeRawValue(isFromToArray ? getFunctionValue(tweenToValue[1], target, ti, tl, toFunctionStore) : tweenToValue, toTargetObject);
+              decomposeRawValue(isFromToArray ? getFunctionValue(tweenToValue[0], target, ti, tl, fromFunctionStore, prevSiblingTween) : tweenFromValue, fromTargetObject);
+              decomposeRawValue(isFromToArray ? getFunctionValue(tweenToValue[1], target, ti, tl, toFunctionStore, prevSiblingTween) : tweenToValue, toTargetObject);
               const originalValue = getOriginalAnimatableValue(target, propName, tweenType, inlineStylesStore);
               if (fromTargetObject.t === valueTypes.NUMBER) {
                 if (prevSibling) {
@@ -2357,6 +2477,16 @@ var JSAnimation = class extends Timer {
             if (tweenComposition !== compositionTypes.none) {
               composeTween(tween, siblings);
             }
+            const vt = tween._valueType;
+            if (vt === valueTypes.COMPLEX) {
+              tween._value = composeComplexValue(tween, 1, -1);
+            } else if (vt === valueTypes.COLOR) {
+              tween._value = composeColorValue(tween, 1, -1);
+            } else if (vt === valueTypes.UNIT) {
+              tween._value = `${tweenModifier(tween._toNumber)}${tween._unit}`;
+            } else {
+              tween._value = tweenModifier(tween._toNumber);
+            }
             if (isNaN(firstTweenChangeStartTime)) {
               firstTweenChangeStartTime = tween._startTime;
             }
@@ -2481,7 +2611,7 @@ var JSAnimation = class extends Timer {
    */
   revert() {
     super.revert();
-    return cleanInlineStyles(this);
+    return revertValues(this);
   }
   /**
    * @typedef {this & {then: null}} ResolvedJSAnimation
@@ -2494,9 +2624,15 @@ var JSAnimation = class extends Timer {
     return super.then(callback);
   }
 };
-var animate = (targets, parameters) => new JSAnimation(targets, parameters, null, 0, false).init();
+var animate = (targets, parameters) => {
+  if (globals.editor) {
+    return globals.editor.addAnimation(targets, parameters);
+  } else {
+    return new JSAnimation(targets, parameters, null, 0, false).init();
+  }
+};
 
-// node_modules/animejs/dist/modules/timeline/position.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/timeline/position.js
 var getPrevChildOffset = (timeline, timePosition) => {
   if (stringStartsWith(timePosition, "<")) {
     const goToPrevAnimationOffset = timePosition[1] === "<";
@@ -2534,11 +2670,11 @@ var parseTimelinePosition = (timeline, timePosition) => {
   }
 };
 
-// node_modules/animejs/dist/modules/timeline/timeline.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/timeline/timeline.js
 function getTimelineTotalDuration(tl) {
   return clampInfinity((tl.iterationDuration + tl._loopDelay) * tl.iterationCount - tl._loopDelay) || minValue;
 }
-function addTlChild(childParams, tl, timePosition, targets, index, length) {
+function addTlChild(childParams, tl, timePosition, targets, index, allTargets) {
   const isSetter = isNum(childParams.duration) && /** @type {Number} */
   childParams.duration <= minValue;
   const adjustedPosition = isSetter ? timePosition - minValue : timePosition;
@@ -2551,7 +2687,7 @@ function addTlChild(childParams, tl, timePosition, targets, index, length) {
     adjustedPosition,
     false,
     index,
-    length
+    allTargets
   ) : new Timer(
     /** @type {TimerParams} */
     childParams,
@@ -2597,7 +2733,7 @@ var Timeline = class extends Timer {
    * @overload
    * @param {TargetsParam} a1
    * @param {AnimationParams} a2
-   * @param {TimelinePosition|StaggerFunction<Number|String>} [a3]
+   * @param {TimelinePosition|StaggerFunction<Number|String>|TweakRegister} [a3]
    * @return {this}
    *
    * @overload
@@ -2607,7 +2743,7 @@ var Timeline = class extends Timer {
    *
    * @param {TargetsParam|TimerParams} a1
    * @param {TimelinePosition|AnimationParams} a2
-   * @param {TimelinePosition|StaggerFunction<Number|String>} [a3]
+   * @param {TimelinePosition|StaggerFunction<Number|String>|TweakRegister} [a3]
    */
   add(a1, a2, a3) {
     const isAnim = isObj(a2);
@@ -2619,8 +2755,11 @@ var Timeline = class extends Timer {
           /** @type {AnimationParams} */
           a2
         );
-        if (isFnc(a3)) {
-          const staggeredPosition = a3;
+        const editorHook = globals.editor && globals.editor.addTimelineChild;
+        const isStaggerType = a3 && /** @type {TweakRegister} */
+        a3.type === "Stagger" && globals.editor;
+        const staggeredPosition = isFnc(a3) ? a3 : null;
+        if (staggeredPosition || isStaggerType) {
           const parsedTargetsArray = parseTargets(
             /** @type {TargetsParam} */
             a1
@@ -2630,26 +2769,51 @@ var Timeline = class extends Timer {
           const id = childParams.id;
           let i = 0;
           const parsedLength = parsedTargetsArray.length;
+          const resolvedParams = editorHook ? editorHook(
+            /** @type {TargetsParam} */
+            a1,
+            childParams,
+            this.id,
+            a3,
+            parsedLength
+          ) : null;
+          const staggerFn = staggeredPosition || globals.editor.resolveStagger(
+            /** @type {TweakRegister} */
+            a3.defaultValue
+          );
           parsedTargetsArray.forEach((target) => {
-            const staggeredChildParams = { ...childParams };
+            const staggeredChildParams = { ...resolvedParams || childParams };
             this.duration = tlDuration;
             this.iterationDuration = tlIterationDuration;
             if (!isUnd(id)) staggeredChildParams.id = id + "-" + i;
+            const staggeredTimePosition = parseTimelinePosition(this, staggerFn(target, i, parsedTargetsArray, null, this));
             addTlChild(
               staggeredChildParams,
               this,
-              parseTimelinePosition(this, staggeredPosition(target, i, parsedLength, this)),
+              staggeredTimePosition,
               target,
               i,
-              parsedLength
+              parsedTargetsArray
             );
             i++;
           });
         } else {
-          addTlChild(
+          const resolvedChildParams = editorHook ? editorHook(
+            /** @type {TargetsParam} */
+            a1,
             childParams,
+            this.id,
+            a3
+          ) : childParams;
+          const resolvedPosition = a3 && /** @type {*} */
+          a3.type ? (
+            /** @type {*} */
+            a3.defaultValue
+          ) : a3;
+          addTlChild(
+            resolvedChildParams,
             this,
-            parseTimelinePosition(this, a3),
+            parseTimelinePosition(this, resolvedPosition),
             /** @type {TargetsParam} */
             a1
           );
@@ -2776,7 +2940,7 @@ var Timeline = class extends Timer {
   revert() {
     super.revert();
     forEachChildren(this, (child) => child.revert, true);
-    return cleanInlineStyles(this);
+    return revertValues(this);
   }
   /**
    * @typedef {this & {then: null}} ResolvedTimeline
@@ -2789,9 +2953,18 @@ var Timeline = class extends Timer {
     return super.then(callback);
   }
 };
-var createTimeline = (parameters) => new Timeline(parameters).init();
+var createTimeline = (parameters) => {
+  if (globals.editor) {
+    return (
+      /** @type {Timeline} */
+      /** @type {unknown} */
+      globals.editor.addTimeline(parameters)
+    );
+  }
+  return new Timeline(parameters).init();
+};
 
-// node_modules/animejs/dist/modules/animatable/animatable.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/animatable/animatable.js
 var Animatable = class {
   /**
    * @param {TargetsParam} targets
@@ -2913,7 +3086,7 @@ var createAnimatable = (targets, parameters) => (
   new Animatable(targets, parameters)
 );
 
-// node_modules/animejs/dist/modules/utils/number.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/utils/number.js
 var number_exports = {};
 __export(number_exports, {
   clamp: () => clamp,
@@ -2940,7 +3113,7 @@ var damp = (start, end, deltaTime, factor) => {
   return !factor ? start : factor === 1 ? end : lerp(start, end, 1 - Math.exp(-factor * deltaTime * 0.1));
 };
 
-// node_modules/animejs/dist/modules/easings/spring/index.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/easings/spring/index.js
 var maxSpringParamValue = K * 10;
 var Spring = class {
   /**
@@ -3105,7 +3278,7 @@ var createSpring = (parameters) => {
   return new Spring(parameters);
 };
 
-// node_modules/animejs/dist/modules/waapi/composition.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/waapi/composition.js
 var WAAPIAnimationsLookups = {
   _head: null,
   _tail: null
@@ -3164,7 +3337,7 @@ var addWAAPIAnimation = (parent, $el, property, keyframes2, params) => {
   return animation;
 };
 
-// node_modules/animejs/dist/modules/utils/target.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/utils/target.js
 function get(targetSelector, propName, unit) {
   const targets = registerTargets(targetSelector);
   if (!targets.length) return;
@@ -3220,7 +3393,7 @@ var remove = (targets, renderable, propertyName) => {
   return targetsArray;
 };
 
-// node_modules/animejs/dist/modules/draggable/draggable.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/draggable/draggable.js
 var preventDefault = (e) => {
   if (e.cancelable) e.preventDefault();
 };
@@ -4366,19 +4539,20 @@ var Draggable = class {
 };
 var createDraggable = (target, parameters) => new Draggable(target, parameters);
 
-// node_modules/animejs/dist/modules/utils/time.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/utils/time.js
 var sync = (callback = noop) => {
   return new Timer({ duration: 1 * globals.timeScale, onComplete: callback }, null, 0).resume();
 };
 var keepTime = (constructor) => {
   let tracked;
   return (...args) => {
-    let currentIteration, currentIterationProgress, reversed, alternate;
+    let currentIteration, currentIterationProgress, reversed, alternate, startTime;
     if (tracked) {
       currentIteration = tracked.currentIteration;
       currentIterationProgress = tracked.iterationProgress;
       reversed = tracked.reversed;
       alternate = tracked._alternate;
+      startTime = tracked._startTime;
       tracked.revert();
     }
     const cleanup = constructor(...args);
@@ -4386,12 +4560,13 @@ var keepTime = (constructor) => {
     if (!isUnd(currentIterationProgress)) {
       tracked.currentIteration = currentIteration;
       tracked.iterationProgress = (alternate ? !(currentIteration % 2) ? reversed : !reversed : reversed) ? 1 - currentIterationProgress : currentIterationProgress;
+      tracked._startTime = startTime;
     }
     return cleanup || noop;
   };
 };
 
-// node_modules/animejs/dist/modules/scope/scope.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/scope/scope.js
 var Scope = class {
   /** @param {ScopeParams} [parameters] */
   constructor(parameters = {}) {
@@ -4601,7 +4776,7 @@ var Scope = class {
 };
 var createScope = (params) => new Scope(params);
 
-// node_modules/animejs/dist/modules/events/scroll.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/events/scroll.js
 var getMaxViewHeight = () => {
   const $el = doc.createElement("div");
   doc.body.appendChild($el);
@@ -5345,7 +5520,7 @@ var ScrollObserver = class {
 };
 var onScroll = (parameters = {}) => new ScrollObserver(parameters);
 
-// node_modules/animejs/dist/modules/easings/index.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/easings/index.js
 var easings_exports = {};
 __export(easings_exports, {
   Spring: () => Spring,
@@ -5358,7 +5533,7 @@ __export(easings_exports, {
   steps: () => steps
 });
 
-// node_modules/animejs/dist/modules/easings/cubic-bezier/index.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/easings/cubic-bezier/index.js
 var calcBezier = (aT, aA1, aA2) => (((1 - 3 * aA2 + 3 * aA1) * aT + (3 * aA2 - 6 * aA1)) * aT + 3 * aA1) * aT;
 var binarySubdivide = (aX, mX1, mX2) => {
   let aA = 0, aB = 1, currentX, currentT, i = 0;
@@ -5375,13 +5550,13 @@ var binarySubdivide = (aX, mX1, mX2) => {
 };
 var cubicBezier = (mX1 = 0.5, mY1 = 0, mX2 = 0.5, mY2 = 1) => mX1 === mY1 && mX2 === mY2 ? none : (t) => t === 0 || t === 1 ? t : calcBezier(binarySubdivide(t, mX1, mX2), mY1, mY2);
 
-// node_modules/animejs/dist/modules/easings/steps/index.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/easings/steps/index.js
 var steps = (steps2 = 10, fromStart) => {
   const roundMethod = fromStart ? ceil : floor;
   return (t) => roundMethod(clamp(t, 0, 1) * steps2) * (1 / steps2);
 };
 
-// node_modules/animejs/dist/modules/easings/linear/index.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/easings/linear/index.js
 var linear = (...args) => {
   const argsLength = args.length;
   if (!argsLength) return none;
@@ -5416,7 +5591,7 @@ var linear = (...args) => {
   };
 };
 
-// node_modules/animejs/dist/modules/easings/irregular/index.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/easings/irregular/index.js
 var irregular = (length = 10, randomness = 1) => {
   const values = [0];
   const total = length - 1;
@@ -5432,7 +5607,7 @@ var irregular = (length = 10, randomness = 1) => {
   return linear(...values);
 };
 
-// node_modules/animejs/dist/modules/waapi/waapi.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/waapi/waapi.js
 var easingToLinear = (fn, samples = 100) => {
   const points = [];
   for (let i = 0; i <= samples; i++) points.push(round(fn(i / samples), 4));
@@ -5485,27 +5660,29 @@ var commonDefaultPXProperties = [
 ];
 var validIndividualTransforms = (() => [...transformsShorthands, ...validTransforms.filter((t) => ["X", "Y", "Z"].some((axis) => t.endsWith(axis)))])();
 var transformsPropertiesRegistered = null;
-var normalizeTweenValue = (propName, value, $el, i, targetsLength) => {
+var normalizeTweenValue = (propName, value, $el, i, parsedTargets) => {
   let v = isStr(value) ? value : getFunctionValue(
     /** @type {any} */
     value,
     $el,
     i,
-    targetsLength
+    parsedTargets,
+    null,
+    null
   );
   if (!isNum(v)) return v;
   if (commonDefaultPXProperties.includes(propName) || stringStartsWith(propName, "translate")) return `${v}px`;
   if (stringStartsWith(propName, "rotate") || stringStartsWith(propName, "skew")) return `${v}deg`;
   return `${v}`;
 };
-var parseIndividualTweenValue = ($el, propName, from, to, i, targetsLength) => {
+var parseIndividualTweenValue = ($el, propName, from, to, i, parsedTargets) => {
   let tweenValue = "0";
-  const computedTo = !isUnd(to) ? normalizeTweenValue(propName, to, $el, i, targetsLength) : getComputedStyle($el)[propName];
+  const computedTo = !isUnd(to) ? normalizeTweenValue(propName, to, $el, i, parsedTargets) : getComputedStyle($el)[propName];
   if (!isUnd(from)) {
-    const computedFrom = normalizeTweenValue(propName, from, $el, i, targetsLength);
+    const computedFrom = normalizeTweenValue(propName, from, $el, i, parsedTargets);
     tweenValue = [computedFrom, computedTo];
   } else {
-    tweenValue = isArr(to) ? to.map((v) => normalizeTweenValue(propName, v, $el, i, targetsLength)) : computedTo;
+    tweenValue = isArr(to) ? to.map((v) => normalizeTweenValue(propName, v, $el, i, parsedTargets)) : computedTo;
   }
   return tweenValue;
 };
@@ -5541,8 +5718,7 @@ var WAAPIAnimation = class {
       }
     }
     const parsedTargets = registerTargets(targets);
-    const targetsLength = parsedTargets.length;
-    if (!targetsLength) {
+    if (!parsedTargets.length) {
       console.warn(`No target found. Make sure the element you're trying to animate is accessible before creating your animation.`);
     }
     const autoplay = setValue(params.autoplay, globals.defaults.autoplay);
@@ -5583,7 +5759,7 @@ var WAAPIAnimation = class {
       const elStyle = $el.style;
       const inlineStyles = this._inlineStyles[i] = {};
       const easeToParse = setValue(params.ease, globals.defaults.ease);
-      const easeFunctionResult = getFunctionValue(easeToParse, $el, i, targetsLength);
+      const easeFunctionResult = getFunctionValue(easeToParse, $el, i, parsedTargets, null, null);
       const keyEasing = isFnc(easeFunctionResult) || isStr(easeFunctionResult) ? easeFunctionResult : easeToParse;
       const spring2 = (
         /** @type {Spring} */
@@ -5593,8 +5769,8 @@ var WAAPIAnimation = class {
       const duration = (spring2 ? (
         /** @type {Spring} */
         spring2.settlingDuration
-      ) : getFunctionValue(setValue(params.duration, globals.defaults.duration), $el, i, targetsLength)) * timeScale;
-      const delay = getFunctionValue(setValue(params.delay, globals.defaults.delay), $el, i, targetsLength) * timeScale;
+      ) : getFunctionValue(setValue(params.duration, globals.defaults.duration), $el, i, parsedTargets, null, null)) * timeScale;
+      const delay = getFunctionValue(setValue(params.delay, globals.defaults.delay), $el, i, parsedTargets, null, null) * timeScale;
       const composite = (
         /** @type {CompositeOperation} */
         setValue(params.composition, "replace")
@@ -5631,17 +5807,17 @@ var WAAPIAnimation = class {
           tweenParams.duration = (tweenOptionsSpring ? (
             /** @type {Spring} */
             tweenOptionsSpring.settlingDuration
-          ) : getFunctionValue(setValue(tweenOptions.duration, duration), $el, i, targetsLength)) * timeScale;
-          tweenParams.delay = getFunctionValue(setValue(tweenOptions.delay, delay), $el, i, targetsLength) * timeScale;
+          ) : getFunctionValue(setValue(tweenOptions.duration, duration), $el, i, parsedTargets, null, null)) * timeScale;
+          tweenParams.delay = getFunctionValue(setValue(tweenOptions.delay, delay), $el, i, parsedTargets, null, null) * timeScale;
           tweenParams.composite = /** @type {CompositeOperation} */
           setValue(tweenOptions.composition, composite);
           tweenParams.easing = parseWAAPIEasing(tweenOptionsEase);
-          parsedPropertyValue = parseIndividualTweenValue($el, name, from, to, i, targetsLength);
+          parsedPropertyValue = parseIndividualTweenValue($el, name, from, to, i, parsedTargets);
           if (individualTransformProperty) {
             keyframes2[`--${individualTransformProperty}`] = parsedPropertyValue;
             cachedTransforms[individualTransformProperty] = parsedPropertyValue;
           } else {
-            keyframes2[name] = parseIndividualTweenValue($el, name, from, to, i, targetsLength);
+            keyframes2[name] = parseIndividualTweenValue($el, name, from, to, i, parsedTargets);
           }
           addWAAPIAnimation(this, $el, name, keyframes2, tweenParams);
           if (!isUnd(from)) {
@@ -5653,13 +5829,13 @@ var WAAPIAnimation = class {
             }
           }
         } else {
-          parsedPropertyValue = isArr(propertyValue) ? propertyValue.map((v) => normalizeTweenValue(name, v, $el, i, targetsLength)) : normalizeTweenValue(
+          parsedPropertyValue = isArr(propertyValue) ? propertyValue.map((v) => normalizeTweenValue(name, v, $el, i, parsedTargets)) : normalizeTweenValue(
             name,
             /** @type {any} */
             propertyValue,
             $el,
             i,
-            targetsLength
+            parsedTargets
           );
           if (individualTransformProperty) {
             keyframes2[`--${individualTransformProperty}`] = parsedPropertyValue;
@@ -5831,7 +6007,7 @@ var waapi = {
   convertEase: easingToLinear
 };
 
-// node_modules/animejs/dist/modules/layout/layout.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/layout/layout.js
 var layoutId = 0;
 var nodeId = 0;
 var isElementInRoot = (root, $el) => {
@@ -5898,7 +6074,7 @@ var createNode = ($el, parentNode, state, recycledNode) => {
   node.$measure = $el;
   node.id = dataId;
   node.index = 0;
-  node.total = 1;
+  node.targets = null;
   node.delay = 0;
   node.duration = 0;
   node.ease = null;
@@ -6059,7 +6235,7 @@ var updateNodeProperties = (node, props) => {
   }
 };
 var updateNodeTimingParams = (node, params) => {
-  const easeFunctionResult = getFunctionValue(params.ease, node.$el, node.index, node.total);
+  const easeFunctionResult = getFunctionValue(params.ease, node.$el, node.index, node.targets, null, null);
   const keyEasing = isFnc(easeFunctionResult) ? easeFunctionResult : params.ease;
   const hasSpring = !isUnd(keyEasing) && !isUnd(
     /** @type {Spring} */
@@ -6072,8 +6248,8 @@ var updateNodeTimingParams = (node, params) => {
   node.duration = hasSpring ? (
     /** @type {Spring} */
     keyEasing.settlingDuration
-  ) : getFunctionValue(params.duration, node.$el, node.index, node.total);
-  node.delay = getFunctionValue(params.delay, node.$el, node.index, node.total);
+  ) : getFunctionValue(params.duration, node.$el, node.index, node.targets, null, null);
+  node.delay = getFunctionValue(params.delay, node.$el, node.index, node.targets, null, null);
 };
 var recordNodeInlineStyles = (node) => {
   const style = node.$el.style;
@@ -6394,10 +6570,14 @@ var LayoutSnapshot = class {
     rootNode.isTarget = true;
     this.rootNode = rootNode;
     const inRootNodeIds = /* @__PURE__ */ new Set();
-    let index = 0, total = this.nodes.size;
+    let index = 0;
+    const allNodeTargets = [];
+    this.nodes.forEach((node) => {
+      allNodeTargets.push(node.$el);
+    });
     this.nodes.forEach((node, id) => {
       node.index = index++;
-      node.total = total;
+      node.targets = allNodeTargets;
       if (node && node.measuredIsInsideRoot) {
         inRootNodeIds.add(id);
       }
@@ -6497,7 +6677,7 @@ var AutoLayout = class {
     this.params = params;
     this.root = /** @type {DOMTarget} */
     registerTargets(root)[0];
-    this.id = layoutId++;
+    this.id = params.id || layoutId++;
     this.children = params.children || "*";
     this.absoluteCoords = false;
     this.swapAtParams = mergeObjects(params.swapAt || { opacity: 0 }, { ease: "inOut(1.75)" });
@@ -6592,7 +6772,9 @@ var AutoLayout = class {
       delay: setValue(params.delay, this.params.delay),
       duration: setValue(params.duration, this.params.duration)
     };
-    const tlParams = {};
+    const tlParams = {
+      id: this.id
+    };
     const onComplete = setValue(params.onComplete, this.params.onComplete);
     const onPause = setValue(params.onPause, this.params.onPause);
     for (let name in defaults) {
@@ -6605,6 +6787,16 @@ var AutoLayout = class {
       }
     }
     tlParams.onComplete = () => {
+      const ap = (
+        /** @type {ScrollObserver} */
+        params.autoplay
+      );
+      const ed = globals.editor;
+      const isScrollControled = ap && ap.linked || ed && ed.showPanel;
+      if (isScrollControled) {
+        if (onComplete) onComplete(this.timeline);
+        return;
+      }
       if (this.transformAnimation) this.transformAnimation.cancel();
       newState.forEachRootNode((node) => {
         restoreNodeVisualState(node);
@@ -6624,6 +6816,16 @@ var AutoLayout = class {
       });
     };
     tlParams.onPause = () => {
+      const ap = (
+        /** @type {ScrollObserver} */
+        params.autoplay
+      );
+      const isScrollControled = ap && ap.linked;
+      if (isScrollControled) {
+        if (onComplete) onComplete(this.timeline);
+        if (onPause) onPause(this.timeline);
+        return;
+      }
       if (!this.root.classList.contains("is-animated")) return;
       if (this.transformAnimation) this.transformAnimation.cancel();
       newState.forEachRootNode(restoreNodeVisualState);
@@ -6757,35 +6959,34 @@ var AutoLayout = class {
       while (animatedParent && !animatedParent.isTarget && animatedParent !== rootNode) {
         animatedParent = animatedParent.parentNode;
       }
-      const animatingTotal = animating.length;
       if (node === rootNode) {
         node.index = 0;
-        node.total = animatingTotal;
+        node.targets = animating;
         updateNodeTimingParams(node, animationTimings);
       } else if (node.isEntering) {
         node.index = animatedParent ? animatedParent.index : enteringIndex;
-        node.total = animatedParent ? animatingTotal : entering.length;
+        node.targets = animatedParent ? animating : entering;
         updateNodeTimingParams(node, enterFromTimings);
         enteringIndex++;
       } else if (node.isLeaving) {
         node.index = animatedParent ? animatedParent.index : leavingIndex;
-        node.total = animatedParent ? animatingTotal : leaving.length;
+        node.targets = animatedParent ? animating : leaving;
         leavingIndex++;
         updateNodeTimingParams(node, leaveToTimings);
       } else if (node.isTarget) {
         node.index = animatingIndex++;
-        node.total = animatingTotal;
+        node.targets = animating;
         updateNodeTimingParams(node, animationTimings);
       } else {
         node.index = animatedParent ? animatedParent.index : 0;
-        node.total = animatingTotal;
+        node.targets = animating;
         updateNodeTimingParams(node, swapAtTimings);
       }
       oldStateNode.index = node.index;
-      oldStateNode.total = node.total;
+      oldStateNode.targets = node.targets;
       for (let prop in nodeProperties) {
-        nodeProperties[prop] = getFunctionValue(nodeProperties[prop], $el, node.index, node.total);
-        oldStateNodeProperties[prop] = getFunctionValue(oldStateNodeProperties[prop], $el, oldStateNode.index, oldStateNode.total);
+        nodeProperties[prop] = getFunctionValue(nodeProperties[prop], $el, node.index, node.targets, null, null);
+        oldStateNodeProperties[prop] = getFunctionValue(oldStateNodeProperties[prop], $el, oldStateNode.index, oldStateNode.targets, null, null);
       }
       const sizeTolerance = 1;
       const widthChanged = Math.abs(nodeProperties.width - oldStateNodeProperties.width) > sizeTolerance;
@@ -6966,8 +7167,8 @@ var AutoLayout = class {
         }
         $el.style.transform = oldState.getComputedValue($el, "transform");
         if (animatedSwap.includes($el)) {
-          node.ease = getFunctionValue(swapAtParams.ease, $el, node.index, node.total);
-          node.duration = getFunctionValue(swapAtParams.duration, $el, node.index, node.total);
+          node.ease = getFunctionValue(swapAtParams.ease, $el, node.index, node.targets, null, null);
+          node.duration = getFunctionValue(swapAtParams.duration, $el, node.index, node.targets, null, null);
         }
       }
       this.transformAnimation = waapi.animate(transformed, {
@@ -6981,7 +7182,7 @@ var AutoLayout = class {
           if (!animatedSwap.includes($el)) return newValue;
           const oldValue = oldState.getComputedValue($el, "transform");
           const node = newState.getNode($el);
-          return [oldValue, getFunctionValue(swapAtProps.transform, $el, node.index, node.total), newValue];
+          return [oldValue, getFunctionValue(swapAtProps.transform, $el, node.index, node.targets, null, null), newValue];
         },
         autoplay: false,
         // persist: true,
@@ -7004,15 +7205,17 @@ var AutoLayout = class {
 };
 var createLayout = (root, params) => new AutoLayout(root, params);
 
-// node_modules/animejs/dist/modules/utils/index.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/utils/index.js
 var utils_exports = {};
 __export(utils_exports, {
   $: () => registerTargets,
+  addChild: () => addChild,
   clamp: () => clamp2,
   cleanInlineStyles: () => cleanInlineStyles,
   createSeededRandom: () => createSeededRandom,
   damp: () => damp2,
   degToRad: () => degToRad2,
+  forEachChildren: () => forEachChildren,
   get: () => get,
   keepTime: () => keepTime,
   lerp: () => lerp2,
@@ -7023,6 +7226,7 @@ __export(utils_exports, {
   random: () => random,
   randomPick: () => randomPick,
   remove: () => remove,
+  removeChild: () => removeChild,
   round: () => round2,
   roundPad: () => roundPad2,
   set: () => set,
@@ -7033,7 +7237,7 @@ __export(utils_exports, {
   wrap: () => wrap2
 });
 
-// node_modules/animejs/dist/modules/utils/chainable.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/utils/chainable.js
 var numberUtils = number_exports;
 var chainables = {};
 var curry = (fn, last = 0) => (...args) => last ? (v) => fn(...args, v) : (v) => fn(v, ...args);
@@ -7042,13 +7246,16 @@ var chain = (fn) => {
     const result = fn(...args);
     return new Proxy(noop, {
       apply: (_, __, [v]) => result(v),
-      get: (_, prop) => chain(
-        /**@param {...Number|String} nextArgs */
-        (...nextArgs) => {
-          const nextResult = chainables[prop](...nextArgs);
-          return (v) => nextResult(result(v));
-        }
-      )
+      get: (_, prop) => {
+        if (!chainables[prop]) return void 0;
+        return chain(
+          /**@param {...Number|String} nextArgs */
+          (...nextArgs) => {
+            const nextResult = chainables[prop](...nextArgs);
+            return (v) => nextResult(result(v));
+          }
+        );
+      }
     });
   };
 };
@@ -7106,7 +7313,7 @@ var damp2 = (
   makeChainable("damp", numberUtils.damp, 1)
 );
 
-// node_modules/animejs/dist/modules/utils/random.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/utils/random.js
 var random = (min = 0, max2 = 1, decimalLength = 0) => {
   const m = 10 ** decimalLength;
   return Math.floor((Math.random() * (max2 - min + 1 / m) + min) * m) / m;
@@ -7134,10 +7341,11 @@ var shuffle = (items) => {
   return items;
 };
 
-// node_modules/animejs/dist/modules/utils/stagger.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/utils/stagger.js
 var stagger = (val, params = {}) => {
   let values = [];
   let maxValue2 = 0;
+  let cachedOffset;
   const from = params.from;
   const reversed = params.reversed;
   const ease = params.ease;
@@ -7151,12 +7359,14 @@ var stagger = (val, params = {}) => {
     ease.ease
   ) : hasEasing ? parseEase(ease) : null;
   const grid = params.grid;
+  const autoGrid = grid === true;
   const axis = params.axis;
   const customTotal = params.total;
   const fromFirst = isUnd(from) || from === 0 || from === "first";
   const fromCenter = from === "center";
   const fromLast = from === "last";
   const fromRandom = from === "random";
+  const fromArr = isArr(from);
   const isRange = isArr(val);
   const useProp = params.use;
   const val1 = isRange ? parseNumber(val[0]) : parseNumber(val);
@@ -7164,48 +7374,143 @@ var stagger = (val, params = {}) => {
   const unitMatch = unitsExecRgx.exec((isRange ? val[1] : val) + emptyString);
   const start = params.start || 0 + (isRange ? val1 : 0);
   let fromIndex = fromFirst ? 0 : isNum(from) ? from : 0;
-  return (target, i, t, tl) => {
+  return (target, i, t, _, tl) => {
     const [registeredTarget] = registerTargets(target);
-    const total = isUnd(customTotal) ? t : customTotal;
+    const total = isUnd(customTotal) ? t.length : customTotal;
     const customIndex = !isUnd(useProp) ? isFnc(useProp) ? useProp(registeredTarget, i, total) : getOriginalAnimatableValue(registeredTarget, useProp) : false;
     const staggerIndex = isNum(customIndex) || isStr(customIndex) && isNum(+customIndex) ? +customIndex : i;
     if (fromCenter) fromIndex = (total - 1) / 2;
     if (fromLast) fromIndex = total - 1;
     if (!values.length) {
-      for (let index = 0; index < total; index++) {
-        if (!grid) {
-          values.push(abs(fromIndex - index));
-        } else {
-          const fromX = !fromCenter ? fromIndex % grid[0] : (grid[0] - 1) / 2;
-          const fromY = !fromCenter ? floor(fromIndex / grid[0]) : (grid[1] - 1) / 2;
-          const toX = index % grid[0];
-          const toY = floor(index / grid[0]);
-          const distanceX = fromX - toX;
-          const distanceY = fromY - toY;
-          let value = sqrt(distanceX * distanceX + distanceY * distanceY);
-          if (axis === "x") value = -distanceX;
-          if (axis === "y") value = -distanceY;
-          values.push(value);
+      if (autoGrid) {
+        let hasPositions = true;
+        let minPosX = Infinity;
+        let minPosY = Infinity;
+        let maxPosX = -Infinity;
+        let maxPosY = -Infinity;
+        const pxArr = [];
+        const pyArr = [];
+        for (let index = 0; index < total; index++) {
+          const el = t[index];
+          let px = 0;
+          let py = 0;
+          let found = false;
+          if (el && isFnc(el.getBoundingClientRect)) {
+            const rect = el.getBoundingClientRect();
+            px = rect.left + rect.width / 2;
+            py = rect.top + rect.height / 2;
+            found = true;
+          } else {
+            const obj = (
+              /** @type {JSTarget} */
+              el
+            );
+            if (obj && isNum(obj.x) && isNum(obj.y)) {
+              px = obj.x;
+              py = obj.y;
+              found = true;
+            }
+          }
+          if (!found) {
+            hasPositions = false;
+            break;
+          }
+          pxArr.push(px);
+          pyArr.push(py);
+          if (px < minPosX) minPosX = px;
+          if (py < minPosY) minPosY = py;
+          if (px > maxPosX) maxPosX = px;
+          if (py > maxPosY) maxPosY = py;
         }
-        maxValue2 = max(...values);
+        if (hasPositions) {
+          let fX = pxArr[0];
+          let fY = pyArr[0];
+          if (fromArr) {
+            fX = minPosX + from[0] * (maxPosX - minPosX);
+            fY = minPosY + from[1] * (maxPosY - minPosY);
+          } else if (fromCenter) {
+            fX = (minPosX + maxPosX) / 2;
+            fY = (minPosY + maxPosY) / 2;
+          } else if (fromLast) {
+            fX = pxArr[total - 1];
+            fY = pyArr[total - 1];
+          } else if (isNum(from)) {
+            fX = pxArr[from];
+            fY = pyArr[from];
+          }
+          for (let index = 0; index < total; index++) {
+            const distanceX = fX - pxArr[index];
+            const distanceY = fY - pyArr[index];
+            let value = sqrt(distanceX * distanceX + distanceY * distanceY);
+            if (axis === "x") value = -distanceX;
+            if (axis === "y") value = -distanceY;
+            values.push(value);
+          }
+          let minDist = Infinity;
+          for (let index = 0, l = values.length; index < l; index++) {
+            const absVal = abs(values[index]);
+            if (absVal > 0 && absVal < minDist) minDist = absVal;
+          }
+          if (minDist > 0 && minDist < Infinity) {
+            for (let index = 0, l = values.length; index < l; index++) {
+              values[index] = values[index] / minDist;
+            }
+          }
+        } else {
+          for (let index = 0; index < total; index++) {
+            values.push(abs(fromIndex - index));
+          }
+        }
+      } else {
+        for (let index = 0; index < total; index++) {
+          if (!grid) {
+            values.push(abs(fromIndex - index));
+          } else {
+            let fromX, fromY;
+            if (fromArr) {
+              fromX = from[0] * (grid[0] - 1);
+              fromY = from[1] * (grid[1] - 1);
+            } else if (fromCenter) {
+              fromX = (grid[0] - 1) / 2;
+              fromY = (grid[1] - 1) / 2;
+            } else {
+              fromX = fromIndex % grid[0];
+              fromY = floor(fromIndex / grid[0]);
+            }
+            const toX = index % grid[0];
+            const toY = floor(index / grid[0]);
+            const distanceX = fromX - toX;
+            const distanceY = fromY - toY;
+            let value = sqrt(distanceX * distanceX + distanceY * distanceY);
+            if (axis === "x") value = -distanceX;
+            if (axis === "y") value = -distanceY;
+            values.push(value);
+          }
+        }
       }
+      maxValue2 = max(...values);
       if (staggerEase) values = values.map((val3) => staggerEase(val3 / maxValue2) * maxValue2);
       if (reversed) values = values.map((val3) => axis ? val3 < 0 ? val3 * -1 : -val3 : abs(maxValue2 - val3));
       if (fromRandom) values = shuffle(values);
     }
     const spacing = isRange ? (val2 - val1) / maxValue2 : val1;
-    const offset = tl ? parseTimelinePosition(tl, isUnd(params.start) ? tl.iterationDuration : start) : (
+    if (isUnd(cachedOffset)) {
+      cachedOffset = tl ? parseTimelinePosition(tl, isUnd(params.start) ? tl.iterationDuration : start) : (
+        /** @type {Number} */
+        start
+      );
+    }
+    let output = cachedOffset + (spacing * round(values[staggerIndex], 2) || 0);
+    if (params.modifier) output = params.modifier(
       /** @type {Number} */
-      start
+      output
     );
-    let output = offset + (spacing * round(values[staggerIndex], 2) || 0);
-    if (params.modifier) output = params.modifier(output);
     if (unitMatch) output = `${output}${unitMatch[2]}`;
     return output;
   };
 };
 
-// node_modules/animejs/dist/modules/svg/index.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/svg/index.js
 var svg_exports = {};
 __export(svg_exports, {
   createDrawable: () => createDrawable,
@@ -7213,7 +7518,7 @@ __export(svg_exports, {
   morphTo: () => morphTo
 });
 
-// node_modules/animejs/dist/modules/svg/helpers.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/svg/helpers.js
 var getPath = (path) => {
   const parsedTargets = parseTargets(path);
   const $parsedSvg = (
@@ -7224,7 +7529,7 @@ var getPath = (path) => {
   return $parsedSvg;
 };
 
-// node_modules/animejs/dist/modules/svg/motionpath.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/svg/motionpath.js
 var getPathPoint = ($path, totalLength, progress, lookup, shouldClamp) => {
   const point = progress + lookup;
   const pointOnPath = shouldClamp ? Math.max(0, Math.min(point, totalLength)) : (point % totalLength + totalLength) % totalLength;
@@ -7265,7 +7570,7 @@ var createMotionPath = (path, offset = 0) => {
   };
 };
 
-// node_modules/animejs/dist/modules/svg/drawable.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/svg/drawable.js
 var getScaleFactor = ($el) => {
   let scaleFactor = 1;
   if ($el && $el.getCTM) {
@@ -7338,8 +7643,8 @@ var createDrawable = (selector, start = 0, end = 0) => {
   ));
 };
 
-// node_modules/animejs/dist/modules/svg/morphto.js
-var morphTo = (path2, precision = 0.33) => ($path1) => {
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/svg/morphto.js
+var morphTo = (path2, precision = 0.33) => ($path1, index, total, prevTween) => {
   const tagName1 = ($path1.tagName || "").toLowerCase();
   if (!tagName1.match(/^(path|polygon|polyline)$/)) {
     throw new Error(`Can't morph a <${$path1.tagName}> SVG element. Use <path>, <polygon> or <polyline>.`);
@@ -7357,7 +7662,7 @@ var morphTo = (path2, precision = 0.33) => ($path1) => {
   }
   const isPath = $path1.tagName === "path";
   const separator = isPath ? " " : ",";
-  const previousPoints = $path1[morphPointsSymbol];
+  const previousPoints = prevTween ? prevTween._value : null;
   if (previousPoints) $path1.setAttribute(isPath ? "d" : "points", previousPoints);
   let v1 = "", v2 = "";
   if (!precision) {
@@ -7382,19 +7687,19 @@ var morphTo = (path2, precision = 0.33) => ($path1) => {
       v2 += prefix + round(pointOnPath2.x, 3) + separator + pointOnPath2.y + " ";
     }
   }
-  $path1[morphPointsSymbol] = v2;
   return [v1, v2];
 };
 
-// node_modules/animejs/dist/modules/text/index.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/text/index.js
 var text_exports = {};
 __export(text_exports, {
   TextSplitter: () => TextSplitter,
+  scrambleText: () => scrambleText,
   split: () => split,
   splitText: () => splitText
 });
 
-// node_modules/animejs/dist/modules/text/split.js
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/text/split.js
 var segmenter = typeof Intl !== "undefined" && Intl.Segmenter;
 var valueRgx = /\{value\}/g;
 var indexRgx = /\{i\}/g;
@@ -7515,7 +7820,7 @@ var processHTMLTemplate = (htmlTemplate, store, node, $parentFragment, type, deb
 };
 var TextSplitter = class {
   /**
-   * @param  {HTMLElement|NodeList|String|Array<HTMLElement>} target
+   * @param  {Element|NodeList|String|Array<Element>} target
    * @param  {TextSplitterParams} [parameters]
    */
   constructor(target, parameters = {}) {
@@ -7599,11 +7904,14 @@ var TextSplitter = class {
     $target ? this.resizeObserver.observe($target) : console.warn("No Text Splitter target found.");
   }
   /**
-   * @param  {(...args: any[]) => Tickable | (() => void)} effect
+   * @param  {(...args: any[]) => Tickable | (() => void) | void} effect
    * @return this
    */
   addEffect(effect) {
-    if (!isFnc(effect)) return console.warn("Effect must return a function.");
+    if (!isFnc(effect)) {
+      console.warn("Effect must return a function.");
+      return this;
+    }
     const refreshableEffect = keepTime(effect);
     this.effects.push(refreshableEffect);
     if (this.ready) this.effectsCleanups[this.effects.length - 1] = refreshableEffect(this);
@@ -7813,6 +8121,227 @@ var split = (target, parameters) => {
   console.warn("text.split() is deprecated, import splitText() directly, or text.splitText()");
   return new TextSplitter(target, parameters);
 };
+
+// node_modules/.pnpm/animejs@4.4.1/node_modules/animejs/dist/modules/text/scramble.js
+var expandCharRanges = (str) => {
+  let result = "";
+  for (let i = 0, l = str.length; i < l; i++) {
+    if (i + 2 < l && str[i + 1] === "-" && str.charCodeAt(i) < str.charCodeAt(i + 2)) {
+      const start = str.charCodeAt(i);
+      const end = str.charCodeAt(i + 2);
+      for (let c = start; c <= end; c++) result += String.fromCharCode(c);
+      i += 2;
+    } else {
+      result += str[i];
+    }
+  }
+  return result;
+};
+var charSets = {
+  lowercase: "a-z",
+  uppercase: "A-Z",
+  numbers: "0-9",
+  symbols: "!%#_|*+=",
+  braille: "⠀-⣿",
+  blocks: "▀-▟",
+  shades: "░-▓"
+};
+var originalTexts = /* @__PURE__ */ new WeakMap();
+var scrambleText = (params = {}) => {
+  if (!params) params = {};
+  const charsParam = params.chars;
+  const easeFn = parseEase(params.ease || "linear");
+  const text = params.text;
+  const fromParam = params.from;
+  const reversed = params.reversed || false;
+  const perturbation = params.perturbation || 0;
+  const cursorParam = params.cursor;
+  const cursorChars = cursorParam === true ? "_" : typeof cursorParam === "number" ? String.fromCharCode(cursorParam) : typeof cursorParam === "string" ? cursorParam : "";
+  const cursorLen = cursorChars.length;
+  const seed = params.seed || 0;
+  const override = params.override !== void 0 ? params.override : true;
+  const revealRate = params.revealRate || 60;
+  const interval = 1e3 * globals.timeScale / revealRate;
+  const settleDuration = params.settleDuration || 300 * globals.timeScale;
+  const settleRate = params.settleRate || 30;
+  const durationParam = params.duration;
+  const revealDelayParam = params.revealDelay;
+  const delayParam = params.delay;
+  const onChange = params.onChange || noop;
+  return (target, index, targets, prevTween) => {
+    const rawChars = typeof charsParam === "function" ? charsParam(target, index, targets) : charsParam || "a-zA-Z0-9!%#_";
+    const characters = expandCharRanges(charSets[rawChars] || rawChars);
+    const totalChars = characters.length - 1;
+    const duration = typeof durationParam === "function" ? durationParam(target, index, targets) : durationParam;
+    const revealDelay = typeof revealDelayParam === "function" ? revealDelayParam(target, index, targets) : revealDelayParam || 0;
+    const delay = typeof delayParam === "function" ? delayParam(target, index, targets) : delayParam || 0;
+    const rng = seed ? createSeededRandom(seed) : createSeededRandom();
+    if (!originalTexts.has(target)) originalTexts.set(target, target.textContent);
+    const startingText = prevTween ? prevTween._value : target.textContent;
+    const targetText = text !== void 0 ? typeof text === "function" ? text(target, index, targets) : text : prevTween ? prevTween._value : originalTexts.get(target);
+    const settledText = targetText === " " || targetText === "&nbsp;" ? " " : targetText;
+    const startLength = startingText === " " ? 0 : startingText.length;
+    const endLength = settledText.length;
+    const overrideChars = override === true ? characters : typeof override === "string" && override.length > 0 ? expandCharRanges(charSets[
+      /** @type {String} */
+      override
+    ] || /** @type {String} */
+    override) : null;
+    const totalOverrideChars = overrideChars ? overrideChars.length - 1 : 0;
+    const overrideChar = override === " " ? " " : null;
+    const animLength = override === "" ? endLength : Math.max(startLength, endLength);
+    const animDuration = duration > 0 ? duration : (animLength - 1) * interval + settleDuration;
+    const computedDuration = round((animDuration + revealDelay) / globals.timeScale, 0) * globals.timeScale;
+    const revealDelayRatio = revealDelay > 0 ? round(revealDelay / computedDuration, 12) : 0;
+    const resolvedFrom = fromParam === void 0 || fromParam === "auto" ? endLength < startLength ? "right" : "left" : fromParam;
+    const charOrder = new Int32Array(animLength);
+    if (resolvedFrom === "random") {
+      for (let i = 0; i < animLength; i++) charOrder[i] = i;
+      for (let i = animLength - 1; i > 0; i--) {
+        const j = rng(0, i);
+        const t = charOrder[i];
+        charOrder[i] = charOrder[j];
+        charOrder[j] = t;
+      }
+    } else {
+      const ref = resolvedFrom === "right" ? (override === "" || !startLength ? animLength : startLength) - 1 : resolvedFrom === "center" ? ((override === "" || !startLength ? animLength : startLength) - 1) / 2 : typeof resolvedFrom === "number" ? resolvedFrom : 0;
+      const abs2 = Math.abs;
+      const indices = new Array(animLength);
+      for (let i = 0; i < animLength; i++) indices[i] = i;
+      indices.sort((a, b) => abs2(a - ref) - abs2(b - ref));
+      for (let i = 0; i < animLength; i++) charOrder[indices[i]] = i;
+    }
+    if (reversed) {
+      const last = animLength - 1;
+      for (let i = 0; i < animLength; i++) charOrder[i] = last - charOrder[i];
+    }
+    const settleRatio = round(settleDuration / animDuration, 12);
+    const settleSpacing = round((1 - settleRatio) / animLength, 12);
+    const cursorZone = cursorLen * settleSpacing;
+    const stepRatio = round(1e3 * globals.timeScale / (settleRate * computedDuration), 12);
+    const charStarts = new Float32Array(animLength);
+    const charEnds = new Float32Array(animLength);
+    const scale = perturbation > 0 ? perturbation * settleRatio : 0;
+    for (let c = 0; c < animLength; c++) {
+      const so = scale > 0 ? (rng(0, 2e3) - 1e3) / 1e3 * scale : 0;
+      const eo = scale > 0 ? (rng(0, 2e3) - 1e3) / 1e3 * scale : 0;
+      charStarts[c] = charOrder[c] * settleSpacing + so;
+      charEnds[c] = Math.ceil((charStarts[c] + settleRatio + eo) / stepRatio) * stepRatio;
+    }
+    if (endLength < animLength && resolvedFrom !== "left" && resolvedFrom !== "right" && resolvedFrom !== "random") {
+      let maxExtraEnd = 0;
+      for (let c = endLength; c < animLength; c++) {
+        if (charEnds[c] > maxExtraEnd) maxExtraEnd = charEnds[c];
+      }
+      const targets2 = new Array(endLength);
+      for (let c = 0; c < endLength; c++) targets2[c] = c;
+      targets2.sort((a, b) => charOrder[a] - charOrder[b]);
+      const targetSpacing = (1 - maxExtraEnd) / endLength;
+      for (let i = 0; i < endLength; i++) {
+        const revealTime = maxExtraEnd + i * targetSpacing;
+        if (revealTime > charEnds[targets2[i]]) {
+          charEnds[targets2[i]] = revealTime;
+        }
+      }
+    }
+    const charCache = new Array(animLength);
+    for (let c = 0; c < animLength; c++) {
+      charCache[c] = characters[rng(0, totalChars)];
+    }
+    const overrideCache = overrideChars ? overrideChars === characters ? charCache : new Array(animLength) : null;
+    if (overrideCache && overrideCache !== charCache) {
+      for (let c = 0; c < animLength; c++) {
+        overrideCache[c] = overrideChar || /** @type {String} */
+        overrideChars[rng(0, overrideChars.length - 1)];
+      }
+    }
+    let fillStartText = startingText;
+    if (!prevTween) {
+      if (override === "") {
+        fillStartText = "";
+      } else if (overrideChars) {
+        fillStartText = "";
+        for (let c = 0; c < startLength; c++) {
+          fillStartText += startingText[c] === " " ? " " : (
+            /** @type {Array<String>} */
+            overrideCache[c]
+          );
+        }
+      }
+    }
+    let lastValue = -1;
+    let lastStep = -1;
+    let scrambled = "";
+    const hasOverride = override !== "";
+    const hasOverrideChars = !!overrideChars;
+    const hasCursor = cursorLen > 0;
+    return {
+      from: 0,
+      to: 1,
+      duration: computedDuration,
+      delay,
+      ease: "linear",
+      modifier: (v) => {
+        if (v === lastValue) return scrambled;
+        lastValue = v;
+        if (delay > 0 && v <= 0) {
+          scrambled = startingText;
+          return startingText;
+        }
+        if (v <= 0) {
+          scrambled = fillStartText;
+          return fillStartText;
+        }
+        if (v >= 1) {
+          scrambled = settledText;
+          return settledText;
+        }
+        scrambled = "";
+        const currentStep = v / stepRatio | 0;
+        const refreshChars = currentStep !== lastStep;
+        if (refreshChars) lastStep = currentStep;
+        const linear2 = revealDelayRatio > 0 ? (v - revealDelayRatio) / (1 - revealDelayRatio) : v;
+        const t = linear2 > 0 ? easeFn(linear2) : 0;
+        for (let c = 0; c < animLength; c++) {
+          const charStart = charStarts[c];
+          const charEnd = charEnds[c];
+          if (t >= charEnd) {
+            if (c < endLength) scrambled += settledText[c];
+            continue;
+          }
+          if (t <= 0 || t < charStart) {
+            if (hasOverride && c < startLength) {
+              if (hasOverrideChars) {
+                if (startingText[c] === " ") {
+                  scrambled += " ";
+                } else {
+                  if (refreshChars) overrideCache[c] = overrideChar || /** @type {String} */
+                  overrideChars[rng(0, totalOverrideChars)];
+                  scrambled += /** @type {Array<String>} */
+                  overrideCache[c];
+                }
+              } else {
+                scrambled += startingText[c];
+              }
+            }
+            continue;
+          }
+          const isSpace = c < endLength && settledText[c] === " " || c < startLength && startingText[c] === " ";
+          if (isSpace) {
+            scrambled += " ";
+          } else if (hasCursor && t - charStart < cursorZone) {
+            scrambled += cursorChars[cursorLen - 1 - ((t - charStart) / settleSpacing | 0)];
+          } else {
+            if (refreshChars) charCache[c] = characters[rng(0, totalChars)];
+            scrambled += charCache[c];
+          }
+        }
+        if (refreshChars) onChange(scrambled, t);
+        return scrambled;
+      }
+    };
+  };
+};
 export {
   registerTargets as $,
   Animatable,
@@ -7826,6 +8355,7 @@ export {
   Timeline,
   Timer,
   WAAPIAnimation,
+  addChild,
   animate,
   clamp2 as clamp,
   cleanInlineStyles,
@@ -7845,7 +8375,9 @@ export {
   eases,
   easings_exports as easings,
   engine,
+  forEachChildren,
   get,
+  globals,
   irregular,
   keepTime,
   lerp2 as lerp,
@@ -7859,8 +8391,10 @@ export {
   random,
   randomPick,
   remove,
+  removeChild,
   round2 as round,
   roundPad2 as roundPad,
+  scrambleText,
   scrollContainers,
   set,
   shuffle,
@@ -7882,7 +8416,7 @@ export {
 animejs/dist/modules/core/consts.js:
   (**
    * Anime.js - core - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -7890,7 +8424,7 @@ animejs/dist/modules/core/consts.js:
 animejs/dist/modules/core/globals.js:
   (**
    * Anime.js - core - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -7898,7 +8432,7 @@ animejs/dist/modules/core/globals.js:
 animejs/dist/modules/core/helpers.js:
   (**
    * Anime.js - core - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -7906,7 +8440,7 @@ animejs/dist/modules/core/helpers.js:
 animejs/dist/modules/core/transforms.js:
   (**
    * Anime.js - core - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -7914,7 +8448,7 @@ animejs/dist/modules/core/transforms.js:
 animejs/dist/modules/core/colors.js:
   (**
    * Anime.js - core - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -7922,7 +8456,7 @@ animejs/dist/modules/core/colors.js:
 animejs/dist/modules/core/values.js:
   (**
    * Anime.js - core - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -7930,7 +8464,7 @@ animejs/dist/modules/core/values.js:
 animejs/dist/modules/core/render.js:
   (**
    * Anime.js - core - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -7938,7 +8472,7 @@ animejs/dist/modules/core/render.js:
 animejs/dist/modules/core/styles.js:
   (**
    * Anime.js - core - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -7946,7 +8480,7 @@ animejs/dist/modules/core/styles.js:
 animejs/dist/modules/core/clock.js:
   (**
    * Anime.js - core - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -7954,7 +8488,7 @@ animejs/dist/modules/core/clock.js:
 animejs/dist/modules/animation/additive.js:
   (**
    * Anime.js - animation - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -7962,7 +8496,7 @@ animejs/dist/modules/animation/additive.js:
 animejs/dist/modules/engine/engine.js:
   (**
    * Anime.js - engine - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -7970,7 +8504,7 @@ animejs/dist/modules/engine/engine.js:
 animejs/dist/modules/animation/composition.js:
   (**
    * Anime.js - animation - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -7978,7 +8512,7 @@ animejs/dist/modules/animation/composition.js:
 animejs/dist/modules/timer/timer.js:
   (**
    * Anime.js - timer - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -7986,7 +8520,7 @@ animejs/dist/modules/timer/timer.js:
 animejs/dist/modules/core/targets.js:
   (**
    * Anime.js - core - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -7994,7 +8528,7 @@ animejs/dist/modules/core/targets.js:
 animejs/dist/modules/core/units.js:
   (**
    * Anime.js - core - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -8002,7 +8536,7 @@ animejs/dist/modules/core/units.js:
 animejs/dist/modules/easings/none.js:
   (**
    * Anime.js - easings - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -8010,7 +8544,7 @@ animejs/dist/modules/easings/none.js:
 animejs/dist/modules/easings/eases/parser.js:
   (**
    * Anime.js - easings - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -8018,7 +8552,7 @@ animejs/dist/modules/easings/eases/parser.js:
 animejs/dist/modules/animation/animation.js:
   (**
    * Anime.js - animation - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -8026,7 +8560,7 @@ animejs/dist/modules/animation/animation.js:
 animejs/dist/modules/timeline/position.js:
   (**
    * Anime.js - timeline - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -8034,7 +8568,7 @@ animejs/dist/modules/timeline/position.js:
 animejs/dist/modules/timeline/timeline.js:
   (**
    * Anime.js - timeline - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -8042,7 +8576,7 @@ animejs/dist/modules/timeline/timeline.js:
 animejs/dist/modules/animatable/animatable.js:
   (**
    * Anime.js - animatable - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -8050,7 +8584,7 @@ animejs/dist/modules/animatable/animatable.js:
 animejs/dist/modules/utils/number.js:
   (**
    * Anime.js - utils - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -8058,7 +8592,7 @@ animejs/dist/modules/utils/number.js:
 animejs/dist/modules/easings/spring/index.js:
   (**
    * Anime.js - easings - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -8066,7 +8600,7 @@ animejs/dist/modules/easings/spring/index.js:
 animejs/dist/modules/waapi/composition.js:
   (**
    * Anime.js - waapi - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -8074,7 +8608,7 @@ animejs/dist/modules/waapi/composition.js:
 animejs/dist/modules/utils/target.js:
   (**
    * Anime.js - utils - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -8082,7 +8616,7 @@ animejs/dist/modules/utils/target.js:
 animejs/dist/modules/draggable/draggable.js:
   (**
    * Anime.js - draggable - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -8090,7 +8624,7 @@ animejs/dist/modules/draggable/draggable.js:
 animejs/dist/modules/utils/time.js:
   (**
    * Anime.js - utils - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -8098,7 +8632,7 @@ animejs/dist/modules/utils/time.js:
 animejs/dist/modules/scope/scope.js:
   (**
    * Anime.js - scope - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -8106,7 +8640,7 @@ animejs/dist/modules/scope/scope.js:
 animejs/dist/modules/events/scroll.js:
   (**
    * Anime.js - events - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -8114,7 +8648,7 @@ animejs/dist/modules/events/scroll.js:
 animejs/dist/modules/easings/cubic-bezier/index.js:
   (**
    * Anime.js - easings - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -8122,7 +8656,7 @@ animejs/dist/modules/easings/cubic-bezier/index.js:
 animejs/dist/modules/easings/steps/index.js:
   (**
    * Anime.js - easings - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -8130,7 +8664,7 @@ animejs/dist/modules/easings/steps/index.js:
 animejs/dist/modules/easings/linear/index.js:
   (**
    * Anime.js - easings - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -8138,7 +8672,7 @@ animejs/dist/modules/easings/linear/index.js:
 animejs/dist/modules/easings/irregular/index.js:
   (**
    * Anime.js - easings - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -8146,7 +8680,7 @@ animejs/dist/modules/easings/irregular/index.js:
 animejs/dist/modules/easings/index.js:
   (**
    * Anime.js - easings - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -8154,7 +8688,7 @@ animejs/dist/modules/easings/index.js:
 animejs/dist/modules/waapi/waapi.js:
   (**
    * Anime.js - waapi - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -8162,7 +8696,7 @@ animejs/dist/modules/waapi/waapi.js:
 animejs/dist/modules/layout/layout.js:
   (**
    * Anime.js - layout - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -8170,7 +8704,7 @@ animejs/dist/modules/layout/layout.js:
 animejs/dist/modules/utils/chainable.js:
   (**
    * Anime.js - utils - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -8178,7 +8712,7 @@ animejs/dist/modules/utils/chainable.js:
 animejs/dist/modules/utils/random.js:
   (**
    * Anime.js - utils - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -8186,7 +8720,7 @@ animejs/dist/modules/utils/random.js:
 animejs/dist/modules/utils/stagger.js:
   (**
    * Anime.js - utils - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -8194,7 +8728,7 @@ animejs/dist/modules/utils/stagger.js:
 animejs/dist/modules/utils/index.js:
   (**
    * Anime.js - utils - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -8202,7 +8736,7 @@ animejs/dist/modules/utils/index.js:
 animejs/dist/modules/svg/helpers.js:
   (**
    * Anime.js - svg - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -8210,7 +8744,7 @@ animejs/dist/modules/svg/helpers.js:
 animejs/dist/modules/svg/motionpath.js:
   (**
    * Anime.js - svg - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -8218,7 +8752,7 @@ animejs/dist/modules/svg/motionpath.js:
 animejs/dist/modules/svg/drawable.js:
   (**
    * Anime.js - svg - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -8226,7 +8760,7 @@ animejs/dist/modules/svg/drawable.js:
 animejs/dist/modules/svg/morphto.js:
   (**
    * Anime.js - svg - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -8234,7 +8768,7 @@ animejs/dist/modules/svg/morphto.js:
 animejs/dist/modules/svg/index.js:
   (**
    * Anime.js - svg - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -8242,7 +8776,15 @@ animejs/dist/modules/svg/index.js:
 animejs/dist/modules/text/split.js:
   (**
    * Anime.js - text - ESM
-   * @version v4.3.5
+   * @version v4.4.1
+   * @license MIT
+   * @copyright 2026 - Julian Garnier
+   *)
+
+animejs/dist/modules/text/scramble.js:
+  (**
+   * Anime.js - text - ESM
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -8250,7 +8792,7 @@ animejs/dist/modules/text/split.js:
 animejs/dist/modules/text/index.js:
   (**
    * Anime.js - text - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)
@@ -8258,7 +8800,7 @@ animejs/dist/modules/text/index.js:
 animejs/dist/modules/index.js:
   (**
    * Anime.js - ESM
-   * @version v4.3.5
+   * @version v4.4.1
    * @license MIT
    * @copyright 2026 - Julian Garnier
    *)

@@ -2,11 +2,11 @@ import {
   __commonJS,
   __export,
   __toESM
-} from "./chunk-DC5AMYBS.js";
+} from "./chunk-RGOVJRZA.js";
 
-// node_modules/eventemitter3/index.js
+// node_modules/.pnpm/eventemitter3@4.0.7/node_modules/eventemitter3/index.js
 var require_eventemitter3 = __commonJS({
-  "node_modules/eventemitter3/index.js"(exports, module) {
+  "node_modules/.pnpm/eventemitter3@4.0.7/node_modules/eventemitter3/index.js"(exports, module) {
     "use strict";
     var has = Object.prototype.hasOwnProperty;
     var prefix = "~";
@@ -166,9 +166,9 @@ var require_eventemitter3 = __commonJS({
   }
 });
 
-// node_modules/delegate/src/closest.js
+// node_modules/.pnpm/delegate@3.2.0/node_modules/delegate/src/closest.js
 var require_closest = __commonJS({
-  "node_modules/delegate/src/closest.js"(exports, module) {
+  "node_modules/.pnpm/delegate@3.2.0/node_modules/delegate/src/closest.js"(exports, module) {
     var DOCUMENT_NODE_TYPE = 9;
     if (typeof Element !== "undefined" && !Element.prototype.matches) {
       proto = Element.prototype;
@@ -187,9 +187,9 @@ var require_closest = __commonJS({
   }
 });
 
-// node_modules/delegate/src/delegate.js
+// node_modules/.pnpm/delegate@3.2.0/node_modules/delegate/src/delegate.js
 var require_delegate = __commonJS({
-  "node_modules/delegate/src/delegate.js"(exports, module) {
+  "node_modules/.pnpm/delegate@3.2.0/node_modules/delegate/src/delegate.js"(exports, module) {
     var closest = require_closest();
     function _delegate2(element, selector, type, callback, useCapture) {
       var listenerFn = listener.apply(this, arguments);
@@ -226,1587 +226,1388 @@ var require_delegate = __commonJS({
   }
 });
 
-// node_modules/downloadjs/download.js
-var require_download = __commonJS({
-  "node_modules/downloadjs/download.js"(exports, module) {
-    (function(root, factory) {
-      if (typeof define === "function" && define.amd) {
-        define([], factory);
-      } else if (typeof exports === "object") {
-        module.exports = factory();
-      } else {
-        root.download = factory();
-      }
-    })(exports, function() {
-      return function download(data, strFileName, strMimeType) {
-        var self = window, defaultMime = "application/octet-stream", mimeType = strMimeType || defaultMime, payload = data, url = !strFileName && !strMimeType && payload, anchor = document.createElement("a"), toString = function(a) {
-          return String(a);
-        }, myBlob = self.Blob || self.MozBlob || self.WebKitBlob || toString, fileName = strFileName || "download", blob, reader;
-        myBlob = myBlob.call ? myBlob.bind(self) : Blob;
-        if (String(this) === "true") {
-          payload = [payload, mimeType];
-          mimeType = payload[0];
-          payload = payload[1];
-        }
-        if (url && url.length < 2048) {
-          fileName = url.split("/").pop().split("?")[0];
-          anchor.href = url;
-          if (anchor.href.indexOf(url) !== -1) {
-            var ajax = new XMLHttpRequest();
-            ajax.open("GET", url, true);
-            ajax.responseType = "blob";
-            ajax.onload = function(e) {
-              download(e.target.response, fileName, defaultMime);
-            };
-            setTimeout(function() {
-              ajax.send();
-            }, 0);
-            return ajax;
-          }
-        }
-        if (/^data:([\w+-]+\/[\w+.-]+)?[,;]/.test(payload)) {
-          if (payload.length > 1024 * 1024 * 1.999 && myBlob !== toString) {
-            payload = dataUrlToBlob(payload);
-            mimeType = payload.type || defaultMime;
-          } else {
-            return navigator.msSaveBlob ? (
-              // IE10 can't do a[download], only Blobs:
-              navigator.msSaveBlob(dataUrlToBlob(payload), fileName)
-            ) : saver(payload);
-          }
-        } else {
-          if (/([\x80-\xff])/.test(payload)) {
-            var i = 0, tempUiArr = new Uint8Array(payload.length), mx = tempUiArr.length;
-            for (i; i < mx; ++i) tempUiArr[i] = payload.charCodeAt(i);
-            payload = new myBlob([tempUiArr], { type: mimeType });
-          }
-        }
-        blob = payload instanceof myBlob ? payload : new myBlob([payload], { type: mimeType });
-        function dataUrlToBlob(strUrl) {
-          var parts = strUrl.split(/[:;,]/), type = parts[1], decoder = parts[2] == "base64" ? atob : decodeURIComponent, binData = decoder(parts.pop()), mx2 = binData.length, i2 = 0, uiArr = new Uint8Array(mx2);
-          for (i2; i2 < mx2; ++i2) uiArr[i2] = binData.charCodeAt(i2);
-          return new myBlob([uiArr], { type });
-        }
-        function saver(url2, winMode) {
-          if ("download" in anchor) {
-            anchor.href = url2;
-            anchor.setAttribute("download", fileName);
-            anchor.className = "download-js-link";
-            anchor.innerHTML = "downloading...";
-            anchor.style.display = "none";
-            document.body.appendChild(anchor);
-            setTimeout(function() {
-              anchor.click();
-              document.body.removeChild(anchor);
-              if (winMode === true) {
-                setTimeout(function() {
-                  self.URL.revokeObjectURL(anchor.href);
-                }, 250);
-              }
-            }, 66);
-            return true;
-          }
-          if (/(Version)\/(\d+)\.(\d+)(?:\.(\d+))?.*Safari\//.test(navigator.userAgent)) {
-            if (/^data:/.test(url2)) url2 = "data:" + url2.replace(/^data:([\w\/\-\+]+)/, defaultMime);
-            if (!window.open(url2)) {
-              if (confirm("Displaying New Document\n\nUse Save As... to download, then click back to return to this page.")) {
-                location.href = url2;
-              }
-            }
-            return true;
-          }
-          var f = document.createElement("iframe");
-          document.body.appendChild(f);
-          if (!winMode && /^data:/.test(url2)) {
-            url2 = "data:" + url2.replace(/^data:([\w\/\-\+]+)/, defaultMime);
-          }
-          f.src = url2;
-          setTimeout(function() {
-            document.body.removeChild(f);
-          }, 333);
-        }
-        if (navigator.msSaveBlob) {
-          return navigator.msSaveBlob(blob, fileName);
-        }
-        if (self.URL) {
-          saver(self.URL.createObjectURL(blob), true);
-        } else {
-          if (typeof blob === "string" || blob.constructor === toString) {
-            try {
-              return saver("data:" + mimeType + ";base64," + self.btoa(blob));
-            } catch (y) {
-              return saver("data:" + mimeType + "," + encodeURIComponent(blob));
-            }
-          }
-          reader = new FileReader();
-          reader.onload = function(e) {
-            saver(this.result);
-          };
-          reader.readAsDataURL(blob);
-        }
-        return true;
-      };
-    });
-  }
-});
-
-// node_modules/danmu.js/dist/index.js
+// node_modules/.pnpm/danmu.js@1.2.1/node_modules/danmu.js/dist/index.js
 var require_dist = __commonJS({
-  "node_modules/danmu.js/dist/index.js"(exports, module) {
+  "node_modules/.pnpm/danmu.js@1.2.1/node_modules/danmu.js/dist/index.js"(exports, module) {
     !function(e, t) {
-      "object" == typeof exports && "object" == typeof module ? module.exports = t() : "function" == typeof define && define.amd ? define([], t) : "object" == typeof exports ? exports["danmu.js"] = t() : e["danmu.js"] = t();
-    }(window, function() {
-      return function(e) {
-        var t = {};
-        function n(i) {
-          if (t[i]) return t[i].exports;
-          var o = t[i] = { i, l: false, exports: {} };
-          return e[i].call(o.exports, o, o.exports, n), o.l = true, o.exports;
+      if ("object" == typeof exports && "object" == typeof module) module.exports = t();
+      else if ("function" == typeof define && define.amd) define([], t);
+      else {
+        var n = t();
+        for (var o in n) ("object" == typeof exports ? exports : e)[o] = n[o];
+      }
+    }(typeof window !== "undefined" ? window : typeof self !== "undefined" ? self : typeof globalThis !== "undefined" ? globalThis : typeof global !== "undefined" ? global : exports, function() {
+      return function() {
+        "use strict";
+        var e = { "./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/style/index.scss": function(e2, t2, n2) {
+          var o2 = n2("./node_modules/css-loader/dist/runtime/sourceMaps.js"), i = n2.n(o2), r = n2("./node_modules/css-loader/dist/runtime/api.js"), s = n2.n(r)()(i());
+          s.push([e2.id, ".danmu{overflow:hidden;user-select:none;-ms-user-select:none}.danmu>*{position:absolute;white-space:nowrap}.danmu-switch{width:32px;height:20px;border-radius:100px;background-color:#ccc;box-sizing:border-box;outline:none;cursor:pointer;position:relative;text-align:center;margin:10px auto}.danmu-switch.danmu-switch-active{padding-left:12px;background-color:#f85959}.danmu-switch span.txt{width:20px;height:20px;line-height:20px;text-align:center;display:block;border-radius:100px;background-color:#fff;box-shadow:-2px 0 0 0 rgba(0,0,0,.04);font-family:PingFangSC;font-size:10px;font-weight:500;color:#f44336}", "", { version: 3, sources: ["webpack://./src/style/danmu.scss"], names: [], mappings: "AAAA,OACE,eAAA,CACA,gBAAA,CACA,oBAAA,CACA,SACE,iBAAA,CACA,kBAAA,CAIJ,cACE,UAAA,CACA,WAAA,CACA,mBAAA,CACA,qBAAA,CACA,qBAAA,CACA,YAAA,CACA,cAAA,CACA,iBAAA,CACA,iBAAA,CACA,gBAAA,CACA,kCACE,iBAAA,CACA,wBAAA,CAEF,uBACE,UAAA,CACA,WAAA,CACA,gBAAA,CACA,iBAAA,CACA,aAAA,CACA,mBAAA,CACA,qBAAA,CACA,qCAAA,CACA,sBAAA,CACA,cAAA,CACA,eAAA,CACA,aAAA", sourcesContent: [".danmu {\n  overflow: hidden;\n  user-select: none;\n  -ms-user-select: none;\n  > * {\n    position: absolute;\n    white-space: nowrap;\n  }\n}\n\n.danmu-switch {\n  width: 32px;\n  height: 20px;\n  border-radius: 100px;\n  background-color: #ccc;\n  box-sizing: border-box;\n  outline: none;\n  cursor: pointer;\n  position: relative;\n  text-align: center;\n  margin: 10px auto;\n  &.danmu-switch-active {\n    padding-left: 12px;\n    background-color: #f85959;\n  }\n  span.txt {\n    width: 20px;\n    height: 20px;\n    line-height: 20px;\n    text-align: center;\n    display: block;\n    border-radius: 100px;\n    background-color: #ffffff;\n    box-shadow: -2px 0 0 0 rgba(0, 0, 0, 0.04);\n    font-family: PingFangSC;\n    font-size: 10px;\n    font-weight: 500;\n    color: #f44336;\n  }\n}\n"], sourceRoot: "" }]), t2.A = s;
+        }, "./node_modules/css-loader/dist/runtime/api.js": function(e2) {
+          e2.exports = function(e3) {
+            var t2 = [];
+            return t2.toString = function() {
+              return this.map(function(t3) {
+                var n2 = "", o2 = void 0 !== t3[5];
+                return t3[4] && (n2 += "@supports (".concat(t3[4], ") {")), t3[2] && (n2 += "@media ".concat(t3[2], " {")), o2 && (n2 += "@layer".concat(t3[5].length > 0 ? " ".concat(t3[5]) : "", " {")), n2 += e3(t3), o2 && (n2 += "}"), t3[2] && (n2 += "}"), t3[4] && (n2 += "}"), n2;
+              }).join("");
+            }, t2.i = function(e4, n2, o2, i, r) {
+              "string" == typeof e4 && (e4 = [[null, e4, void 0]]);
+              var s = {};
+              if (o2) for (var a = 0; a < this.length; a++) {
+                var l = this[a][0];
+                null != l && (s[l] = true);
+              }
+              for (var c = 0; c < e4.length; c++) {
+                var u = [].concat(e4[c]);
+                o2 && s[u[0]] || (void 0 !== r && (void 0 === u[5] || (u[1] = "@layer".concat(u[5].length > 0 ? " ".concat(u[5]) : "", " {").concat(u[1], "}")), u[5] = r), n2 && (u[2] && (u[1] = "@media ".concat(u[2], " {").concat(u[1], "}")), u[2] = n2), i && (u[4] ? (u[1] = "@supports (".concat(u[4], ") {").concat(u[1], "}"), u[4] = i) : u[4] = "".concat(i)), t2.push(u));
+              }
+            }, t2;
+          };
+        }, "./node_modules/css-loader/dist/runtime/sourceMaps.js": function(e2) {
+          e2.exports = function(e3) {
+            var t2 = e3[1], n2 = e3[3];
+            if (!n2) return t2;
+            if ("function" == typeof btoa) {
+              var o2 = btoa(unescape(encodeURIComponent(JSON.stringify(n2))));
+              return [t2].concat(["/*# ".concat("sourceMappingURL=data:application/json;charset=utf-8;base64,".concat(o2), " */")]).join("\n");
+            }
+            return [t2].join("\n");
+          };
+        }, "./node_modules/d/index.js": function(e2, t2, n2) {
+          var o2 = n2("./node_modules/d/node_modules/type/value/is.js"), i = n2("./node_modules/d/node_modules/type/plain-function/is.js"), r = n2("./node_modules/es5-ext/object/assign/index.js"), s = n2("./node_modules/es5-ext/object/normalize-options.js"), a = n2("./node_modules/es5-ext/string/​#/contains/index.js");
+          (e2.exports = function(e3, t3) {
+            var n3, i2, l, c, u;
+            return arguments.length < 2 || "string" != typeof e3 ? (c = t3, t3 = e3, e3 = null) : c = arguments[2], o2(e3) ? (n3 = a.call(e3, "c"), i2 = a.call(e3, "e"), l = a.call(e3, "w")) : (n3 = l = true, i2 = false), u = { value: t3, configurable: n3, enumerable: i2, writable: l }, c ? r(s(c), u) : u;
+          }).gs = function(e3, t3, n3) {
+            var l, c, u, h;
+            return "string" != typeof e3 ? (u = n3, n3 = t3, t3 = e3, e3 = null) : u = arguments[3], o2(t3) ? i(t3) ? o2(n3) ? i(n3) || (u = n3, n3 = void 0) : n3 = void 0 : (u = t3, t3 = n3 = void 0) : t3 = void 0, o2(e3) ? (l = a.call(e3, "c"), c = a.call(e3, "e")) : (l = true, c = false), h = { get: t3, set: n3, configurable: l, enumerable: c }, u ? r(s(u), h) : h;
+          };
+        }, "./node_modules/d/node_modules/type/function/is.js": function(e2, t2, n2) {
+          var o2 = n2("./node_modules/d/node_modules/type/prototype/is.js");
+          e2.exports = function(e3) {
+            if ("function" != typeof e3 || !hasOwnProperty.call(e3, "length")) return false;
+            try {
+              if ("number" != typeof e3.length || "function" != typeof e3.call || "function" != typeof e3.apply) return false;
+            } catch (e4) {
+              return false;
+            }
+            return !o2(e3);
+          };
+        }, "./node_modules/d/node_modules/type/object/is.js": function(e2, t2, n2) {
+          var o2 = n2("./node_modules/d/node_modules/type/value/is.js"), i = { object: true, function: true, undefined: true };
+          e2.exports = function(e3) {
+            return !!o2(e3) && hasOwnProperty.call(i, typeof e3);
+          };
+        }, "./node_modules/d/node_modules/type/plain-function/is.js": function(e2, t2, n2) {
+          var o2 = n2("./node_modules/d/node_modules/type/function/is.js"), i = /^\s*class[\s{/}]/, r = Function.prototype.toString;
+          e2.exports = function(e3) {
+            return !(!o2(e3) || i.test(r.call(e3)));
+          };
+        }, "./node_modules/d/node_modules/type/prototype/is.js": function(e2, t2, n2) {
+          var o2 = n2("./node_modules/d/node_modules/type/object/is.js");
+          e2.exports = function(e3) {
+            if (!o2(e3)) return false;
+            try {
+              if (!e3.constructor) return false;
+              return e3.constructor.prototype === e3;
+            } catch (e4) {
+              return false;
+            }
+          };
+        }, "./node_modules/d/node_modules/type/value/is.js": function(e2) {
+          var t2 = void 0;
+          e2.exports = function(e3) {
+            return e3 !== t2 && null !== e3;
+          };
+        }, "./node_modules/es5-ext/function/noop.js": function(e2) {
+          e2.exports = function() {
+          };
+        }, "./node_modules/es5-ext/object/assign/index.js": function(e2, t2, n2) {
+          e2.exports = n2("./node_modules/es5-ext/object/assign/is-implemented.js")() ? Object.assign : n2("./node_modules/es5-ext/object/assign/shim.js");
+        }, "./node_modules/es5-ext/object/assign/is-implemented.js": function(e2) {
+          e2.exports = function() {
+            var e3, t2 = Object.assign;
+            return "function" == typeof t2 && (t2(e3 = { foo: "raz" }, { bar: "dwa" }, { trzy: "trzy" }), e3.foo + e3.bar + e3.trzy === "razdwatrzy");
+          };
+        }, "./node_modules/es5-ext/object/assign/shim.js": function(e2, t2, n2) {
+          var o2 = n2("./node_modules/es5-ext/object/keys/index.js"), i = n2("./node_modules/es5-ext/object/valid-value.js"), r = Math.max;
+          e2.exports = function(e3, t3) {
+            var n3, s, a, l = r(arguments.length, 2);
+            for (s = 1, e3 = Object(i(e3)), a = function(o3) {
+              try {
+                e3[o3] = t3[o3];
+              } catch (e4) {
+                n3 || (n3 = e4);
+              }
+            }; s < l; ++s) t3 = arguments[s], o2(t3).forEach(a);
+            if (void 0 !== n3) throw n3;
+            return e3;
+          };
+        }, "./node_modules/es5-ext/object/is-value.js": function(e2, t2, n2) {
+          var o2 = n2("./node_modules/es5-ext/function/noop.js")();
+          e2.exports = function(e3) {
+            return e3 !== o2 && null !== e3;
+          };
+        }, "./node_modules/es5-ext/object/keys/index.js": function(e2, t2, n2) {
+          e2.exports = n2("./node_modules/es5-ext/object/keys/is-implemented.js")() ? Object.keys : n2("./node_modules/es5-ext/object/keys/shim.js");
+        }, "./node_modules/es5-ext/object/keys/is-implemented.js": function(e2) {
+          e2.exports = function() {
+            try {
+              return Object.keys("primitive"), true;
+            } catch (e3) {
+              return false;
+            }
+          };
+        }, "./node_modules/es5-ext/object/keys/shim.js": function(e2, t2, n2) {
+          var o2 = n2("./node_modules/es5-ext/object/is-value.js"), i = Object.keys;
+          e2.exports = function(e3) {
+            return i(o2(e3) ? Object(e3) : e3);
+          };
+        }, "./node_modules/es5-ext/object/normalize-options.js": function(e2, t2, n2) {
+          var o2 = n2("./node_modules/es5-ext/object/is-value.js"), i = Array.prototype.forEach, r = Object.create, s = function(e3, t3) {
+            var n3;
+            for (n3 in e3) t3[n3] = e3[n3];
+          };
+          e2.exports = function(e3) {
+            var t3 = r(null);
+            return i.call(arguments, function(e4) {
+              o2(e4) && s(Object(e4), t3);
+            }), t3;
+          };
+        }, "./node_modules/es5-ext/object/valid-callable.js": function(e2) {
+          e2.exports = function(e3) {
+            if ("function" != typeof e3) throw TypeError(e3 + " is not a function");
+            return e3;
+          };
+        }, "./node_modules/es5-ext/object/valid-value.js": function(e2, t2, n2) {
+          var o2 = n2("./node_modules/es5-ext/object/is-value.js");
+          e2.exports = function(e3) {
+            if (!o2(e3)) throw TypeError("Cannot use null or undefined");
+            return e3;
+          };
+        }, "./node_modules/es5-ext/string/​#/contains/index.js": function(e2, t2, n2) {
+          e2.exports = n2("./node_modules/es5-ext/string/​#/contains/is-implemented.js")() ? String.prototype.contains : n2("./node_modules/es5-ext/string/​#/contains/shim.js");
+        }, "./node_modules/es5-ext/string/​#/contains/is-implemented.js": function(e2) {
+          var t2 = "razdwatrzy";
+          e2.exports = function() {
+            return "function" == typeof t2.contains && true === t2.contains("dwa") && false === t2.contains("foo");
+          };
+        }, "./node_modules/es5-ext/string/​#/contains/shim.js": function(e2) {
+          var t2 = String.prototype.indexOf;
+          e2.exports = function(e3) {
+            return t2.call(this, e3, arguments[1]) > -1;
+          };
+        }, "./node_modules/event-emitter/index.js": function(e2, t2, n2) {
+          var o2, i, r, s, a, l, c, u = n2("./node_modules/d/index.js"), h = n2("./node_modules/es5-ext/object/valid-callable.js"), f = Function.prototype.apply, d = Function.prototype.call, m = Object.create, p = Object.defineProperty, g = Object.defineProperties, v = Object.prototype.hasOwnProperty, y = { configurable: true, enumerable: false, writable: true };
+          o2 = function(e3, t3) {
+            var n3;
+            return h(t3), v.call(this, "__ee__") ? n3 = this.__ee__ : (n3 = y.value = m(null), p(this, "__ee__", y), y.value = null), n3[e3] ? "object" == typeof n3[e3] ? n3[e3].push(t3) : n3[e3] = [n3[e3], t3] : n3[e3] = t3, this;
+          }, i = function(e3, t3) {
+            var n3, i2;
+            return h(t3), i2 = this, o2.call(this, e3, n3 = function() {
+              r.call(i2, e3, n3), f.call(t3, this, arguments);
+            }), n3.__eeOnceListener__ = t3, this;
+          }, a = { on: o2, once: i, off: r = function(e3, t3) {
+            var n3, o3, i2, r2;
+            if (h(t3), !v.call(this, "__ee__") || !(n3 = this.__ee__)[e3]) return this;
+            if ("object" == typeof (o3 = n3[e3])) for (r2 = 0; i2 = o3[r2]; ++r2) (i2 === t3 || i2.__eeOnceListener__ === t3) && (2 === o3.length ? n3[e3] = o3[+!r2] : o3.splice(r2, 1));
+            else (o3 === t3 || o3.__eeOnceListener__ === t3) && delete n3[e3];
+            return this;
+          }, emit: s = function(e3) {
+            var t3, n3, o3, i2, r2;
+            if (v.call(this, "__ee__") && (i2 = this.__ee__[e3])) if ("object" == typeof i2) {
+              for (t3 = 1, n3 = arguments.length, r2 = Array(n3 - 1); t3 < n3; ++t3) r2[t3 - 1] = arguments[t3];
+              for (t3 = 0, i2 = i2.slice(); o3 = i2[t3]; ++t3) f.call(o3, this, r2);
+            } else switch (arguments.length) {
+              case 1:
+                d.call(i2, this);
+                break;
+              case 2:
+                d.call(i2, this, arguments[1]);
+                break;
+              case 3:
+                d.call(i2, this, arguments[1], arguments[2]);
+                break;
+              default:
+                for (t3 = 1, n3 = arguments.length, r2 = Array(n3 - 1); t3 < n3; ++t3) r2[t3 - 1] = arguments[t3];
+                f.call(i2, this, r2);
+            }
+          } }, c = g({}, l = { on: u(o2), once: u(i), off: u(r), emit: u(s) }), e2.exports = t2 = function(e3) {
+            return null == e3 ? m(c) : g(Object(e3), l);
+          }, t2.methods = a;
+        }, "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js": function(e2) {
+          var t2 = [];
+          function n2(e3) {
+            for (var n3 = -1, o3 = 0; o3 < t2.length; o3++) if (t2[o3].identifier === e3) {
+              n3 = o3;
+              break;
+            }
+            return n3;
+          }
+          function o2(e3, o3) {
+            for (var i = {}, r = [], s = 0; s < e3.length; s++) {
+              var a = e3[s], l = o3.base ? a[0] + o3.base : a[0], c = i[l] || 0, u = "".concat(l, " ").concat(c);
+              i[l] = c + 1;
+              var h = n2(u), f = { css: a[1], media: a[2], sourceMap: a[3], supports: a[4], layer: a[5] };
+              if (-1 !== h) t2[h].references++, t2[h].updater(f);
+              else {
+                var d = function(e4, t3) {
+                  var n3 = t3.domAPI(t3);
+                  return n3.update(e4), function(t4) {
+                    t4 ? (t4.css !== e4.css || t4.media !== e4.media || t4.sourceMap !== e4.sourceMap || t4.supports !== e4.supports || t4.layer !== e4.layer) && n3.update(e4 = t4) : n3.remove();
+                  };
+                }(f, o3);
+                o3.byIndex = s, t2.splice(s, 0, { identifier: u, updater: d, references: 1 });
+              }
+              r.push(u);
+            }
+            return r;
+          }
+          e2.exports = function(e3, i) {
+            var r = o2(e3 = e3 || [], i = i || {});
+            return function(e4) {
+              e4 = e4 || [];
+              for (var s = 0; s < r.length; s++) {
+                var a = n2(r[s]);
+                t2[a].references--;
+              }
+              for (var l = o2(e4, i), c = 0; c < r.length; c++) {
+                var u = n2(r[c]);
+                0 === t2[u].references && (t2[u].updater(), t2.splice(u, 1));
+              }
+              r = l;
+            };
+          };
+        }, "./node_modules/style-loader/dist/runtime/insertBySelector.js": function(e2) {
+          var t2 = {};
+          e2.exports = function(e3, n2) {
+            var o2 = function(e4) {
+              if (void 0 === t2[e4]) {
+                var n3 = document.querySelector(e4);
+                if (window.HTMLIFrameElement && n3 instanceof window.HTMLIFrameElement) try {
+                  n3 = n3.contentDocument.head;
+                } catch (e5) {
+                  n3 = null;
+                }
+                t2[e4] = n3;
+              }
+              return t2[e4];
+            }(e3);
+            if (!o2) throw Error("Couldn't find a style target. This probably means that the value for the 'insert' parameter is invalid.");
+            o2.appendChild(n2);
+          };
+        }, "./node_modules/style-loader/dist/runtime/insertStyleElement.js": function(e2) {
+          e2.exports = function(e3) {
+            var t2 = document.createElement("style");
+            return e3.setAttributes(t2, e3.attributes), e3.insert(t2, e3.options), t2;
+          };
+        }, "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js": function(e2, t2, n2) {
+          e2.exports = function(e3) {
+            var t3 = n2.nc;
+            t3 && e3.setAttribute("nonce", t3);
+          };
+        }, "./node_modules/style-loader/dist/runtime/styleDomAPI.js": function(e2) {
+          e2.exports = function(e3) {
+            if ("undefined" == typeof document) return { update: function() {
+            }, remove: function() {
+            } };
+            var t2 = e3.insertStyleElement(e3);
+            return { update: function(n2) {
+              var o2, i, r;
+              o2 = "", n2.supports && (o2 += "@supports (".concat(n2.supports, ") {")), n2.media && (o2 += "@media ".concat(n2.media, " {")), (i = void 0 !== n2.layer) && (o2 += "@layer".concat(n2.layer.length > 0 ? " ".concat(n2.layer) : "", " {")), o2 += n2.css, i && (o2 += "}"), n2.media && (o2 += "}"), n2.supports && (o2 += "}"), (r = n2.sourceMap) && "undefined" != typeof btoa && (o2 += "\n/*# sourceMappingURL=data:application/json;base64,".concat(btoa(unescape(encodeURIComponent(JSON.stringify(r)))), " */")), e3.styleTagTransform(o2, t2, e3.options);
+            }, remove: function() {
+              var e4;
+              null === (e4 = t2).parentNode || e4.parentNode.removeChild(e4);
+            } };
+          };
+        }, "./node_modules/style-loader/dist/runtime/styleTagTransform.js": function(e2) {
+          e2.exports = function(e3, t2) {
+            if (t2.styleSheet) t2.styleSheet.cssText = e3;
+            else {
+              for (; t2.firstChild; ) t2.removeChild(t2.firstChild);
+              t2.appendChild(document.createTextNode(e3));
+            }
+          };
+        } }, t = {};
+        function n(o2) {
+          var i = t[o2];
+          if (void 0 !== i) return i.exports;
+          var r = t[o2] = { id: o2, exports: {} };
+          return e[o2](r, r.exports, n), r.exports;
         }
-        return n.m = e, n.c = t, n.d = function(e2, t2, i) {
-          n.o(e2, t2) || Object.defineProperty(e2, t2, { enumerable: true, get: i });
-        }, n.r = function(e2) {
-          "undefined" != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e2, Symbol.toStringTag, { value: "Module" }), Object.defineProperty(e2, "__esModule", { value: true });
-        }, n.t = function(e2, t2) {
-          if (1 & t2 && (e2 = n(e2)), 8 & t2) return e2;
-          if (4 & t2 && "object" == typeof e2 && e2 && e2.__esModule) return e2;
-          var i = /* @__PURE__ */ Object.create(null);
-          if (n.r(i), Object.defineProperty(i, "default", { enumerable: true, value: e2 }), 2 & t2 && "string" != typeof e2) for (var o in e2) n.d(i, o, (function(t3) {
-            return e2[t3];
-          }).bind(null, o));
-          return i;
-        }, n.n = function(e2) {
+        n.n = function(e2) {
           var t2 = e2 && e2.__esModule ? function() {
             return e2.default;
           } : function() {
             return e2;
           };
-          return n.d(t2, "a", t2), t2;
+          return n.d(t2, { a: t2 }), t2;
+        }, n.d = function(e2, t2) {
+          for (var o2 in t2) n.o(t2, o2) && !n.o(e2, o2) && Object.defineProperty(e2, o2, { enumerable: true, get: t2[o2] });
         }, n.o = function(e2, t2) {
           return Object.prototype.hasOwnProperty.call(e2, t2);
-        }, n.p = "", n(n.s = 4);
-      }([function(e, t, n) {
-        "use strict";
-        Object.defineProperty(t, "__esModule", { value: true }), t.createDom = function() {
-          var e2 = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : "div", t2 = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : "", n2 = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : {}, i2 = arguments.length > 3 && void 0 !== arguments[3] ? arguments[3] : "", o2 = document.createElement(e2);
-          return o2.className = i2, o2.innerHTML = t2, Object.keys(n2).forEach(function(t3) {
-            var i3 = t3, r2 = n2[t3];
-            "video" === e2 || "audio" === e2 ? r2 && o2.setAttribute(i3, r2) : o2.setAttribute(i3, r2);
-          }), o2;
-        }, t.hasClass = i, t.addClass = o, t.removeClass = r, t.toggleClass = function(e2, t2) {
-          t2.split(/\s+/g).forEach(function(t3) {
-            i(e2, t3) ? r(e2, t3) : o(e2, t3);
-          });
-        }, t.findDom = function() {
-          var e2 = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : document, t2 = arguments[1], n2 = void 0;
-          try {
-            n2 = e2.querySelector(t2);
-          } catch (i2) {
-            t2.startsWith("#") && (n2 = e2.getElementById(t2.slice(1)));
+        }, n.r = function(e2) {
+          "undefined" != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e2, Symbol.toStringTag, { value: "Module" }), Object.defineProperty(e2, "__esModule", { value: true });
+        }, n.nc = void 0;
+        var o = {};
+        return !function() {
+          n.r(o), n.d(o, { default: function() {
+            return B;
+          }, DanmuJs: function() {
+            return B;
+          } });
+          var e2 = n("./node_modules/event-emitter/index.js"), t2 = n.n(e2);
+          function i(e3, t3) {
+            (null == t3 || t3 > e3.length) && (t3 = e3.length);
+            for (var n2 = 0, o2 = Array(t3); n2 < t3; n2++) o2[n2] = e3[n2];
+            return o2;
           }
-          return n2;
-        }, t.deepCopy = function e2(t2, n2) {
-          if ("Object" === a(n2) && "Object" === a(t2)) return Object.keys(n2).forEach(function(i2) {
-            "Object" !== a(n2[i2]) || n2[i2] instanceof Node ? "Array" === a(n2[i2]) ? t2[i2] = "Array" === a(t2[i2]) ? t2[i2].concat(n2[i2]) : n2[i2] : t2[i2] = n2[i2] : t2[i2] ? e2(t2[i2], n2[i2]) : t2[i2] = n2[i2];
-          }), t2;
-        }, t.typeOf = a, t.copyDom = function(e2) {
-          if (e2 && 1 === e2.nodeType) {
-            var t2 = document.createElement(e2.tagName);
-            return Array.prototype.forEach.call(e2.attributes, function(e3) {
-              t2.setAttribute(e3.name, e3.value);
-            }), e2.innerHTML && (t2.innerHTML = e2.innerHTML), t2;
-          }
-          return "";
-        }, t.attachEventListener = function(e2, t2, n2, i2) {
-          if (i2) e2.on(t2, n2), function(e3, t3, n3, i3) {
-            e3.once(i3, function o2() {
-              e3.off(t3, n3), e3.off(i3, o2);
-            });
-          }(e2, t2, n2, i2);
-          else {
-            e2.on(t2, function i3(o2) {
-              n2(o2), e2.off(t2, i3);
-            });
-          }
-        }, t.styleUtil = function(e2, t2, n2) {
-          var i2 = e2.style;
-          try {
-            i2[t2] = n2;
-          } catch (e3) {
-            i2.setProperty(t2, n2);
-          }
-        }, t.styleCSSText = function(e2, t2) {
-          var n2 = e2.style;
-          try {
-            n2.cssText = t2;
-          } catch (e3) {
-          }
-        }, t.isNumber = function(e2) {
-          return "number" == typeof e2 && !Number.isNaN(e2);
-        }, t.throttle = function(e2, t2) {
-          var n2 = this, i2 = 0;
-          return function() {
-            for (var o2 = arguments.length, r2 = Array(o2), a2 = 0; a2 < o2; a2++) r2[a2] = arguments[a2];
-            clearTimeout(i2), i2 = setTimeout(function() {
-              return e2.apply(n2, r2);
-            }, t2);
-          };
-        };
-        t.hasOwnProperty = Object.prototype.hasOwnProperty;
-        function i(e2, t2) {
-          return e2.classList ? Array.prototype.some.call(e2.classList, function(e3) {
-            return e3 === t2;
-          }) : !!e2.className.match(new RegExp("(\\s|^)" + t2 + "(\\s|$)"));
-        }
-        function o(e2, t2) {
-          e2.classList ? t2.replace(/(^\s+|\s+$)/g, "").split(/\s+/g).forEach(function(t3) {
-            t3 && e2.classList.add(t3);
-          }) : i(e2, t2) || (e2.className += " " + t2);
-        }
-        function r(e2, t2) {
-          e2.classList ? t2.split(/\s+/g).forEach(function(t3) {
-            e2.classList.remove(t3);
-          }) : i(e2, t2) && t2.split(/\s+/g).forEach(function(t3) {
-            var n2 = new RegExp("(\\s|^)" + t3 + "(\\s|$)");
-            e2.className = e2.className.replace(n2, " ");
-          });
-        }
-        function a(e2) {
-          return Object.prototype.toString.call(e2).match(/([^\s.*]+)(?=]$)/g)[0];
-        }
-      }, function(e, t, n) {
-        "use strict";
-        Object.defineProperty(t, "__esModule", { value: true });
-        var i, o = /* @__PURE__ */ function() {
-          function e2(e3, t2) {
-            for (var n2 = 0; n2 < t2.length; n2++) {
-              var i2 = t2[n2];
-              i2.enumerable = i2.enumerable || false, i2.configurable = true, "value" in i2 && (i2.writable = true), Object.defineProperty(e3, i2.key, i2);
+          var r = "undefined" != typeof window && window.location.href.indexOf("danmu-debug") > -1, s = function() {
+            var e3;
+            function t3(e4) {
+              if (!(this instanceof t3)) throw TypeError("Cannot call a class as a function");
+              this.constructorName = e4 || "";
             }
-          }
-          return function(t2, n2, i2) {
-            return n2 && e2(t2.prototype, n2), i2 && e2(t2, i2), t2;
-          };
-        }(), r = n(26), a = (i = r) && i.__esModule ? i : { default: i };
-        var s = function() {
-          function e2() {
-            !function(e3, t2) {
-              if (!(e3 instanceof t2)) throw new TypeError("Cannot call a class as a function");
-            }(this, e2);
-          }
-          return o(e2, [{ key: "setLogger", value: function() {
-            var e3 = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : "";
-            this.logger = new a.default(e3 + ".js");
-          } }]), e2;
-        }();
-        t.default = s, e.exports = t.default;
-      }, function(e, t, n) {
-        "use strict";
-        var i = n(18)();
-        e.exports = function(e2) {
-          return e2 !== i && null !== e2;
-        };
-      }, function(e, t, n) {
-        "use strict";
-        e.exports = function(e2) {
-          return null != e2;
-        };
-      }, function(e, t, n) {
-        "use strict";
-        Object.defineProperty(t, "__esModule", { value: true });
-        var i, o = n(5), r = (i = o) && i.__esModule ? i : { default: i };
-        n(34), t.default = r.default, e.exports = t.default;
-      }, function(e, t, n) {
-        "use strict";
-        Object.defineProperty(t, "__esModule", { value: true }), t.DanmuJs = void 0;
-        var i = /* @__PURE__ */ function() {
-          function e2(e3, t2) {
-            for (var n2 = 0; n2 < t2.length; n2++) {
-              var i2 = t2[n2];
-              i2.enumerable = i2.enumerable || false, i2.configurable = true, "value" in i2 && (i2.writable = true), Object.defineProperty(e3, i2.key, i2);
-            }
-          }
-          return function(t2, n2, i2) {
-            return n2 && e2(t2.prototype, n2), i2 && e2(t2, i2), t2;
-          };
-        }(), o = h(n(6)), r = n(25), a = h(n(1)), s = h(n(27)), l = h(n(32)), u = n(33), c = n(0);
-        function h(e2) {
-          return e2 && e2.__esModule ? e2 : { default: e2 };
-        }
-        function f(e2, t2) {
-          if (!e2) throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-          return !t2 || "object" != typeof t2 && "function" != typeof t2 ? e2 : t2;
-        }
-        var d = t.DanmuJs = function(e2) {
-          function t2(e3) {
-            !function(e4, t3) {
-              if (!(e4 instanceof t3)) throw new TypeError("Cannot call a class as a function");
-            }(this, t2);
-            var n2 = f(this, (t2.__proto__ || Object.getPrototypeOf(t2)).call(this)), i2 = n2;
-            i2.setLogger("danmu"), i2.logger && i2.logger.info("danmu.js version: " + r.version);
-            var a2 = i2.config = { overlap: false, area: { start: 0, end: 1, lines: void 0 }, live: false, comments: [], direction: "r2l", needResizeObserver: false, dropStaleComments: false, channelSize: void 0, maxCommentsLength: void 0, bulletOffset: void 0, interval: 2e3, highScorePriority: true };
-            if ((0, c.deepCopy)(a2, e3), (0, o.default)(i2), i2.hideArr = [], i2.domObj = new l.default(), i2.freezeId = null, a2.comments.forEach(function(e4) {
-              e4.duration = e4.duration ? e4.duration : 5e3, e4.mode || (e4.mode = "scroll");
-            }), i2.container = a2.container && 1 === a2.container.nodeType ? a2.container : null, !i2.container) return i2.emit("error", "container id can't be empty"), false, f(n2, false);
-            if (a2.containerStyle) {
-              var u2 = a2.containerStyle;
-              Object.keys(u2).forEach(function(e4) {
-                i2.container.style[e4] = u2[e4];
-              });
-            }
-            return i2.live = a2.live, i2.player = a2.player, i2.direction = a2.direction, (0, c.addClass)(i2.container, "danmu"), i2.bulletBtn = new s.default(i2), i2.main = i2.bulletBtn.main, i2.isReady = true, i2.emit("ready"), n2.logger && n2.logger.info("ready"), n2.addResizeObserver(), n2;
-          }
-          return function(e3, t3) {
-            if ("function" != typeof t3 && null !== t3) throw new TypeError("Super expression must either be null or a function, not " + typeof t3);
-            e3.prototype = Object.create(t3 && t3.prototype, { constructor: { value: e3, enumerable: false, writable: true, configurable: true } }), t3 && (Object.setPrototypeOf ? Object.setPrototypeOf(e3, t3) : e3.__proto__ = t3);
-          }(t2, e2), i(t2, [{ key: "addResizeObserver", value: function() {
-            var e3 = this;
-            this.config.needResizeObserver && (0, u.addObserver)(this.container, function() {
-              e3.logger && e3.logger.info("needResizeObserver"), e3.resize();
-            });
-          } }, { key: "start", value: function() {
-            this.logger && this.logger.info("start"), this.main.start();
-          } }, { key: "pause", value: function() {
-            this.logger && this.logger.info("pause"), this.main.pause();
-          } }, { key: "play", value: function() {
-            this.logger && this.logger.info("play"), this.main.play();
-          } }, { key: "stop", value: function() {
-            this.logger && this.logger.info("stop"), this.main.stop();
-          } }, { key: "clear", value: function() {
-            this.logger && this.logger.info("clear"), this.main.clear();
-          } }, { key: "destroy", value: function() {
-            for (var e3 in (0, u.unObserver)(this.container), this.logger && this.logger.info("destroy"), this.stop(), this.bulletBtn.destroy(), this.domObj.destroy(), this) delete this[e3];
-            this.emit("destroy");
-          } }, { key: "sendComment", value: function(e3) {
-            this.logger && this.logger.info("sendComment: " + (e3.txt || "[DOM Element]"));
-            var t3 = this.main;
-            e3.duration || (e3.duration = 15e3), e3 && e3.id && e3.duration && (e3.el || e3.txt) && (e3.duration = e3.duration ? e3.duration : 5e3, e3.style || (e3.style = { opacity: void 0, fontSize: void 0 }), e3.style && (this.opacity && this.opacity !== e3.style.opacity && (e3.style.opacity = this.opacity), this.fontSize && this.fontSize !== e3.style.fontSize && (e3.style.fontSize = this.fontSize)), e3.prior || e3.realTime ? (t3.data.unshift(e3), e3.realTime && (t3.readData(), t3.dataHandle())) : t3.data.push(e3), t3.keepPoolWatermark());
-          } }, { key: "setCommentID", value: function(e3, t3) {
-            var n2 = this;
-            this.logger && this.logger.info("setCommentID: oldID " + e3 + " newID " + t3), e3 && t3 && (this.main.data.some(function(n3) {
-              return n3.id === e3 && (n3.id = t3, true);
-            }), this.main.queue.some(function(i2) {
-              return i2.id === e3 && (i2.id = t3, i2.pauseMove(), "paused" !== n2.main.status && i2.startMove(), true);
-            }));
-          } }, { key: "setCommentDuration", value: function(e3, t3) {
-            var n2 = this;
-            this.logger && this.logger.info("setCommentDuration: id " + e3 + " duration " + t3), e3 && t3 && (t3 = t3 || 5e3, this.main.data.some(function(n3) {
-              return n3.id === e3 && (n3.duration = t3, true);
-            }), this.main.queue.some(function(i2) {
-              return i2.id === e3 && (i2.duration = t3, i2.pauseMove(), "paused" !== n2.main.status && i2.startMove(), true);
-            }));
-          } }, { key: "setCommentLike", value: function(e3, t3) {
-            this.logger && this.logger.info("setCommentLike: id " + e3 + " like " + t3), e3 && t3 && (this.main.data.some(function(n2) {
-              return n2.id === e3 && (n2.like = t3, true);
-            }), this.main.queue.some(function(n2) {
-              return n2.id === e3 && (n2.pauseMove(), n2.setLikeDom(t3.el, t3.style), "paused" !== n2.danmu.main.status && n2.startMove(), true);
-            }));
-          } }, { key: "restartComment", value: function(e3) {
-            if (this.logger && this.logger.info("restartComment: id " + e3), e3) {
-              var t3 = this.main;
-              if (this._releaseCtrl(e3), "closed" === t3.status) return;
-              t3.queue.some(function(n2) {
-                return n2.id === e3 && ("paused" !== t3.status ? n2.startMove(true) : n2.status = "paused", true);
-              });
-            }
-          } }, { key: "_releaseCtrl", value: function(e3) {
-            this.freezeId && e3 === this.freezeId && (this.mouseControl = false, this.freezeId = null);
-          } }, { key: "_freezeCtrl", value: function(e3) {
-            this.mouseControl = true, this.freezeId = e3;
-          } }, { key: "freezeComment", value: function(e3) {
-            if (this.logger && this.logger.info("freezeComment: id " + e3), e3) {
-              this._freezeCtrl(e3), this.main.queue.some(function(t3) {
-                return t3.id === e3 && (t3.status = "forcedPause", t3.pauseMove(), t3.el && t3.el.style && (0, c.styleUtil)(t3.el, "zIndex", 10), true);
-              });
-            }
-          } }, { key: "removeComment", value: function(e3) {
-            if (this.logger && this.logger.info("removeComment: id " + e3), e3) {
-              this._releaseCtrl(e3), this.main.queue.some(function(t3) {
-                return t3.id === e3 && (t3.remove(), true);
-              }), this.main.data = this.main.data.filter(function(t3) {
-                return t3.id !== e3;
-              });
-            }
-          } }, { key: "updateComments", value: function(e3) {
-            var t3 = !(arguments.length > 1 && void 0 !== arguments[1]) || arguments[1];
-            this.logger && this.logger.info("updateComments: " + e3.length + ", isClear " + t3);
-            var n2 = this.main;
-            "boolean" == typeof t3 && t3 && (n2.data = []), n2.data = n2.data.concat(e3), n2.sortData(), n2.keepPoolWatermark();
-          } }, { key: "setAllDuration", value: function() {
-            var e3 = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : "scroll", t3 = this, n2 = arguments[1], i2 = !(arguments.length > 2 && void 0 !== arguments[2]) || arguments[2];
-            this.logger && this.logger.info("setAllDuration: mode " + e3 + " duration " + n2 + " force " + i2), n2 && (n2 = n2 || 5e3, i2 && (this.main.forceDuration = n2), this.main.data.forEach(function(t4) {
-              e3 === t4.mode && (t4.duration = n2);
-            }), this.main.queue.forEach(function(i3) {
-              e3 === i3.mode && (i3.duration = n2, i3.pauseMove(), "paused" !== t3.main.status && i3.startMove());
-            }));
-          } }, { key: "setPlayRate", value: function() {
-            var e3 = this, t3 = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : "scroll", n2 = arguments[1];
-            this.logger && this.logger.info("setPlayRate: " + n2), (0, c.isNumber)(n2) && n2 > 0 && (this.main.playRate = n2, this.main.queue.forEach(function(n3) {
-              t3 === n3.mode && (n3.pauseMove(), "paused" !== e3.main.status && n3.startMove());
-            }));
-          } }, { key: "setOpacity", value: function(e3) {
-            this.logger && this.logger.info("setOpacity: opacity " + e3), this.container.style.opacity = e3;
-          } }, { key: "setFontSize", value: function(e3, t3) {
-            var n2 = this, i2 = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : { reflow: true };
-            this.logger && this.logger.info("setFontSize: size " + e3 + " channelSize " + t3), this.fontSize = e3 + "px", e3 && (this.main.data.forEach(function(e4) {
-              e4.style && (e4.style.fontSize = n2.fontSize);
-            }), this.main.queue.forEach(function(e4) {
-              e4.options.style || (e4.options.style = {}), e4.options.style.fontSize = n2.fontSize, e4.setFontSize(n2.fontSize), t3 && (e4.top = e4.channel_id[0] * t3, e4.topInit());
-            })), t3 && (this.config.channelSize = t3, i2.reflow && this.main.channel.resizeSync());
-          } }, { key: "setArea", value: function(e3) {
-            this.logger && this.logger.info("setArea: area " + e3), this.config.area = e3, false !== e3.reflow && this.main.channel.resizeSync();
-          } }, { key: "hide", value: function() {
-            var e3 = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : "scroll";
-            this.logger && this.logger.info("hide: mode " + e3), this.hideArr.indexOf(e3) < 0 && this.hideArr.push(e3);
-            var t3 = this.main.queue.filter(function(t4) {
-              return e3 === t4.mode || "color" === e3 && t4.color;
-            });
-            t3.forEach(function(e4) {
-              return e4.remove();
-            });
-          } }, { key: "show", value: function() {
-            var e3 = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : "scroll";
-            this.logger && this.logger.info("show: mode " + e3);
-            var t3 = this.hideArr.indexOf(e3);
-            t3 > -1 && this.hideArr.splice(t3, 1);
-          } }, { key: "setDirection", value: function() {
-            var e3 = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : "r2l";
-            this.logger && this.logger.info("setDirection: direction " + e3), this.emit("changeDirection", e3);
-          } }, { key: "resize", value: function() {
-            this.logger && this.logger.info("resize"), this.emit("channel_resize");
-          } }, { key: "status", get: function() {
-            return this.main.status;
-          } }, { key: "state", get: function() {
-            var e3 = this.main;
-            return { status: e3.status, comments: e3.data, bullets: e3.queue, displayArea: e3.channel.getRealOccupyArea() };
-          } }, { key: "containerPos", get: function() {
-            return this.main.channel.containerPos;
-          } }]), t2;
-        }(a.default);
-        t.default = d;
-      }, function(e, t, n) {
-        "use strict";
-        var i, o, r, a, s, l, u, c = n(7), h = n(24), f = Function.prototype.apply, d = Function.prototype.call, p = Object.create, g = Object.defineProperty, m = Object.defineProperties, v = Object.prototype.hasOwnProperty, y = { configurable: true, enumerable: false, writable: true };
-        o = function(e2, t2) {
-          var n2, o2;
-          return h(t2), o2 = this, i.call(this, e2, n2 = function() {
-            r.call(o2, e2, n2), f.call(t2, this, arguments);
-          }), n2.__eeOnceListener__ = t2, this;
-        }, s = { on: i = function(e2, t2) {
-          var n2;
-          return h(t2), v.call(this, "__ee__") ? n2 = this.__ee__ : (n2 = y.value = p(null), g(this, "__ee__", y), y.value = null), n2[e2] ? "object" == typeof n2[e2] ? n2[e2].push(t2) : n2[e2] = [n2[e2], t2] : n2[e2] = t2, this;
-        }, once: o, off: r = function(e2, t2) {
-          var n2, i2, o2, r2;
-          if (h(t2), !v.call(this, "__ee__")) return this;
-          if (!(n2 = this.__ee__)[e2]) return this;
-          if ("object" == typeof (i2 = n2[e2])) for (r2 = 0; o2 = i2[r2]; ++r2) o2 !== t2 && o2.__eeOnceListener__ !== t2 || (2 === i2.length ? n2[e2] = i2[r2 ? 0 : 1] : i2.splice(r2, 1));
-          else i2 !== t2 && i2.__eeOnceListener__ !== t2 || delete n2[e2];
-          return this;
-        }, emit: a = function(e2) {
-          var t2, n2, i2, o2, r2;
-          if (v.call(this, "__ee__") && (o2 = this.__ee__[e2])) if ("object" == typeof o2) {
-            for (n2 = arguments.length, r2 = new Array(n2 - 1), t2 = 1; t2 < n2; ++t2) r2[t2 - 1] = arguments[t2];
-            for (o2 = o2.slice(), t2 = 0; i2 = o2[t2]; ++t2) f.call(i2, this, r2);
-          } else switch (arguments.length) {
-            case 1:
-              d.call(o2, this);
-              break;
-            case 2:
-              d.call(o2, this, arguments[1]);
-              break;
-            case 3:
-              d.call(o2, this, arguments[1], arguments[2]);
-              break;
-            default:
-              for (n2 = arguments.length, r2 = new Array(n2 - 1), t2 = 1; t2 < n2; ++t2) r2[t2 - 1] = arguments[t2];
-              f.call(o2, this, r2);
-          }
-        } }, l = { on: c(i), once: c(o), off: c(r), emit: c(a) }, u = m({}, l), e.exports = t = function(e2) {
-          return null == e2 ? p(u) : m(Object(e2), l);
-        }, t.methods = s;
-      }, function(e, t, n) {
-        "use strict";
-        var i = n(3), o = n(8), r = n(12), a = n(20), s = n(21);
-        (e.exports = function(e2, t2) {
-          var n2, o2, l, u, c;
-          return arguments.length < 2 || "string" != typeof e2 ? (u = t2, t2 = e2, e2 = null) : u = arguments[2], i(e2) ? (n2 = s.call(e2, "c"), o2 = s.call(e2, "e"), l = s.call(e2, "w")) : (n2 = l = true, o2 = false), c = { value: t2, configurable: n2, enumerable: o2, writable: l }, u ? r(a(u), c) : c;
-        }).gs = function(e2, t2, n2) {
-          var l, u, c, h;
-          return "string" != typeof e2 ? (c = n2, n2 = t2, t2 = e2, e2 = null) : c = arguments[3], i(t2) ? o(t2) ? i(n2) ? o(n2) || (c = n2, n2 = void 0) : n2 = void 0 : (c = t2, t2 = n2 = void 0) : t2 = void 0, i(e2) ? (l = s.call(e2, "c"), u = s.call(e2, "e")) : (l = true, u = false), h = { get: t2, set: n2, configurable: l, enumerable: u }, c ? r(a(c), h) : h;
-        };
-      }, function(e, t, n) {
-        "use strict";
-        var i = n(9), o = /^\s*class[\s{/}]/, r = Function.prototype.toString;
-        e.exports = function(e2) {
-          return !!i(e2) && !o.test(r.call(e2));
-        };
-      }, function(e, t, n) {
-        "use strict";
-        var i = n(10);
-        e.exports = function(e2) {
-          if ("function" != typeof e2) return false;
-          if (!hasOwnProperty.call(e2, "length")) return false;
-          try {
-            if ("number" != typeof e2.length) return false;
-            if ("function" != typeof e2.call) return false;
-            if ("function" != typeof e2.apply) return false;
-          } catch (e3) {
-            return false;
-          }
-          return !i(e2);
-        };
-      }, function(e, t, n) {
-        "use strict";
-        var i = n(11);
-        e.exports = function(e2) {
-          if (!i(e2)) return false;
-          try {
-            return !!e2.constructor && e2.constructor.prototype === e2;
-          } catch (e3) {
-            return false;
-          }
-        };
-      }, function(e, t, n) {
-        "use strict";
-        var i = n(3), o = { object: true, function: true, undefined: true };
-        e.exports = function(e2) {
-          return !!i(e2) && hasOwnProperty.call(o, typeof e2);
-        };
-      }, function(e, t, n) {
-        "use strict";
-        e.exports = n(13)() ? Object.assign : n(14);
-      }, function(e, t, n) {
-        "use strict";
-        e.exports = function() {
-          var e2, t2 = Object.assign;
-          return "function" == typeof t2 && (t2(e2 = { foo: "raz" }, { bar: "dwa" }, { trzy: "trzy" }), e2.foo + e2.bar + e2.trzy === "razdwatrzy");
-        };
-      }, function(e, t, n) {
-        "use strict";
-        var i = n(15), o = n(19), r = Math.max;
-        e.exports = function(e2, t2) {
-          var n2, a, s, l = r(arguments.length, 2);
-          for (e2 = Object(o(e2)), s = function(i2) {
-            try {
-              e2[i2] = t2[i2];
-            } catch (e3) {
-              n2 || (n2 = e3);
-            }
-          }, a = 1; a < l; ++a) i(t2 = arguments[a]).forEach(s);
-          if (void 0 !== n2) throw n2;
-          return e2;
-        };
-      }, function(e, t, n) {
-        "use strict";
-        e.exports = n(16)() ? Object.keys : n(17);
-      }, function(e, t, n) {
-        "use strict";
-        e.exports = function() {
-          try {
-            return Object.keys("primitive"), true;
-          } catch (e2) {
-            return false;
-          }
-        };
-      }, function(e, t, n) {
-        "use strict";
-        var i = n(2), o = Object.keys;
-        e.exports = function(e2) {
-          return o(i(e2) ? Object(e2) : e2);
-        };
-      }, function(e, t, n) {
-        "use strict";
-        e.exports = function() {
-        };
-      }, function(e, t, n) {
-        "use strict";
-        var i = n(2);
-        e.exports = function(e2) {
-          if (!i(e2)) throw new TypeError("Cannot use null or undefined");
-          return e2;
-        };
-      }, function(e, t, n) {
-        "use strict";
-        var i = n(2), o = Array.prototype.forEach, r = Object.create, a = function(e2, t2) {
-          var n2;
-          for (n2 in e2) t2[n2] = e2[n2];
-        };
-        e.exports = function(e2) {
-          var t2 = r(null);
-          return o.call(arguments, function(e3) {
-            i(e3) && a(Object(e3), t2);
-          }), t2;
-        };
-      }, function(e, t, n) {
-        "use strict";
-        e.exports = n(22)() ? String.prototype.contains : n(23);
-      }, function(e, t, n) {
-        "use strict";
-        var i = "razdwatrzy";
-        e.exports = function() {
-          return "function" == typeof i.contains && (true === i.contains("dwa") && false === i.contains("foo"));
-        };
-      }, function(e, t, n) {
-        "use strict";
-        var i = String.prototype.indexOf;
-        e.exports = function(e2) {
-          return i.call(this, e2, arguments[1]) > -1;
-        };
-      }, function(e, t, n) {
-        "use strict";
-        e.exports = function(e2) {
-          if ("function" != typeof e2) throw new TypeError(e2 + " is not a function");
-          return e2;
-        };
-      }, function(e) {
-        e.exports = JSON.parse('{"version":"1.1.7"}');
-      }, function(e, t, n) {
-        "use strict";
-        Object.defineProperty(t, "__esModule", { value: true });
-        var i = /* @__PURE__ */ function() {
-          function e2(e3, t2) {
-            for (var n2 = 0; n2 < t2.length; n2++) {
-              var i2 = t2[n2];
-              i2.enumerable = i2.enumerable || false, i2.configurable = true, "value" in i2 && (i2.writable = true), Object.defineProperty(e3, i2.key, i2);
-            }
-          }
-          return function(t2, n2, i2) {
-            return n2 && e2(t2.prototype, n2), i2 && e2(t2, i2), t2;
-          };
-        }();
-        var o = "undefined" != typeof window && window.location.href.indexOf("danmu-debug") > -1, r = function() {
-          function e2(t2) {
-            !function(e3, t3) {
-              if (!(e3 instanceof t3)) throw new TypeError("Cannot call a class as a function");
-            }(this, e2), this.constructorName = t2 || "";
-          }
-          return i(e2, [{ key: "info", value: function(e3) {
-            for (var t2, n2 = arguments.length, i2 = Array(n2 > 1 ? n2 - 1 : 0), r2 = 1; r2 < n2; r2++) i2[r2 - 1] = arguments[r2];
-            o && (t2 = console).log.apply(t2, ["[Danmu Log][" + this.constructorName + "]", e3].concat(i2));
-          } }]), e2;
-        }();
-        t.default = r, e.exports = t.default;
-      }, function(e, t, n) {
-        "use strict";
-        Object.defineProperty(t, "__esModule", { value: true });
-        var i = /* @__PURE__ */ function() {
-          function e2(e3, t2) {
-            for (var n2 = 0; n2 < t2.length; n2++) {
-              var i2 = t2[n2];
-              i2.enumerable = i2.enumerable || false, i2.configurable = true, "value" in i2 && (i2.writable = true), Object.defineProperty(e3, i2.key, i2);
-            }
-          }
-          return function(t2, n2, i2) {
-            return n2 && e2(t2.prototype, n2), i2 && e2(t2, i2), t2;
-          };
-        }(), o = s(n(1)), r = s(n(28)), a = n(0);
-        function s(e2) {
-          return e2 && e2.__esModule ? e2 : { default: e2 };
-        }
-        var l = function(e2) {
-          function t2(e3) {
-            !function(e4, t3) {
-              if (!(e4 instanceof t3)) throw new TypeError("Cannot call a class as a function");
-            }(this, t2);
-            var n2 = function(e4, t3) {
-              if (!e4) throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-              return !t3 || "object" != typeof t3 && "function" != typeof t3 ? e4 : t3;
-            }(this, (t2.__proto__ || Object.getPrototypeOf(t2)).call(this));
-            return n2.setLogger("control"), n2.danmu = e3, n2.main = new r.default(e3), e3.config.defaultOff || n2.main.start(), n2;
-          }
-          return function(e3, t3) {
-            if ("function" != typeof t3 && null !== t3) throw new TypeError("Super expression must either be null or a function, not " + typeof t3);
-            e3.prototype = Object.create(t3 && t3.prototype, { constructor: { value: e3, enumerable: false, writable: true, configurable: true } }), t3 && (Object.setPrototypeOf ? Object.setPrototypeOf(e3, t3) : e3.__proto__ = t3);
-          }(t2, e2), i(t2, [{ key: "createSwitch", value: function() {
-            var e3 = !(arguments.length > 0 && void 0 !== arguments[0]) || arguments[0];
-            return this.logger && this.logger.info("createSwitch"), this.switchBtn = (0, a.createDom)("dk-switch", '<span class="txt">弹</span>', {}, "danmu-switch " + (e3 ? "danmu-switch-active" : "")), this.switchBtn;
-          } }, { key: "destroy", value: function() {
-            for (var e3 in this.logger && this.logger.info("destroy"), this.main.destroy(), this) a.hasOwnProperty.call(this, e3) && delete this[e3];
-          } }]), t2;
-        }(o.default);
-        t.default = l, e.exports = t.default;
-      }, function(e, t, n) {
-        "use strict";
-        Object.defineProperty(t, "__esModule", { value: true });
-        var i = /* @__PURE__ */ function() {
-          function e2(e3, t2) {
-            for (var n2 = 0; n2 < t2.length; n2++) {
-              var i2 = t2[n2];
-              i2.enumerable = i2.enumerable || false, i2.configurable = true, "value" in i2 && (i2.writable = true), Object.defineProperty(e3, i2.key, i2);
-            }
-          }
-          return function(t2, n2, i2) {
-            return n2 && e2(t2.prototype, n2), i2 && e2(t2, i2), t2;
-          };
-        }(), o = l(n(1)), r = l(n(29)), a = l(n(30)), s = n(0);
-        function l(e2) {
-          return e2 && e2.__esModule ? e2 : { default: e2 };
-        }
-        var u = function(e2) {
-          function t2(e3) {
-            !function(e4, t3) {
-              if (!(e4 instanceof t3)) throw new TypeError("Cannot call a class as a function");
-            }(this, t2);
-            var n2 = function(e4, t3) {
-              if (!e4) throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-              return !t3 || "object" != typeof t3 && "function" != typeof t3 ? e4 : t3;
-            }(this, (t2.__proto__ || Object.getPrototypeOf(t2)).call(this));
-            return n2.setLogger("main"), n2.danmu = e3, n2.container = e3.container, n2.channel = new a.default(e3), n2.data = [].concat(e3.config.comments), n2.playedData = [], n2.queue = [], n2.timer = null, n2.playRate = 1, n2.retryStatus = "normal", n2.interval = e3.config.interval, n2._status = "idle", (0, s.attachEventListener)(e3, "bullet_remove", n2.updateQueue.bind(n2), "destroy"), (0, s.attachEventListener)(e3, "changeDirection", function(e4) {
-              n2.danmu.direction = e4;
-            }, "destroy"), n2;
-          }
-          return function(e3, t3) {
-            if ("function" != typeof t3 && null !== t3) throw new TypeError("Super expression must either be null or a function, not " + typeof t3);
-            e3.prototype = Object.create(t3 && t3.prototype, { constructor: { value: e3, enumerable: false, writable: true, configurable: true } }), t3 && (Object.setPrototypeOf ? Object.setPrototypeOf(e3, t3) : e3.__proto__ = t3);
-          }(t2, e2), i(t2, [{ key: "_cancelDataHandleTimer", value: function() {
-            this.handleId && (clearTimeout(this.handleId), this.handleId = null), this.handleTimer && (clearTimeout(this.handleTimer), this.handleTimer = null);
-          } }, { key: "destroy", value: function() {
-            for (var e3 in this.logger && this.logger.info("destroy"), this._cancelDataHandleTimer(), this.channel.destroy(), this.data = [], this) delete this[e3];
-          } }, { key: "updateQueue", value: function(e3) {
-            this.logger && this.logger.info("updateQueue");
-            var t3 = this;
-            t3.queue.some(function(n2, i2) {
-              return n2.id === e3.bullet.id && (t3.queue.splice(i2, 1), true);
-            }), t3.data.some(function(t4) {
-              return t4.id === e3.bullet.id && (t4.attached_ = false, true);
-            });
-          } }, { key: "init", value: function() {
-            var e3 = this;
-            e3.retryStatus = "normal", e3.sortData(), function t3() {
-              "closed" !== e3._status || "stop" !== e3.retryStatus ? ("playing" === e3._status && (e3.readData(), e3.dataHandle()), "stop" === e3.retryStatus && "paused" !== e3._status || (e3.handleTimer = setTimeout(function() {
-                e3.handleId = requestAnimationFrame(function() {
-                  t3();
-                });
-              }, 250))) : e3._cancelDataHandleTimer();
-            }();
-          } }, { key: "start", value: function() {
-            this.logger && this.logger.info("start");
-            "playing" !== this._status && (this._status = "playing", this.queue = [], this.container.innerHTML = "", this.channel.reset(), this.init());
-          } }, { key: "stop", value: function() {
-            this.logger && this.logger.info("stop");
-            "closed" !== this._status && (this._status = "closed", this.retryStatus = "stop", this.queue = [], this.container.innerHTML = "", this.channel.reset());
-          } }, { key: "clear", value: function() {
-            this.logger && this.logger.info("clear"), this.channel.reset(), this.data = [], this.queue = [], this.container.innerHTML = "";
-          } }, { key: "play", value: function() {
-            var e3 = this;
-            if ("closed" !== this._status) {
-              this.logger && this.logger.info("play"), this._status = "playing";
-              var t3 = this.channel.channels;
-              t3 && t3.length > 0 && ["scroll", "top", "bottom"].forEach(function(n2) {
-                e3.queue.forEach(function(e4) {
-                  e4.startMove(), e4.resized = true;
-                });
-                for (var i2 = 0; i2 < t3.length; i2++) t3[i2].queue[n2].forEach(function(e4) {
-                  e4.resized = false;
-                });
-              });
-            } else this.logger && this.logger.info("play ignored");
-          } }, { key: "pause", value: function() {
-            if ("closed" !== this._status) {
-              this.logger && this.logger.info("pause"), this._status = "paused";
-              var e3 = this.channel.channels;
-              e3 && e3.length > 0 && this.queue.forEach(function(e4) {
-                e4.pauseMove();
-              });
-            } else this.logger && this.logger.info("pause ignored");
-          } }, { key: "dataHandle", value: function() {
-            "paused" !== this._status && "closed" !== this._status && this.queue.length && this.queue.forEach(function(e3) {
-              "waiting" === e3.status && e3.startMove();
-            });
-          } }, { key: "readData", value: function() {
-            var e3 = this.danmu, t3 = this.interval, n2 = this.channel, i2 = e3.player, o2 = void 0, a2 = void 0;
-            if (e3.isReady) {
-              if (i2) {
-                var l2 = i2.currentTime ? Math.floor(1e3 * i2.currentTime) : 0;
-                a2 = this.data.filter(function(n3) {
-                  return !n3.start && e3.hideArr.indexOf(n3.mode) < 0 && (!n3.color || e3.hideArr.indexOf("color") < 0) && (n3.start = l2), !n3.attached_ && e3.hideArr.indexOf(n3.mode) < 0 && (!n3.color || e3.hideArr.indexOf("color") < 0) && n3.start - t3 <= l2 && l2 <= n3.start + t3;
-                }), e3.config.highScorePriority && a2.sort(function(e4, t4) {
-                  return t4.prior && !e4.prior || (t4.score || -1) - (e4.score || -1);
-                }), e3.live && (this.data = []);
-              } else 0 === (a2 = this.data.splice(0, 1)).length && (a2 = this.playedData.splice(0, 1));
-              if (a2.length > 0) {
-                n2.updatePos();
-                var u2 = 2;
-                e: for (var c, h = 0; h < a2.length; h++) if (c = a2[h], this.forceDuration && this.forceDuration !== c.duration && (c.duration = this.forceDuration), (o2 = new r.default(e3, c)) && !o2.bulletCreateFail) if (o2.attach(), c.attached_ = true, n2.addBullet(o2).result) this.queue.push(o2), o2.topInit(), u2 = 2;
-                else {
-                  for (var f in o2.detach(), o2) s.hasOwnProperty.call(o2, f) && delete o2[f];
-                  if (o2 = null, c.attached_ = false, c.noDiscard && (c.prior ? this.data.unshift(c) : this.data.push(c)), 0 === u2) break e;
-                  u2--;
+            return e3 = [{ key: "info", value: function(e4) {
+              for (var t4, n2 = arguments.length, o2 = Array(n2 > 1 ? n2 - 1 : 0), s2 = 1; s2 < n2; s2++) o2[s2 - 1] = arguments[s2];
+              r && (t4 = console).log.apply(t4, ["[Danmu Log][".concat(this.constructorName, "]"), e4].concat(function(e5) {
+                if (Array.isArray(e5)) return i(e5);
+              }(o2) || function(e5) {
+                if ("undefined" != typeof Symbol && null != e5[Symbol.iterator] || null != e5["@@iterator"]) return Array.from(e5);
+              }(o2) || function(e5, t5) {
+                if (e5) {
+                  if ("string" == typeof e5) return i(e5, void 0);
+                  var n3 = Object.prototype.toString.call(e5).slice(8, -1);
+                  if ("Object" === n3 && e5.constructor && (n3 = e5.constructor.name), "Map" === n3 || "Set" === n3) return Array.from(n3);
+                  if ("Arguments" === n3 || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n3)) return i(e5, void 0);
                 }
-                else {
-                  if (0 === u2) break e;
-                  u2--;
-                }
+              }(o2) || function() {
+                throw TypeError("Invalid attempt to spread non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+              }()));
+            } }], function(e4, t4) {
+              for (var n2 = 0; n2 < t4.length; n2++) {
+                var o2 = t4[n2];
+                o2.enumerable = o2.enumerable || false, o2.configurable = true, "value" in o2 && (o2.writable = true), Object.defineProperty(e4, o2.key, o2);
               }
+            }(t3.prototype, e3), t3;
+          }(), a = function() {
+            var e3;
+            function t3() {
+              if (!(this instanceof t3)) throw TypeError("Cannot call a class as a function");
             }
-          } }, { key: "sortData", value: function() {
-            this.data.sort(function(e3, t3) {
-              return (e3.start || -1) - (t3.start || -1);
-            });
-          } }, { key: "keepPoolWatermark", value: function() {
-            var e3 = this.danmu, t3 = e3.config, n2 = e3.player, i2 = this.data, o2 = [], r2 = 0;
-            if ("number" == typeof t3.maxCommentsLength && i2.length > t3.maxCommentsLength) {
-              r2 = i2.length - t3.maxCommentsLength;
-              for (var a2, s2 = 0; s2 < r2; s2++) (a2 = i2[s2]).prior && !a2.attached_ && o2.push(i2[s2]);
-            } else if (t3.dropStaleComments && n2 && n2.currentTime) {
-              var l2 = Math.floor(1e3 * n2.currentTime) - t3.interval;
-              if (l2 > 0) {
-                for (var u2, c = 0; c < i2.length; c++) if ((u2 = i2[c]).prior && !u2.attached_ && o2.push(i2[c]), u2.start > l2) {
-                  r2 = c;
-                  break;
-                }
+            return e3 = [{ key: "setLogger", value: function(e4) {
+              this.logger = (null != s && "undefined" != typeof Symbol && s[Symbol.hasInstance] ? !!s[Symbol.hasInstance](e4) : e4 instanceof s) ? e4 : new s((e4 || "") + ".js");
+            } }], function(e4, t4) {
+              for (var n2 = 0; n2 < t4.length; n2++) {
+                var o2 = t4[n2];
+                o2.enumerable = o2.enumerable || false, o2.configurable = true, "value" in o2 && (o2.writable = true), Object.defineProperty(e4, o2.key, o2);
               }
-            }
-            r2 > 0 && (i2.splice(0, r2), this.data = o2.concat(i2));
-          } }, { key: "status", get: function() {
-            return this._status;
-          } }]), t2;
-        }(o.default);
-        t.default = u, e.exports = t.default;
-      }, function(e, t, n) {
-        "use strict";
-        Object.defineProperty(t, "__esModule", { value: true }), t.Bullet = void 0;
-        var i, o = /* @__PURE__ */ function() {
-          function e2(e3, t2) {
-            for (var n2 = 0; n2 < t2.length; n2++) {
-              var i2 = t2[n2];
-              i2.enumerable = i2.enumerable || false, i2.configurable = true, "value" in i2 && (i2.writable = true), Object.defineProperty(e3, i2.key, i2);
-            }
+            }(t3.prototype, e3), t3;
+          }(), l = Object.prototype.hasOwnProperty;
+          function c(e3, t3) {
+            if ("Object" === u(t3) && "Object" === u(e3)) return Object.keys(t3).forEach(function(n2) {
+              var o2, i2;
+              "Object" !== u(t3[n2]) || (o2 = t3[n2], null != (i2 = Node) && "undefined" != typeof Symbol && i2[Symbol.hasInstance] ? !!i2[Symbol.hasInstance](o2) : o2 instanceof i2) ? "Array" === u(t3[n2]) ? e3[n2] = "Array" === u(e3[n2]) ? e3[n2].concat(t3[n2]) : t3[n2] : e3[n2] = t3[n2] : e3[n2] ? c(e3[n2], t3[n2]) : e3[n2] = t3[n2];
+            }), e3;
           }
-          return function(t2, n2, i2) {
-            return n2 && e2(t2.prototype, n2), i2 && e2(t2, i2), t2;
-          };
-        }(), r = n(1), a = (i = r) && i.__esModule ? i : { default: i }, s = n(0);
-        function l(e2, t2) {
-          if (!e2) throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-          return !t2 || "object" != typeof t2 && "function" != typeof t2 ? e2 : t2;
-        }
-        var u = t.Bullet = function(e2) {
-          function t2(e3, n2) {
-            !function(e4, t3) {
-              if (!(e4 instanceof t3)) throw new TypeError("Cannot call a class as a function");
-            }(this, t2);
-            var i2 = l(this, (t2.__proto__ || Object.getPrototypeOf(t2)).call(this)), o2 = i2, r2 = void 0, a2 = "", u2 = n2.style || {};
-            if (i2.setLogger("bullet"), i2.danmu = e3, i2.options = n2, i2.duration = n2.duration, i2.id = n2.id, i2.container = e3.container, i2.start = n2.start, i2.prior = n2.prior, i2.realTime = n2.realTime, i2.color = n2.color, i2.bookChannelId = n2.bookChannelId, i2.direction = e3.direction, i2.reuseDOM = true, i2.domObj = e3.domObj, n2.el && 1 === n2.el.nodeType) {
-              if (n2.el.parentNode) return l(i2, { bulletCreateFail: true });
-              if (e3.config.disableCopyDOM || n2.disableCopyDOM) i2.reuseDOM = false, r2 = n2.el;
-              else {
-                var c = (0, s.copyDom)(n2.el);
-                n2.eventListeners && n2.eventListeners.length > 0 && n2.eventListeners.forEach(function(e4) {
-                  c.addEventListener(e4.event, e4.listener, e4.useCapture || false);
-                }), (r2 = i2.domObj.use()).childNodes.length > 0 && (r2.innerHTML = ""), r2.textContent && (r2.textContent = ""), r2.appendChild(c);
-              }
-            } else (r2 = i2.domObj.use()).textContent = n2.txt;
-            i2.onChangeDirection = function(e4) {
-              o2.direction = e4;
-            }, i2.danmu.on("changeDirection", i2.onChangeDirection);
-            var h = void 0;
-            if ((0, s.isNumber)(e3.config.bulletOffset) && e3.config.bulletOffset >= 0) h = e3.config.bulletOffset;
+          function u(e3) {
+            return Object.prototype.toString.call(e3).match(/([^\s.*]+)(?=]$)/g)[0];
+          }
+          function h(e3, t3, n2, o2) {
+            if (o2) e3.on(t3, n2), e3.once(o2, function i3() {
+              e3.off(t3, n2), e3.off(o2, i3);
+            });
             else {
-              var f = e3.containerPos;
-              h = f.width / 10 > 100 ? 100 : f.width / 10;
+              var i2 = function(o3) {
+                n2(o3), e3.off(t3, i2);
+              };
+              e3.on(t3, i2);
             }
-            var d = n2.realTime ? 0 : Math.floor(Math.random() * h), p = i2.updateOffset(d, true);
-            return u2.left = p, Object.keys(u2).forEach(function(e4) {
-              a2 += e4 + ":" + u2[e4] + ";";
-            }), (0, s.styleCSSText)(r2, a2), "top" === n2.mode || "bottom" === n2.mode ? i2.mode = n2.mode : i2.mode = "scroll", i2.el = r2, n2.like && n2.like.el && i2.setLikeDom(n2.like.el, n2.like.style), i2.status = "waiting", i2;
           }
-          return function(e3, t3) {
-            if ("function" != typeof t3 && null !== t3) throw new TypeError("Super expression must either be null or a function, not " + typeof t3);
-            e3.prototype = Object.create(t3 && t3.prototype, { constructor: { value: e3, enumerable: false, writable: true, configurable: true } }), t3 && (Object.setPrototypeOf ? Object.setPrototypeOf(e3, t3) : e3.__proto__ = t3);
-          }(t2, e2), o(t2, [{ key: "updateOffset", value: function(e3) {
-            var t3 = arguments.length > 1 && void 0 !== arguments[1] && arguments[1];
-            this.random = e3;
-            var n2 = this.danmu.containerPos.width + e3 + "px";
-            return t3 || (0, s.styleUtil)(this.el, "left", this.danmu.containerPos.width + e3 + "px"), n2;
-          } }, { key: "attach", value: function() {
-            var e3 = this.el;
-            this.container.contains(e3) || this.container.appendChild(e3), this.elPos = e3.getBoundingClientRect(), "b2t" === this.direction ? (this.width = this.elPos.height, this.height = this.elPos.width) : (this.width = this.elPos.width, this.height = this.elPos.height), this.moveV && (this.duration = (this.danmu.containerPos.width + this.random + this.width) / this.moveV * 1e3), this.danmu.config && (this.danmu.config.mouseControl && (this.mouseoverFunWrapper = this.mouseoverFun.bind(this), e3.addEventListener("mouseover", this.mouseoverFunWrapper, false)), this.danmu.config.mouseEnterControl && (this.mouseEnterFunWrapper = this.mouseoverFun.bind(this), e3.addEventListener("mouseenter", this.mouseEnterFunWrapper, false))), this._onTransitionEnd = this._onTransitionEnd.bind(this), e3.addEventListener("transitionend", this._onTransitionEnd, false);
-          } }, { key: "detach", value: function() {
-            var e3 = this.el;
-            if (e3) {
-              var t3 = this.danmu.config;
-              t3 && (t3.mouseControl && e3.removeEventListener("mouseover", this.mouseoverFunWrapper, false), t3.mouseEnterControl && e3.removeEventListener("mouseenter", this.mouseEnterFunWrapper, false)), e3.removeEventListener("transitionend", this._onTransitionEnd, false), this.reuseDOM ? this.domObj.unused(e3) : e3.parentNode && e3.parentNode.removeChild(e3), this.el = null;
+          function f(e3, t3, n2) {
+            var o2 = e3.style;
+            try {
+              o2[t3] = n2;
+            } catch (e4) {
+              o2.setProperty(t3, n2);
             }
-            this.elPos = void 0, this.danmu.off("changeDirection", this.onChangeDirection);
-          } }, { key: "mouseoverFun", value: function(e3) {
-            this.danmu && this.danmu.mouseControl && this.danmu.config.mouseControlPause || "waiting" === this.status || "end" === this.status || this.danmu && this.danmu.emit("bullet_hover", { bullet: this, event: e3 });
-          } }, { key: "_onTransitionEnd", value: function() {
-            this.status = "end", this.remove(false);
-          } }, { key: "topInit", value: function() {
-            this.logger && this.logger.info("topInit #" + (this.options.txt || "[DOM Element]") + "#"), "b2t" === this.direction ? ((0, s.styleUtil)(this.el, "transformOrigin", "left top"), (0, s.styleUtil)(this.el, "transform", "translateX(-" + this.top + "px) translateY(" + this.danmu.containerPos.height + "px) translateZ(0px) rotate(90deg)"), (0, s.styleUtil)(this.el, "transition", "transform 0s linear 0s")) : (0, s.styleUtil)(this.el, "top", this.top + "px");
-          } }, { key: "pauseMove", value: function() {
-            var e3 = arguments.length > 0 && void 0 !== arguments[0] && arguments[0], t3 = this;
-            if ("paused" !== t3.status && ("forcedPause" !== t3.status && (this.status = "paused"), t3._moveV = void 0, this.el)) if ("scroll" === this.mode) {
-              var n2 = t3.danmu.containerPos;
-              if (e3) {
-                var i2 = ((/* @__PURE__ */ new Date()).getTime() - t3.moveTime) / 1e3, o2 = i2 * this.moveV, r2 = 0;
-                r2 = t3.moveMoreS - o2 >= 0 ? "b2t" === this.direction ? (t3.moveMoreS - o2) / t3.moveContainerHeight * n2.height : (t3.moveMoreS - o2) / t3.moveContainerWidth * n2.width : t3.moveMoreS - o2, "b2t" === this.direction ? (0, s.styleUtil)(this.el, "transform", "translateX(-" + this.top + "px) translateY(" + r2 + "px) translateZ(0px) rotate(90deg)") : (0, s.styleUtil)(this.el, "left", r2 + "px");
-              } else "b2t" === this.direction ? (0, s.styleUtil)(this.el, "transform", "translateX(-" + this.top + "px) translateY(" + (this.el.getBoundingClientRect().top - n2.top) + "px) translateZ(0px) rotate(90deg)") : (0, s.styleUtil)(this.el, "left", this.el.getBoundingClientRect().left - n2.left + "px");
-              "b2t" === this.direction || (0, s.styleUtil)(this.el, "transform", "translateX(0px) translateY(0px) translateZ(0px)"), (0, s.styleUtil)(this.el, "transition", "transform 0s linear 0s");
-            } else this.pastDuration && this.startTime ? this.pastDuration = this.pastDuration + (/* @__PURE__ */ new Date()).getTime() - this.startTime : this.pastDuration = 1;
-          } }, { key: "startMove", value: function(e3) {
-            if (this.hasMove || (this.danmu.emit("bullet_start", this), this.hasMove = true), ("forcedPause" !== this.status || e3) && this.el && "start" !== this.status) if (this.status = "start", (0, s.styleUtil)(this.el, "backface-visibility", "hidden"), (0, s.styleUtil)(this.el, "perspective", "500em"), "scroll" === this.mode) {
-              var t3 = this.danmu.containerPos;
-              if ("b2t" === this.direction) {
-                var n2 = (this.el.getBoundingClientRect().bottom - t3.top) / this.moveV;
-                (0, s.styleUtil)(this.el, "transition", "transform " + n2 + "s linear 0s"), (0, s.styleUtil)(this.el, "transform", "translateX(-" + this.top + "px) translateY(-" + this.height + "px) translateZ(0px) rotate(90deg)"), this.moveTime = (/* @__PURE__ */ new Date()).getTime(), this.moveMoreS = this.el.getBoundingClientRect().top - t3.top, this.moveContainerHeight = t3.height;
-              } else {
+          }
+          function d(e3) {
+            return "number" == typeof e3 && !Number.isNaN(e3);
+          }
+          function m(e3) {
+            return (m = Object.setPrototypeOf ? Object.getPrototypeOf : function(e4) {
+              return e4.__proto__ || Object.getPrototypeOf(e4);
+            })(e3);
+          }
+          function p(e3, t3) {
+            return (p = Object.setPrototypeOf || function(e4, t4) {
+              return e4.__proto__ = t4, e4;
+            })(e3, t3);
+          }
+          function g() {
+            try {
+              var e3 = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function() {
+              }));
+            } catch (e4) {
+            }
+            return (g = function() {
+              return !!e3;
+            })();
+          }
+          var v = new s("bullet"), y = function(e3) {
+            var t3;
+            if ("function" != typeof e3 && null !== e3) throw TypeError("Super expression must either be null or a function");
+            function n2(e4) {
+              var t4, o2, i2 = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : {};
+              if (!(this instanceof n2)) throw TypeError("Cannot call a class as a function");
+              t4 = m(t4 = n2), o2 = function(e5, t5) {
+                var n3;
+                if (t5 && ("object" == ((n3 = t5) && "undefined" != typeof Symbol && n3.constructor === Symbol ? "symbol" : typeof n3) || "function" == typeof t5)) return t5;
+                if (void 0 === e5) throw ReferenceError("this hasn't been initialised - super() hasn't been called");
+                return e5;
+              }(this, g() ? Reflect.construct(t4, [], m(this).constructor) : t4.apply(this, void 0));
+              var r2 = e4.container, s2 = e4.recycler, a2 = e4.config;
+              return o2.setLogger(v), o2.danmu = e4, o2.options = i2, o2.duration = i2.duration, o2.id = i2.id, o2.container = r2, o2.mode = "top" === i2.mode || "bottom" === i2.mode ? i2.mode : "scroll", o2.start = i2.start, o2.prior = i2.prior, o2.realTime = i2.realTime, o2.color = i2.color, o2.bookChannelId = i2.bookChannelId, o2.reuseDOM = true, o2.noCopyEl = !!(a2.disableCopyDOM || i2.disableCopyDOM), o2.recycler = s2, o2._fullySlideInScreenDuration = void 0, o2._lastMoveTime = void 0, o2.status = "waiting", i2.elLazyInit || (o2.bulletCreateFail = !o2._makeEl()), o2;
+            }
+            return n2.prototype = Object.create(e3 && e3.prototype, { constructor: { value: n2, writable: true, configurable: true } }), e3 && p(n2, e3), t3 = [{ key: "moveV", get: function() {
+              var e4 = this.danmu, t4 = this.options, n3 = this._moveV;
+              if (!n3) {
+                if (t4.moveV) n3 = t4.moveV;
+                else if (this.elPos) {
+                  var o2 = e4.containerPos;
+                  n3 = ("b2t" === this.direction ? o2.height + (e4.config.chaseEffect ? this.height : 0) : o2.width + (e4.config.chaseEffect ? this.width : 0)) / this.duration * 1e3;
+                }
+                n3 && (n3 *= e4.main.playRate, this._moveV = n3);
+              }
+              return n3;
+            } }, { key: "direction", get: function() {
+              return this.danmu.direction;
+            } }, { key: "fullySlideIntoScreen", get: function() {
+              var e4 = true;
+              return "scroll" === this.mode && this._lastMoveTime && this._fullySlideInScreenDuration > 0 && (e4 = ((/* @__PURE__ */ new Date()).getTime() - this._lastMoveTime) / 1e3 >= this._fullySlideInScreenDuration), e4;
+            } }, { key: "_makeEl", value: function() {
+              var e4, t4, n3 = this.danmu, o2 = this.options, i2 = n3.config, r2 = n3.globalHooks, s2 = "", a2 = o2.style || {};
+              if (a2.perspective = "500em", o2.el || o2.elLazyInit) {
+                if (this.noCopyEl && (this.reuseDOM = false), o2.elLazyInit) {
+                  if ("function" == typeof r2.bulletCreateEl) try {
+                    var l2, c2 = r2.bulletCreateEl(o2);
+                    l2 = HTMLElement, e4 = (null != l2 && "undefined" != typeof Symbol && l2[Symbol.hasInstance] ? !!l2[Symbol.hasInstance](c2) : c2 instanceof l2) ? c2 : c2.el;
+                  } catch (e5) {
+                  }
+                } else if (1 === o2.el.nodeType && !o2.el.parentNode) if (this.reuseDOM) {
+                  var u2 = function(e5) {
+                    if (!e5 || 1 !== e5.nodeType) return "";
+                    var t5 = document.createElement(e5.tagName);
+                    return Array.prototype.forEach.call(e5.attributes, function(e6) {
+                      t5.setAttribute(e6.name, e6.value);
+                    }), e5.innerHTML && (t5.innerHTML = e5.innerHTML), t5;
+                  }(o2.el);
+                  o2.eventListeners && o2.eventListeners.length > 0 && o2.eventListeners.forEach(function(e5) {
+                    u2.addEventListener(e5.event, e5.listener, e5.useCapture || false);
+                  }), (e4 = this.recycler.use()).childNodes.length > 0 && (e4.innerHTML = ""), e4.textContent && (e4.textContent = ""), e4.appendChild(u2);
+                } else e4 = o2.el;
+              } else "string" == typeof o2.txt && ((e4 = this.recycler.use()).textContent = o2.txt);
+              if (!e4 || !n3.main) return false;
+              if (d(i2.bulletOffset) && i2.bulletOffset >= 0) t4 = i2.bulletOffset;
+              else {
+                var h2 = n3.containerPos;
+                t4 = h2.width / 10 > 100 ? 100 : h2.width / 10;
+              }
+              var f2 = o2.realTime ? 0 : Math.floor(Math.random() * t4);
+              a2.left = this.updateOffset(f2, true), Object.keys(a2).forEach(function(e5) {
+                var t5 = e5.replace(/[A-Z]/g, function(e6) {
+                  return "-" + e6.toLowerCase();
+                });
+                s2 += "".concat(t5, ":").concat(a2[e5], ";");
+              });
+              var m2 = s2, p2 = e4.style;
+              try {
+                p2.cssText = m2;
+              } catch (e5) {
+              }
+              return this.el = e4, o2.like && o2.like.el && this.setLikeDom(o2.like.el, o2.like.style), true;
+            } }, { key: "updateOffset", value: function(e4) {
+              var t4 = arguments.length > 1 && void 0 !== arguments[1] && arguments[1];
+              this.random = e4;
+              var n3 = this.danmu.containerPos.width + e4 + "px";
+              return t4 || f(this.el, "left", this.danmu.containerPos.width + e4 + "px"), n3;
+            } }, { key: "attach", value: function() {
+              if (this.options.elLazyInit && !this.el && this._makeEl(), this.danmu && this.danmu.main) {
+                var e4 = this.danmu, t4 = this.options, n3 = this.el, o2 = e4.globalHooks;
+                o2.bulletAttaching && o2.bulletAttaching(t4), this.container.contains(n3) || this.container.appendChild(n3), this.elPos = n3.getBoundingClientRect(), "b2t" === this.direction ? (this.width = this.elPos.height, this.height = this.elPos.width) : (this.width = this.elPos.width, this.height = this.elPos.height), this.moveV && (this.duration = (this.danmu.containerPos.width + this.random + this.width) / this.moveV * 1e3), o2.bulletAttached && o2.bulletAttached(t4, n3);
+              }
+            } }, { key: "detach", value: function() {
+              var e4 = this.el, t4 = this.danmu, n3 = this.options, o2 = t4.globalHooks;
+              e4 && (o2.bulletDetaching && o2.bulletDetaching(n3), this.reuseDOM ? this.recycler.unused(e4) : e4.parentNode && e4.parentNode.removeChild(e4), o2.bulletDetached && o2.bulletDetached(n3, e4), this.el = null), this.elPos = void 0;
+            } }, { key: "topInit", value: function() {
+              this.logger && this.logger.info("topInit #".concat(this.options.txt || "[DOM Element]", "#")), "b2t" === this.direction ? (f(this.el, "transformOrigin", "left top"), f(this.el, "transform", "translateX(-".concat(this.top, "px) translateY(").concat(this.danmu.containerPos.height, "px) translateZ(0px) rotate(90deg)")), f(this.el, "transition", "transform 0s linear 0s")) : f(this.el, "top", "".concat(this.top, "px"));
+            } }, { key: "pauseMove", value: function() {
+              var e4 = arguments.length > 0 && void 0 !== arguments[0] && arguments[0];
+              if ("paused" !== this.status && ("forcedPause" !== this.status && (this.status = "paused"), this._moveV = void 0, this.el)) if ("scroll" === this.mode) {
+                var t4 = this.danmu.containerPos;
+                if (e4) {
+                  var n3 = ((/* @__PURE__ */ new Date()).getTime() - this._lastMoveTime) / 1e3 * this.moveV, o2 = 0;
+                  o2 = this.moveMoreS - n3 >= 0 ? "b2t" === this.direction ? (this.moveMoreS - n3) / this.moveContainerHeight * t4.height : (this.moveMoreS - n3) / this.moveContainerWidth * t4.width : this.moveMoreS - n3, "b2t" === this.direction ? f(this.el, "transform", "translateX(-".concat(this.top, "px) translateY(").concat(o2, "px) translateZ(0px) rotate(90deg)")) : f(this.el, "left", "".concat(o2, "px"));
+                } else "b2t" === this.direction ? f(this.el, "transform", "translateX(-".concat(this.top, "px) translateY(").concat(this.el.getBoundingClientRect().top - t4.top, "px) translateZ(0px) rotate(90deg)")) : f(this.el, "left", "".concat(this.el.getBoundingClientRect().left - t4.left, "px"));
+                "b2t" === this.direction || f(this.el, "transform", "translateX(0px) translateY(0px) translateZ(0px)"), f(this.el, "transition", "transform 0s linear 0s");
+              } else this.pastDuration && this.startTime ? this.pastDuration = this.pastDuration + (/* @__PURE__ */ new Date()).getTime() - this.startTime : this.pastDuration = 1;
+            } }, { key: "startMove", value: function(e4) {
+              if ((this.hasMove || (this.danmu.emit("bullet_start", this), this.hasMove = true), ("forcedPause" !== this.status || e4) && this.el) && "start" !== this.status) if (this.status = "start", "scroll" === this.mode) {
+                var t4, n3 = this.danmu.containerPos;
                 if (!this.el) return;
-                var i2 = this.el.getBoundingClientRect(), o2 = i2.right - t3.left, r2 = o2 / this.moveV;
-                i2.right > t3.left ? ((0, s.styleUtil)(this.el, "transition", "transform " + r2 + "s linear 0s"), (0, s.styleUtil)(this.el, "transform", "translateX(-" + o2 + "px) translateY(0px) translateZ(0px)"), this.moveTime = (/* @__PURE__ */ new Date()).getTime(), this.moveMoreS = i2.left - t3.left, this.moveContainerWidth = t3.width) : (this.status = "end", this.remove());
+                var o2 = this.el.getBoundingClientRect();
+                if ("b2t" === this.direction) {
+                  t4 = o2.bottom - n3.bottom;
+                  var i2 = (o2.bottom - n3.top) / this.moveV;
+                  f(this.el, "transition", "transform ".concat(i2, "s linear 0s")), f(this.el, "transform", "translateX(-".concat(this.top, "px) translateY(-").concat(this.height, "px) translateZ(0px) rotate(90deg)")), this._lastMoveTime = (/* @__PURE__ */ new Date()).getTime(), this.moveMoreS = o2.top - n3.top, this.moveContainerHeight = n3.height;
+                } else {
+                  t4 = o2.right - n3.right;
+                  var r2 = o2.right - n3.left, s2 = r2 / this.moveV;
+                  o2.right > n3.left ? (f(this.el, "transition", "transform ".concat(s2, "s linear 0s")), f(this.el, "transform", "translateX(-".concat(r2, "px) translateY(0px) translateZ(0px)")), this._lastMoveTime = (/* @__PURE__ */ new Date()).getTime(), this.moveMoreS = o2.left - n3.left, this.moveContainerWidth = n3.width) : (this.status = "end", this.remove());
+                }
+                this._fullySlideInScreenDuration = t4 / this.moveV;
+              } else {
+                var a2 = (/* @__PURE__ */ new Date()).getTime(), l2 = (this.startTime && a2 - this.startTime > this.duration ? a2 - this.startTime : this.duration) / 1e3;
+                f(this.el, "left", "50%"), f(this.el, "margin", "0 0 0 -".concat(this.width / 2, "px")), f(this.el, "visibility", "hidden"), f(this.el, "transition", "visibility ".concat(l2, "s 0s")), this.pastDuration || (this.pastDuration = 1), this.startTime = a2;
               }
-            } else {
-              var a2 = (/* @__PURE__ */ new Date()).getTime(), l2 = (this.startTime && a2 - this.startTime > this.duration ? a2 - this.startTime : this.duration) / 1e3;
-              (0, s.styleUtil)(this.el, "left", "50%"), (0, s.styleUtil)(this.el, "margin", "0 0 0 -" + this.width / 2 + "px"), (0, s.styleUtil)(this.el, "visibility", "hidden"), (0, s.styleUtil)(this.el, "transition", "visibility " + l2 + "s 0s"), this.pastDuration || (this.pastDuration = 1), this.startTime = a2;
-            }
-          } }, { key: "remove", value: function() {
-            var e3 = !(arguments.length > 0 && void 0 !== arguments[0]) || arguments[0];
-            this.logger && this.logger.info("remove #" + (this.options.txt || "[DOM Element]") + "#");
-            var t3 = this;
-            e3 && t3.pauseMove(), t3.el && t3.el.parentNode && (t3.detach(), this.options.el && 1 === this.options.el.nodeType && this.danmu.config.disableCopyDOM && (0, s.styleUtil)(this.options.el, "transform", "none"), t3.danmu.emit("bullet_remove", { bullet: t3 }));
-          } }, { key: "setFontSize", value: function(e3) {
-            this.el && (this.el.style.fontSize = e3);
-          } }, { key: "setLikeDom", value: function(e3, t3) {
-            if (e3) {
-              Object.keys(t3).forEach(function(n3) {
-                e3.style[n3] = t3[n3];
-              });
-              if (e3.className = "danmu-like", this.el) {
-                var n2 = this.el.querySelector(".danmu-like");
-                n2 && this.el.removeChild(n2), this.el.innerHTML = "" + this.el.innerHTML + e3.outerHTML;
+            } }, { key: "remove", value: function() {
+              var e4 = !(arguments.length > 0) || void 0 === arguments[0] || arguments[0];
+              this.logger && this.logger.info("remove #".concat(this.options.txt || "[DOM Element]", "#")), e4 && this.pauseMove(), this.el && this.el.parentNode && (this.detach(), this.options.el && 1 === this.options.el.nodeType && this.noCopyEl && f(this.options.el, "transform", "none"), this.danmu.emit("bullet_remove", { bullet: this }));
+            } }, { key: "setFontSize", value: function(e4) {
+              this.el && (this.el.style.fontSize = e4);
+            } }, { key: "setLikeDom", value: function(e4, t4) {
+              if (e4) {
+                Object.keys(t4).forEach(function(n4) {
+                  e4.style[n4] = t4[n4];
+                });
+                var n3 = "danmu-like";
+                if (e4.className = n3, this.el) {
+                  var o2 = this.el.querySelector("." + n3);
+                  o2 && this.el.removeChild(o2), this.el.innerHTML = "".concat(this.el.innerHTML).concat(e4.outerHTML);
+                }
               }
-            }
-            return e3;
-          } }, { key: "moveV", get: function() {
-            var e3 = this._moveV;
-            if (!e3) {
-              if (this.options.moveV) e3 = this.options.moveV;
-              else if (this.elPos) {
-                var t3 = this.danmu.containerPos;
-                e3 = ("b2t" === this.direction ? t3.height + this.height : t3.width + this.width) / this.duration * 1e3;
+              return e4;
+            } }], function(e4, t4) {
+              for (var n3 = 0; n3 < t4.length; n3++) {
+                var o2 = t4[n3];
+                o2.enumerable = o2.enumerable || false, o2.configurable = true, "value" in o2 && (o2.writable = true), Object.defineProperty(e4, o2.key, o2);
               }
-              e3 && (e3 *= this.danmu.main.playRate, this._moveV = e3);
-            }
-            return e3;
-          } }]), t2;
-        }(a.default);
-        t.default = u;
-      }, function(e, t, n) {
-        "use strict";
-        Object.defineProperty(t, "__esModule", { value: true });
-        var i, o = /* @__PURE__ */ function() {
-          function e2(e3, t2) {
-            for (var n2 = 0; n2 < t2.length; n2++) {
-              var i2 = t2[n2];
-              i2.enumerable = i2.enumerable || false, i2.configurable = true, "value" in i2 && (i2.writable = true), Object.defineProperty(e3, i2.key, i2);
-            }
+            }(n2.prototype, t3), n2;
+          }(a);
+          function b(e3) {
+            return (b = Object.setPrototypeOf ? Object.getPrototypeOf : function(e4) {
+              return e4.__proto__ || Object.getPrototypeOf(e4);
+            })(e3);
           }
-          return function(t2, n2, i2) {
-            return n2 && e2(t2.prototype, n2), i2 && e2(t2, i2), t2;
-          };
-        }(), r = n(1), a = (i = r) && i.__esModule ? i : { default: i }, s = n(0), l = n(31);
-        var u = function(e2) {
-          function t2(e3) {
-            !function(e4, t3) {
-              if (!(e4 instanceof t3)) throw new TypeError("Cannot call a class as a function");
-            }(this, t2);
-            var n2 = function(e4, t3) {
-              if (!e4) throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-              return !t3 || "object" != typeof t3 && "function" != typeof t3 ? e4 : t3;
-            }(this, (t2.__proto__ || Object.getPrototypeOf(t2)).call(this)), i2 = n2;
-            return i2.setLogger("channel"), i2.danmu = e3, i2.width = 0, i2.height = 0, i2.reset(true), i2.direction = e3.direction, i2.channels = [], i2.updatePos(), (0, s.attachEventListener)(n2.danmu, "bullet_remove", function(e4) {
-              i2.removeBullet(e4.bullet);
-            }, "destroy"), (0, s.attachEventListener)(n2.danmu, "changeDirection", function(e4) {
-              i2.direction = e4;
-            }, "destroy"), (0, s.attachEventListener)(n2.danmu, "channel_resize", function() {
-              i2.resize();
-            }, "destroy"), n2;
+          function _(e3, t3) {
+            return (_ = Object.setPrototypeOf || function(e4, t4) {
+              return e4.__proto__ = t4, e4;
+            })(e3, t3);
           }
-          return function(e3, t3) {
-            if ("function" != typeof t3 && null !== t3) throw new TypeError("Super expression must either be null or a function, not " + typeof t3);
-            e3.prototype = Object.create(t3 && t3.prototype, { constructor: { value: e3, enumerable: false, writable: true, configurable: true } }), t3 && (Object.setPrototypeOf ? Object.setPrototypeOf(e3, t3) : e3.__proto__ = t3);
-          }(t2, e2), o(t2, [{ key: "destroy", value: function() {
-            for (var e3 in this.logger && this.logger.info("destroy"), this.channels.splice(0, this.channels.length), this._cancelResizeTimer(), this) s.hasOwnProperty.call(this, e3) && delete this[e3];
-          } }, { key: "reset", value: function() {
-            var e3 = arguments.length > 0 && void 0 !== arguments[0] && arguments[0];
-            this.logger && this.logger.info("reset");
-            var t3 = this, n2 = t3.danmu, i2 = n2.container, o2 = n2.bulletBtn;
-            function r2() {
-              var e4 = i2.getBoundingClientRect();
-              t3.width = e4.width, t3.height = e4.height, t3.resetId && (cancelAnimationFrame(t3.resetId), t3.resetId = null);
-              var n3 = t3._initChannels(), o3 = n3.channelSize, r3 = n3.channelCount, a2 = n3.channels;
-              t3.channelCount = r3, t3.channels = a2, "b2t" === t3.direction ? t3.channelWidth = o3 : t3.channelHeight = o3;
+          function A() {
+            try {
+              var e3 = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function() {
+              }));
+            } catch (e4) {
             }
-            t3.container = i2, o2 && o2.main && o2.main.queue.forEach(function(e4) {
-              e4.remove();
-            }), t3.channels && t3.channels.length > 0 && ["scroll", "top", "bottom"].forEach(function(e4) {
-              for (var n3 = 0; n3 < t3.channels.length; n3++) t3.channels[n3].queue[e4].forEach(function(e5) {
+            return (A = function() {
+              return !!e3;
+            })();
+          }
+          var k = function(e3) {
+            var t3;
+            if ("function" != typeof e3 && null !== e3) throw TypeError("Super expression must either be null or a function");
+            function n2(e4) {
+              var t4, o2;
+              if (!(this instanceof n2)) throw TypeError("Cannot call a class as a function");
+              return t4 = b(t4 = n2), (o2 = function(e5, t5) {
+                var n3;
+                if (t5 && ("object" == ((n3 = t5) && "undefined" != typeof Symbol && n3.constructor === Symbol ? "symbol" : typeof n3) || "function" == typeof t5)) return t5;
+                if (void 0 === e5) throw ReferenceError("this hasn't been initialised - super() hasn't been called");
+                return e5;
+              }(this, A() ? Reflect.construct(t4, [], b(this).constructor) : t4.apply(this, void 0))).setLogger("channel"), o2.danmu = e4, o2.width = 0, o2.height = 0, o2.reset(true), o2.channels = [], o2.updatePos(), h(o2.danmu, "bullet_remove", function(e5) {
+                o2.removeBullet(e5.bullet);
+              }, "destroy"), h(o2.danmu, "channel_resize", function() {
+                o2.resize();
+              }, "destroy"), o2;
+            }
+            return n2.prototype = Object.create(e3 && e3.prototype, { constructor: { value: n2, writable: true, configurable: true } }), e3 && _(n2, e3), t3 = [{ key: "direction", get: function() {
+              return this.danmu.direction;
+            } }, { key: "checkAvailableTrack", value: function() {
+              var e4 = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : "scroll", t4 = this.channels, n3 = false;
+              if ("scroll" === e4) for (var o2, i2 = 0; i2 < t4.length; i2++) {
+                if (o2 = t4[i2], n3 = true, o2.operating[e4]) {
+                  n3 = false;
+                  continue;
+                }
+                var r2 = o2.queue[e4][0];
+                if (r2 && !r2.fullySlideIntoScreen) {
+                  n3 = false;
+                  continue;
+                }
+                if (n3) break;
+              }
+              else n3 = true;
+              return n3;
+            } }, { key: "destroy", value: function() {
+              for (var e4 in this.logger && this.logger.info("destroy"), this.channels.splice(0, this.channels.length), this._cancelResizeTimer(), this) l.call(this, e4) && delete this[e4];
+            } }, { key: "reset", value: function() {
+              var e4 = arguments.length > 0 && void 0 !== arguments[0] && arguments[0];
+              this.logger && this.logger.info("reset");
+              var t4 = this, n3 = t4.danmu, o2 = n3.container, i2 = n3.bulletBtn;
+              function r2() {
+                if (t4.danmu && t4.danmu.container) {
+                  var e5 = t4.danmu.container.getBoundingClientRect();
+                  t4.width = e5.width, t4.height = e5.height, t4.resetId && (cancelAnimationFrame(t4.resetId), t4.resetId = null);
+                  var n4 = t4._initChannels(), o3 = n4.channelSize, i3 = n4.channelCount, r3 = n4.channels;
+                  t4.channelCount = i3, t4.channels = r3, "b2t" === t4.direction ? t4.channelWidth = o3 : t4.channelHeight = o3;
+                }
+              }
+              t4.container = o2, i2 && i2.main && i2.main.queue.forEach(function(e5) {
                 e5.remove();
-              });
-            }), o2 && o2.main && o2.main.data && o2.main.data.forEach(function(e4) {
-              e4.attached_ = false;
-            }), e3 ? this.resetId = requestAnimationFrame(r2) : r2();
-          } }, { key: "getRealOccupyArea", value: function() {
-            return { width: this.width, height: this.height };
-          } }, { key: "updatePos", value: function() {
-            var e3 = this.container.getBoundingClientRect();
-            this.containerPos = e3, this.containerWidth = e3.width, this.containerHeight = e3.height, this.containerTop = e3.top, this.containerBottom = e3.bottom, this.containerLeft = e3.left, this.containerRight = e3.right;
-          } }, { key: "addBullet", value: function(e3) {
-            var t3 = this, n2 = this.danmu, i2 = this.channels, o2 = void 0, r2 = void 0, a2 = void 0;
-            if ("b2t" === t3.direction ? (r2 = this.channelWidth, a2 = Math.ceil(e3.width / r2)) : (o2 = this.channelHeight, a2 = Math.ceil(e3.height / o2)), a2 > i2.length) return { result: false, message: "exceed channels.length, occupy=" + a2 + ",channelsSize=" + i2.length };
-            for (var s2 = true, l2 = void 0, u2 = -1, c = 0, h = i2.length; c < h; c++) if (i2[c].queue[e3.mode].some(function(t4) {
-              return t4.id === e3.id;
-            })) return { result: false, message: "exited, channelOrder=" + c + ",danmu_id=" + e3.id };
-            if ("scroll" === e3.mode) for (var f = 0, d = i2.length - a2; f <= d; f++) {
-              s2 = true;
-              for (var p = f; p < f + a2; p++) {
-                if ((l2 = i2[p]).operating.scroll) {
-                  s2 = false;
-                  break;
-                }
-                if (l2.bookId.scroll && l2.bookId.scroll !== e3.id) {
-                  s2 = false;
-                  break;
-                }
-                l2.operating.scroll = true;
-                var g = l2.queue.scroll[0];
-                if (g) {
-                  var m = g.el.getBoundingClientRect();
-                  if ("b2t" === t3.direction) {
-                    if (m.bottom >= t3.containerPos.bottom) {
-                      s2 = false, l2.operating.scroll = false;
-                      break;
-                    }
-                  } else if (m.right >= t3.containerPos.right) {
-                    s2 = false, l2.operating.scroll = false;
+              }), t4.channels && t4.channels.length > 0 && ["scroll", "top", "bottom"].forEach(function(e5) {
+                for (var n4 = 0; n4 < t4.channels.length; n4++) t4.channels[n4].queue[e5].forEach(function(e6) {
+                  e6.remove();
+                });
+              }), i2 && i2.main && i2.main.data && i2.main.data.forEach(function(e5) {
+                e5.attached_ = false;
+              }), e4 ? this.resetId = requestAnimationFrame(r2) : r2();
+            } }, { key: "getRealOccupyArea", value: function() {
+              return { width: this.width, height: this.height };
+            } }, { key: "updatePos", value: function() {
+              var e4 = this.container.getBoundingClientRect();
+              this.containerPos = e4, this.containerWidth = e4.width, this.containerHeight = e4.height, this.containerTop = e4.top, this.containerBottom = e4.bottom, this.containerLeft = e4.left, this.containerRight = e4.right;
+            } }, { key: "addBullet", value: function(e4) {
+              var t4 = this, n3 = this.danmu, o2 = this.channels;
+              if ("b2t" === t4.direction ? (r2 = this.channelWidth, s2 = Math.ceil(e4.width / r2)) : (i2 = this.channelHeight, s2 = Math.ceil(e4.height / i2)), s2 > o2.length) return { result: false, message: "exceed channels.length, occupy=".concat(s2, ",channelsSize=").concat(o2.length) };
+              for (var i2, r2, s2, a2, l2 = true, c2 = -1, u2 = 0, h2 = o2.length; u2 < h2; u2++) if (o2[u2].queue[e4.mode].some(function(t5) {
+                return t5.id === e4.id;
+              })) return { result: false, message: "exited, channelOrder=".concat(u2, ",danmu_id=").concat(e4.id) };
+              if ("scroll" === e4.mode) for (var f2 = 0, d2 = o2.length - s2; f2 <= d2; f2 += s2) {
+                l2 = true;
+                for (var m2 = f2; m2 < f2 + s2; m2++) {
+                  if ((a2 = o2[m2]).operating.scroll || a2.bookId.scroll && a2.bookId.scroll !== e4.id) {
+                    l2 = false;
                     break;
                   }
-                  var v = void 0, y = g.moveV, b = void 0, _ = e3.moveV, w = void 0;
-                  if ("b2t" === t3.direction ? (b = (v = m.bottom - t3.containerTop) / y, w = t3.containerHeight + e3.random - v) : (b = (v = m.right - t3.containerLeft) / y, w = t3.containerWidth + e3.random - v), _ > y) {
-                    var O = w / (_ - y);
-                    if (n2.config.bOffset || (n2.config.bOffset = 0), b + n2.config.bOffset >= O) {
-                      var k = b * _ - t3.containerPos.width;
-                      k > 0 && e3.updateOffset(k + (1 + Math.ceil(5 * Math.random())));
+                  a2.operating.scroll = true;
+                  var p2 = a2.queue.scroll[0];
+                  if (p2) {
+                    var g2 = p2.el.getBoundingClientRect();
+                    if ("b2t" === t4.direction) {
+                      if (g2.bottom >= t4.containerPos.bottom) {
+                        l2 = false, a2.operating.scroll = false;
+                        break;
+                      }
+                    } else if (g2.right >= t4.containerPos.right) {
+                      l2 = false, a2.operating.scroll = false;
+                      break;
+                    }
+                    var v2 = void 0, y2 = p2.moveV, b2 = void 0, _2 = e4.moveV, A2 = void 0;
+                    if ("b2t" === t4.direction ? (b2 = (v2 = g2.bottom - t4.containerTop) / y2, A2 = t4.containerHeight + e4.random - v2) : (b2 = (v2 = g2.right - t4.containerLeft) / y2, A2 = t4.containerWidth + e4.random - v2), _2 > y2) {
+                      var k2 = A2 / (_2 - y2);
+                      if (n3.config.bOffset || (n3.config.bOffset = 0), b2 + n3.config.bOffset >= k2) {
+                        var x2 = b2 * _2 - t4.containerPos.width;
+                        x2 > 0 && e4.updateOffset(x2 + (1 + Math.ceil(5 * Math.random())));
+                      }
                     }
                   }
+                  a2.operating.scroll = false;
                 }
-                l2.operating.scroll = false;
-              }
-              if (s2) {
-                u2 = f;
-                break;
-              }
-            }
-            else if ("top" === e3.mode) for (var x = 0, C = i2.length - a2; x <= C; x++) {
-              s2 = true;
-              for (var j = x; j < x + a2; j++) {
-                if (j > Math.floor(i2.length / 2)) {
-                  s2 = false;
-                  break;
-                }
-                if ((l2 = i2[j]).operating[e3.mode]) {
-                  s2 = false;
-                  break;
-                }
-                if ((l2.bookId[e3.mode] || e3.prior) && l2.bookId[e3.mode] !== e3.id) {
-                  s2 = false;
-                  break;
-                }
-                if (l2.operating[e3.mode] = true, l2.queue[e3.mode].length > 0) {
-                  s2 = false, l2.operating[e3.mode] = false;
-                  break;
-                }
-                l2.operating[e3.mode] = false;
-              }
-              if (s2) {
-                u2 = x;
-                break;
-              }
-            }
-            else if ("bottom" === e3.mode) for (var E = i2.length - a2; E >= 0; E--) {
-              s2 = true;
-              for (var M = E; M < E + a2; M++) {
-                if (M <= Math.floor(i2.length / 2)) {
-                  s2 = false;
-                  break;
-                }
-                if ((l2 = i2[M]).operating[e3.mode]) {
-                  s2 = false;
-                  break;
-                }
-                if ((l2.bookId[e3.mode] || e3.prior) && l2.bookId[e3.mode] !== e3.id) {
-                  s2 = false;
-                  break;
-                }
-                if (l2.operating[e3.mode] = true, l2.queue[e3.mode].length > 0) {
-                  s2 = false, l2.operating[e3.mode] = false;
-                  break;
-                }
-                l2.operating[e3.mode] = false;
-              }
-              if (s2) {
-                u2 = E;
-                break;
-              }
-            }
-            if (-1 !== u2) {
-              for (var T = u2, L = u2 + a2; T < L; T++) (l2 = i2[T]).operating[e3.mode] = true, l2.queue[e3.mode].unshift(e3), e3.prior && (delete l2.bookId[e3.mode], t3.logger && t3.logger.info(T + "号轨道恢复正常使用")), l2.operating[e3.mode] = false;
-              if (e3.prior) {
-                if (t3.logger && t3.logger.info(e3.id + "号优先弹幕运行完毕"), delete e3.bookChannelId, n2.player) n2.bulletBtn.main.data.some(function(t4) {
-                  return t4.id === e3.id && (delete t4.bookChannelId, true);
-                });
-              }
-              return e3.channel_id = [u2, a2], e3.el.setAttribute("data-line-index", u2 + 1), "b2t" === t3.direction ? (e3.top = u2 * r2, t3.danmu.config.area && t3.danmu.config.area.start && (e3.top += t3.containerWidth * t3.danmu.config.area.start)) : (e3.top = u2 * o2, t3.danmu.config.area && t3.danmu.config.area.start && (e3.top += t3.containerHeight * t3.danmu.config.area.start)), { result: e3, message: "success" };
-            }
-            if (e3.options.realTime) {
-              var P = 0, S = -1, z = null;
-              if (t3.danmu.bulletBtn.main.queue.forEach(function(e4, n3) {
-                !e4.prior && !e4.options.realTime && e4.el && e4.el.getBoundingClientRect().left > t3.containerPos.right && e4.start >= P && (P = e4.start, S = n3, z = e4);
-              }), z) {
-                z.remove(), t3.removeBullet(z), t3.danmu.bulletBtn.main.queue.splice(S, 1), e3.channel_id = z.channel_id;
-                for (var D = z.channel_id[0], I = z.channel_id[0] + z.channel_id[1]; D < I; D++) (l2 = i2[D]).operating[e3.mode] = true, l2.queue[e3.mode].unshift(e3), e3.prior && delete l2.bookId[e3.mode], l2.operating[e3.mode] = false;
-                return e3.top = z.top, t3.danmu.config.area && t3.danmu.config.area.start && (e3.top += t3.containerHeight * t3.danmu.config.area.start), { result: e3, message: "success" };
-              }
-            }
-            if (e3.prior) if (e3.bookChannelId || t3.danmu.live) {
-              if (n2.player) n2.bulletBtn.main.data.some(function(n3) {
-                return n3.id === e3.id && (t3.logger && t3.logger.info(e3.id + "号优先弹幕将于2秒后再次请求注册"), n3.start += 2e3, true);
-              });
-            } else {
-              u2 = -1;
-              for (var R = 0, q = i2.length - a2; R <= q; R++) {
-                s2 = true;
-                for (var A = R; A < R + a2; A++) if (i2[A].bookId[e3.mode]) {
-                  s2 = false;
-                  break;
-                }
-                if (s2) {
-                  u2 = R;
+                if (l2) {
+                  c2 = f2;
                   break;
                 }
               }
-              if (-1 !== u2) {
-                for (var U = u2; U < u2 + a2; U++) i2[U].bookId[e3.mode] = e3.id, t3.logger && t3.logger.info(U + "号轨道被" + e3.id + "号优先弹幕预定");
-                if (n2.player) n2.bulletBtn.main.data.some(function(n3) {
-                  return n3.id === e3.id && (t3.logger && t3.logger.info(e3.id + "号优先弹幕将于2秒后再次请求注册"), n3.start += 2e3, n3.bookChannelId = [u2, a2], t3.logger && t3.logger.info(e3.id + "号优先弹幕预定了" + u2 + "~" + (u2 + a2 - 1) + "号轨道"), true);
-                });
-              }
-            }
-            return { result: false, message: "no surplus will right" };
-          } }, { key: "removeBullet", value: function(e3) {
-            this.logger && this.logger.info("removeBullet " + (e3.options.txt || "[DOM Element]"));
-            for (var t3 = this.channels, n2 = e3.channel_id, i2 = void 0, o2 = n2[0], r2 = n2[0] + n2[1]; o2 < r2; o2++) if (i2 = t3[o2]) {
-              i2.operating[e3.mode] = true;
-              var a2 = -1;
-              i2.queue[e3.mode].some(function(t4, n3) {
-                return t4.id === e3.id && (a2 = n3, true);
-              }), a2 > -1 && i2.queue[e3.mode].splice(a2, 1), i2.operating[e3.mode] = false;
-            }
-            e3.options.loop && this.danmu.bulletBtn.main.playedData.push(e3.options);
-          } }, { key: "resizeSync", value: function() {
-            this.resize(true);
-          } }, { key: "_initChannels", value: function() {
-            var e3 = this.danmu.config, t3 = e3.channelSize || (/mobile/gi.test(navigator.userAgent) ? 10 : 12), n2 = void 0;
-            if (e3.area) {
-              var i2 = e3.area, o2 = i2.lines, r2 = i2.start, a2 = i2.end;
-              if ((0, l.validAreaLineRule)(o2)) n2 = o2, "b2t" === this.direction ? this.width = n2 * t3 : this.height = n2 * t3;
-              else if (r2 >= 0 && a2 >= r2) {
-                var u2 = a2 - r2;
-                "b2t" === this.direction ? this.width = Math.floor(this.width * u2) : this.height = Math.floor(this.height * u2);
-              }
-            }
-            (0, s.isNumber)(n2) || (n2 = "b2t" === this.direction ? Math.floor(this.width / t3) : Math.floor(this.height / t3));
-            for (var c = [], h = 0; h < n2; h++) c[h] = { id: h, queue: { scroll: [], top: [], bottom: [] }, operating: { scroll: false, top: false, bottom: false }, bookId: {} };
-            return { channelSize: t3, channelCount: n2, channels: c };
-          } }, { key: "resize", value: function() {
-            var e3 = arguments.length > 0 && void 0 !== arguments[0] && arguments[0];
-            this.logger && this.logger.info("resize");
-            var t3 = this;
-            function n2(e4, t4) {
-              e4[t4] = { id: t4, queue: { scroll: [], top: [], bottom: [] }, operating: { scroll: false, top: false, bottom: false }, bookId: {} };
-            }
-            function i2(e4, i3) {
-              function o3(n3) {
-                ["scroll", "top"].forEach(function(i4) {
-                  t3.channels[n3].queue[i4].forEach(function(t4) {
-                    t4.el && e4[n3].queue[i4].push(t4);
-                  });
-                });
-              }
-              function r3(n3) {
-                t3.channels[n3].queue.bottom.forEach(function(o4) {
-                  if (o4.el && (e4[n3 + e4.length - t3.channels.length].queue.bottom.push(o4), o4.channel_id[0] + o4.channel_id[1] - 1 === n3)) {
-                    var r4 = [].concat(o4.channel_id);
-                    o4.channel_id = [r4[0] - t3.channels.length + e4.length, r4[1]], o4.top = o4.channel_id[0] * i3, t3.danmu.config.area && t3.danmu.config.area.start && (o4.top += t3.containerHeight * t3.danmu.config.area.start), o4.topInit();
+              else if ("top" === e4.mode) for (var j2 = 0, C2 = o2.length - s2; j2 <= C2; j2++) {
+                l2 = true;
+                for (var O2 = j2; O2 < j2 + s2; O2++) {
+                  if (O2 > Math.floor(o2.length / 2) || (a2 = o2[O2]).operating[e4.mode] || (a2.bookId[e4.mode] || e4.prior) && a2.bookId[e4.mode] !== e4.id) {
+                    l2 = false;
+                    break;
                   }
-                });
+                  if (a2.operating[e4.mode] = true, a2.queue[e4.mode].length > 0) {
+                    l2 = false, a2.operating[e4.mode] = false;
+                    break;
+                  }
+                  a2.operating[e4.mode] = false;
+                }
+                if (l2) {
+                  c2 = j2;
+                  break;
+                }
               }
-              for (var a2 = 0; a2 < t3.channels.length; a2++) n2(e4, a2), o3(a2), r3(a2);
-              for (var s2 = function(t4) {
-                ["scroll", "top", "bottom"].forEach(function(n3) {
-                  e4[t4].queue[n3].forEach(function(e5) {
-                    e5.resized = false;
+              else if ("bottom" === e4.mode) for (var w2 = o2.length - s2; w2 >= 0; w2--) {
+                l2 = true;
+                for (var S2 = w2; S2 < w2 + s2; S2++) {
+                  if (S2 <= Math.floor(o2.length / 2) || (a2 = o2[S2]).operating[e4.mode] || (a2.bookId[e4.mode] || e4.prior) && a2.bookId[e4.mode] !== e4.id) {
+                    l2 = false;
+                    break;
+                  }
+                  if (a2.operating[e4.mode] = true, a2.queue[e4.mode].length > 0) {
+                    l2 = false, a2.operating[e4.mode] = false;
+                    break;
+                  }
+                  a2.operating[e4.mode] = false;
+                }
+                if (l2) {
+                  c2 = w2;
+                  break;
+                }
+              }
+              if (-1 !== c2) {
+                for (var E2 = c2, T2 = c2 + s2; E2 < T2; E2++) (a2 = o2[E2]).operating[e4.mode] = true, a2.queue[e4.mode].unshift(e4), e4.prior && (delete a2.bookId[e4.mode], t4.logger && t4.logger.info(E2 + "号轨道恢复正常使用")), a2.operating[e4.mode] = false;
+                return e4.prior && (t4.logger && t4.logger.info(e4.id + "号优先弹幕运行完毕"), delete e4.bookChannelId, n3.player && n3.bulletBtn.main.data.some(function(t5) {
+                  return t5.id === e4.id && (delete t5.bookChannelId, true);
+                })), e4.channel_id = [c2, s2], e4.el.setAttribute("data-line-index", c2 + 1), "b2t" === t4.direction ? (e4.top = c2 * r2, t4.danmu.config.area && t4.danmu.config.area.start && (e4.top += t4.containerWidth * t4.danmu.config.area.start)) : (e4.top = c2 * i2, t4.danmu.config.area && t4.danmu.config.area.start && (e4.top += t4.containerHeight * t4.danmu.config.area.start)), { result: e4, message: "success" };
+              }
+              if (e4.options.realTime) {
+                var z2 = 0, M2 = -1, P2 = null;
+                if (t4.danmu.bulletBtn.main.queue.forEach(function(e5, n4) {
+                  !e5.prior && !e5.options.realTime && e5.el && e5.el.getBoundingClientRect().left > t4.containerPos.right && e5.start >= z2 && (z2 = e5.start, M2 = n4, P2 = e5);
+                }), P2) {
+                  P2.remove(), t4.removeBullet(P2), t4.danmu.bulletBtn.main.queue.splice(M2, 1), e4.channel_id = P2.channel_id;
+                  for (var I2 = P2.channel_id[0], L2 = P2.channel_id[0] + P2.channel_id[1]; I2 < L2; I2++) (a2 = o2[I2]).operating[e4.mode] = true, a2.queue[e4.mode].unshift(e4), e4.prior && delete a2.bookId[e4.mode], a2.operating[e4.mode] = false;
+                  return e4.top = P2.top, t4.danmu.config.area && t4.danmu.config.area.start && (e4.top += t4.containerHeight * t4.danmu.config.area.start), { result: e4, message: "success" };
+                }
+              }
+              if (e4.prior) if (e4.bookChannelId || t4.danmu.live) n3.player && n3.bulletBtn.main.data.some(function(n4) {
+                return n4.id === e4.id && (t4.logger && t4.logger.info(e4.id + "号优先弹幕将于2秒后再次请求注册"), n4.start += 2e3, true);
+              });
+              else {
+                c2 = -1;
+                for (var D2 = 0, B2 = o2.length - s2; D2 <= B2; D2++) {
+                  l2 = true;
+                  for (var q2 = D2; q2 < D2 + s2; q2++) if (o2[q2].bookId[e4.mode]) {
+                    l2 = false;
+                    break;
+                  }
+                  if (l2) {
+                    c2 = D2;
+                    break;
+                  }
+                }
+                if (-1 !== c2) {
+                  for (var R2 = c2; R2 < c2 + s2; R2++) o2[R2].bookId[e4.mode] = e4.id, t4.logger && t4.logger.info(R2 + "号轨道被" + e4.id + "号优先弹幕预定");
+                  n3.player && n3.bulletBtn.main.data.some(function(n4) {
+                    return n4.id === e4.id && (t4.logger && t4.logger.info(e4.id + "号优先弹幕将于2秒后再次请求注册"), n4.start += 2e3, n4.bookChannelId = [c2, s2], t4.logger && t4.logger.info("".concat(e4.id, "号优先弹幕预定了").concat(c2, "~").concat(c2 + s2 - 1, "号轨道")), true);
                   });
-                });
-              }, l2 = 0; l2 < e4.length; l2++) s2(l2);
-              t3.channels = e4, "b2t" === t3.direction ? t3.channelWidth = i3 : t3.channelHeight = i3;
-            }
-            function o2(e4, i3) {
-              for (var o3 = ["scroll", "top", "bottom"], r3 = function(r4) {
-                n2(e4, r4), o3.forEach(function(n3) {
-                  if ("top" === n3 && r4 > Math.floor(e4.length / 2)) ;
-                  else if ("bottom" === n3 && r4 <= Math.floor(e4.length / 2)) ;
-                  else {
-                    var o4 = "bottom" === n3 ? r4 - e4.length + t3.channels.length : r4;
-                    t3.channels[o4].queue[n3].forEach(function(a3, s3) {
-                      if (a3.el) {
-                        if (e4[r4].queue[n3].push(a3), "bottom" === n3 && a3.channel_id[0] + a3.channel_id[1] - 1 === o4) {
-                          var l2 = [].concat(a3.channel_id);
-                          a3.channel_id = [l2[0] - t3.channels.length + e4.length, l2[1]], a3.top = a3.channel_id[0] * i3, t3.danmu.config.area && t3.danmu.config.area.start && (a3.top += t3.containerHeight * t3.danmu.config.area.start), a3.topInit();
-                        }
-                        t3.channels[o4].queue[n3].splice(s3, 1);
+                }
+              }
+              return { result: false, message: "no surplus will right" };
+            } }, { key: "removeBullet", value: function(e4) {
+              this.logger && this.logger.info("removeBullet ".concat(e4.options.txt || "[DOM Element]"));
+              for (var t4, n3 = this.channels, o2 = e4.channel_id, i2 = o2[0], r2 = o2[0] + o2[1]; i2 < r2; i2++) !function(o3, i3) {
+                if (t4 = n3[o3]) {
+                  t4.operating[e4.mode] = true;
+                  var r3 = -1;
+                  t4.queue[e4.mode].some(function(t5, n4) {
+                    return t5.id === e4.id && (r3 = n4, true);
+                  }), r3 > -1 && t4.queue[e4.mode].splice(r3, 1), t4.operating[e4.mode] = false;
+                }
+              }(i2, 0);
+              e4.options.loop && this.danmu.bulletBtn.main.playedData.push(e4.options);
+            } }, { key: "resizeSync", value: function() {
+              this.resize(true);
+            } }, { key: "_initChannels", value: function() {
+              if (this.danmu && this.danmu.config) {
+                var e4 = this.danmu.config, t4 = e4.channelSize || (/mobile/gi.test(navigator.userAgent) ? 10 : 12);
+                if (e4.area) {
+                  var n3, o2 = e4.area, i2 = o2.lines, r2 = o2.start, s2 = o2.end;
+                  if ("number" == typeof i2 && i2 >= 0 && Number.isInteger(i2)) n3 = i2, "b2t" === this.direction ? this.width = n3 * t4 : this.height = n3 * t4;
+                  else if (r2 >= 0 && s2 >= r2) {
+                    var a2 = s2 - r2;
+                    "b2t" === this.direction ? this.width = Math.floor(this.width * a2) : this.height = Math.floor(this.height * a2);
+                  }
+                }
+                d(n3) || (n3 = "b2t" === this.direction ? Math.floor(this.width / t4) : Math.floor(this.height / t4));
+                for (var l2 = [], c2 = 0; c2 < n3; c2++) l2[c2] = { id: c2, queue: { scroll: [], top: [], bottom: [] }, operating: { scroll: false, top: false, bottom: false }, bookId: {} };
+                return { channelSize: t4, channelCount: n3, channels: l2 };
+              }
+            } }, { key: "resize", value: function() {
+              var e4 = arguments.length > 0 && void 0 !== arguments[0] && arguments[0];
+              this.logger && this.logger.info("resize");
+              var t4 = this;
+              function n3(e5, t5) {
+                e5[t5] = { id: t5, queue: { scroll: [], top: [], bottom: [] }, operating: { scroll: false, top: false, bottom: false }, bookId: {} };
+              }
+              function o2() {
+                var e5 = t4.danmu, o3 = e5.container, i2 = e5.bulletBtn;
+                t4.container = o3, t4.updatePos(), t4._cancelResizeTimer(), i2.main.data && i2.main.data.forEach(function(e6) {
+                  e6.bookChannelId && (delete e6.bookChannelId, t4.logger && t4.logger.info("resize导致" + e6.id + "号优先弹幕预定取消"));
+                }), t4.logger && t4.logger.info("resize导致所有轨道恢复正常使用"), t4.width = t4.containerWidth, t4.height = t4.containerHeight;
+                var r2 = t4._initChannels(), s2 = r2.channelSize, a2 = r2.channels;
+                if (t4.channels) if (t4.channels.length <= a2.length) {
+                  for (var l2 = function(e6) {
+                    ["scroll", "top", "bottom"].forEach(function(t5) {
+                      a2[e6].queue[t5].forEach(function(e7) {
+                        e7.resized = false;
+                      });
+                    });
+                  }, c2 = 0; c2 < t4.channels.length; c2++) n3(a2, c2), function(e6) {
+                    ["scroll", "top"].forEach(function(n4) {
+                      t4.channels[e6].queue[n4].forEach(function(t5) {
+                        t5.el && a2[e6].queue[n4].push(t5);
+                      });
+                    });
+                  }(c2), function(e6) {
+                    t4.channels[e6].queue.bottom.forEach(function(n4) {
+                      if (n4.el && (a2[e6 + a2.length - t4.channels.length].queue.bottom.push(n4), n4.channel_id[0] + n4.channel_id[1] - 1 === e6)) {
+                        var o4 = [].concat(n4.channel_id);
+                        n4.channel_id = [o4[0] - t4.channels.length + a2.length, o4[1]], n4.top = n4.channel_id[0] * s2, t4.danmu.config.area && t4.danmu.config.area.start && (n4.top += t4.containerHeight * t4.danmu.config.area.start), n4.topInit();
                       }
                     });
+                  }(c2);
+                  for (var u2 = 0; u2 < a2.length; u2++) l2(u2);
+                  t4.channels = a2, "b2t" === t4.direction ? t4.channelWidth = s2 : t4.channelHeight = s2;
+                } else !function(e6, o4) {
+                  for (var i3 = function(i4) {
+                    n3(e6, i4), s3.forEach(function(n4) {
+                      if ("top" === n4 && i4 > Math.floor(e6.length / 2)) ;
+                      else if ("bottom" === n4 && i4 <= Math.floor(e6.length / 2)) ;
+                      else {
+                        var r4 = "bottom" === n4 ? i4 - e6.length + t4.channels.length : i4;
+                        t4.channels[r4].queue[n4].forEach(function(s4, a4) {
+                          if (s4.el) {
+                            if (e6[i4].queue[n4].push(s4), "bottom" === n4 && s4.channel_id[0] + s4.channel_id[1] - 1 === r4) {
+                              var l4 = [].concat(s4.channel_id);
+                              s4.channel_id = [l4[0] - t4.channels.length + e6.length, l4[1]], s4.top = s4.channel_id[0] * o4, t4.danmu.config.area && t4.danmu.config.area.start && (s4.top += t4.containerHeight * t4.danmu.config.area.start), s4.topInit();
+                            }
+                            t4.channels[r4].queue[n4].splice(a4, 1);
+                          }
+                        });
+                      }
+                    });
+                  }, r3 = function(t5) {
+                    s3.forEach(function(n4) {
+                      e6[t5].queue[n4].forEach(function(e7) {
+                        e7.resized = false;
+                      });
+                    });
+                  }, s3 = ["scroll", "top", "bottom"], a3 = 0; a3 < e6.length; a3++) i3(a3);
+                  for (var l3 = 0; l3 < e6.length; l3++) r3(l3);
+                  t4.channels = e6, "b2t" === t4.direction ? t4.channelWidth = o4 : t4.channelHeight = o4;
+                }(a2, s2);
+                t4.resizing = false;
+              }
+              t4.resizing || (t4.resizing = true, e4 ? o2() : (this._cancelResizeTimer(), this.resizeId = requestAnimationFrame(o2)));
+            } }, { key: "_cancelResizeTimer", value: function() {
+              this.resizeId && (cancelAnimationFrame(this.resizeId), this.resizeId = null);
+            } }], function(e4, t4) {
+              for (var n3 = 0; n3 < t4.length; n3++) {
+                var o2 = t4[n3];
+                o2.enumerable = o2.enumerable || false, o2.configurable = true, "value" in o2 && (o2.writable = true), Object.defineProperty(e4, o2.key, o2);
+              }
+            }(n2.prototype, t3), n2;
+          }(a);
+          function x(e3) {
+            return (x = Object.setPrototypeOf ? Object.getPrototypeOf : function(e4) {
+              return e4.__proto__ || Object.getPrototypeOf(e4);
+            })(e3);
+          }
+          function j(e3, t3) {
+            return (j = Object.setPrototypeOf || function(e4, t4) {
+              return e4.__proto__ = t4, e4;
+            })(e3, t3);
+          }
+          function C() {
+            try {
+              var e3 = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function() {
+              }));
+            } catch (e4) {
+            }
+            return (C = function() {
+              return !!e3;
+            })();
+          }
+          var O = function(e3) {
+            var t3;
+            if ("function" != typeof e3 && null !== e3) throw TypeError("Super expression must either be null or a function");
+            function n2(e4) {
+              var t4, o2;
+              if (!(this instanceof n2)) throw TypeError("Cannot call a class as a function");
+              return o2 = x(o2 = n2), (t4 = function(e5, t5) {
+                var n3;
+                if (t5 && ("object" == ((n3 = t5) && "undefined" != typeof Symbol && n3.constructor === Symbol ? "symbol" : typeof n3) || "function" == typeof t5)) return t5;
+                if (void 0 === e5) throw ReferenceError("this hasn't been initialised - super() hasn't been called");
+                return e5;
+              }(this, C() ? Reflect.construct(o2, [], x(this).constructor) : o2.apply(this, void 0))).setLogger("main"), t4.danmu = e4, t4.container = e4.container, t4.channel = new k(e4), t4.data = [].concat(e4.config.comments), t4.playedData = [], t4.queue = [], t4.timer = null, t4.playRate = 1, t4.retryStatus = "normal", t4.interval = e4.config.interval, t4._status = "idle", t4._events = [], t4._bindEvents(), t4;
+            }
+            return n2.prototype = Object.create(e3 && e3.prototype, { constructor: { value: n2, writable: true, configurable: true } }), e3 && j(n2, e3), t3 = [{ key: "status", get: function() {
+              return this._status;
+            } }, { key: "destroy", value: function() {
+              for (var e4 in this.logger && this.logger.info("destroy"), this._unbindEvents(), this._cancelTick(), this.channel && this.channel.destroy(), this.data = [], this) delete this[e4];
+            } }, { key: "_bindEvents", value: function() {
+              var e4 = this, t4 = this.danmu, n3 = this.container;
+              this._unbindEvents(), this._events.push([t4, "bullet_remove", function(t5) {
+                var n4 = t5.bullet, o2 = e4.data, i2 = e4.queue;
+                i2.some(function(e5, t6) {
+                  return e5.id === n4.id && (i2.splice(t6, 1), true);
+                }), o2.some(function(e5) {
+                  return e5.id === n4.id && (e5.attached_ = false, true);
+                });
+              }]), this._events.push([n3, "transitionend", function(t5) {
+                var n4 = e4._getBulletByEvt(t5);
+                n4 && (n4.status = "end", n4.remove(false));
+              }]), (t4.config.mouseControl || t4.config.mouseEnterControl) && this._events.push([n3, "mouseover", function(t5) {
+                var n4, o2 = e4.danmu;
+                o2 && (!o2.mouseControl || !o2.config.mouseControlPause) && (n4 = e4._getBulletByEvt(t5)) && "waiting" !== n4.status && "end" !== n4.status && o2.emit("bullet_hover", { bullet: n4, event: t5 });
+              }]), this._events.forEach(function(e5) {
+                e5[0].addEventListener ? e5[0].addEventListener(e5[1], e5[2], false) : e5[0].on && e5[0].on(e5[1], e5[2]);
+              });
+            } }, { key: "_unbindEvents", value: function() {
+              this._events.length && (this._events.forEach(function(e4) {
+                e4[0].removeEventListener ? e4[0].removeEventListener(e4[1], e4[2], false) : e4[0].off && e4[0].off(e4[1], e4[2]);
+              }), this._events = []);
+            } }, { key: "_cancelTick", value: function() {
+              this.handleTimer && (clearTimeout(this.handleTimer), this.handleTimer = null);
+            } }, { key: "_startTick", value: function() {
+              var e4 = this;
+              e4.retryStatus = "normal", e4._cancelTick(), e4.sortData(), !function t4() {
+                "closed" === e4._status && "stop" === e4.retryStatus ? e4._cancelTick() : ("playing" === e4._status && (e4.readData(), e4.dataHandle()), ("stop" !== e4.retryStatus || "paused" === e4._status) && (e4.handleTimer = setTimeout(t4, 250)));
+              }();
+            } }, { key: "start", value: function() {
+              this.logger && this.logger.info("start"), "playing" !== this._status && (this._status = "playing", this.queue = [], this.container.innerHTML = "", this.channel.reset(), this._startTick());
+            } }, { key: "stop", value: function() {
+              this.logger && this.logger.info("stop"), "closed" !== this._status && (this._status = "closed", this.retryStatus = "stop", this.queue = [], this.container && (this.container.innerHTML = ""), this.channel && this.channel.reset(), this._cancelTick());
+            } }, { key: "clear", value: function() {
+              this.logger && this.logger.info("clear"), this.channel && this.channel.reset(), this.data = [], this.queue = [], this.container && (this.container.innerHTML = "");
+            } }, { key: "play", value: function() {
+              var e4 = this;
+              if ("closed" === this._status) {
+                this.logger && this.logger.info("play ignored");
+                return;
+              }
+              this.logger && this.logger.info("play"), this._status = "playing";
+              var t4 = this.channel.channels;
+              t4 && t4.length > 0 && ["scroll", "top", "bottom"].forEach(function(n3) {
+                e4.queue.forEach(function(e5) {
+                  e5.startMove(), e5.resized = true;
+                });
+                for (var o2 = 0; o2 < t4.length; o2++) t4[o2].queue[n3].forEach(function(e5) {
+                  e5.resized = false;
+                });
+              }), this._startTick();
+            } }, { key: "pause", value: function() {
+              if ("closed" === this._status) {
+                this.logger && this.logger.info("pause ignored");
+                return;
+              }
+              this.logger && this.logger.info("pause"), this._status = "paused", this._cancelTick();
+              var e4 = this.channel.channels;
+              e4 && e4.length > 0 && this.queue.forEach(function(e5) {
+                e5.pauseMove();
+              });
+            } }, { key: "dataHandle", value: function() {
+              "paused" !== this._status && "closed" !== this._status && this.queue.length && this.queue.forEach(function(e4) {
+                "waiting" === e4.status && e4.startMove();
+              });
+            } }, { key: "readData", value: function() {
+              var e4 = this.danmu, t4 = this.interval, n3 = this.channel, o2 = e4.player;
+              if (e4.isReady && e4.main) {
+                if (o2) {
+                  var i2 = o2.currentTime ? Math.floor(1e3 * o2.currentTime) : 0;
+                  s2 = this.data.filter(function(n4) {
+                    return !n4.start && 0 > e4.hideArr.indexOf(n4.mode) && (!n4.color || 0 > e4.hideArr.indexOf("color")) && (n4.start = i2), !n4.attached_ && 0 > e4.hideArr.indexOf(n4.mode) && (!n4.color || 0 > e4.hideArr.indexOf("color")) && n4.start - t4 <= i2 && i2 <= n4.start + t4;
+                  }), e4.config.highScorePriority && s2.sort(function(e5, t5) {
+                    return t5.prior && !e5.prior || (t5.score || -1) - (e5.score || -1);
+                  }), e4.live && (this.data = []);
+                } else 0 === (s2 = this.data.splice(0, 1)).length && (s2 = this.playedData.splice(0, 1));
+                if (s2.length > 0 && n3.checkAvailableTrack(s2[0].mode)) {
+                  n3.updatePos();
+                  for (var r2, s2, a2, c2 = 0, u2 = 0; u2 < s2.length; u2++) if (a2 = s2[u2], this.forceDuration && this.forceDuration !== a2.duration && (a2.duration = this.forceDuration), (r2 = new y(e4, a2)).bulletCreateFail) if (0 === c2) break;
+                  else c2--;
+                  else if (r2.attach(), a2.attached_ = true, n3.addBullet(r2).result) this.queue.push(r2), r2.topInit(), c2 = 0;
+                  else {
+                    for (var h2 in r2.detach(), r2) l.call(r2, h2) && delete r2[h2];
+                    if (r2 = null, a2.attached_ = false, a2.noDiscard && (a2.prior ? this.data.unshift(a2) : this.data.push(a2)), 0 === c2) break;
+                    c2--;
+                  }
+                }
+              }
+            } }, { key: "sortData", value: function() {
+              this.data.sort(function(e4, t4) {
+                return (e4.start || -1) - (t4.start || -1);
+              });
+            } }, { key: "keepPoolWatermark", value: function() {
+              var e4 = this.danmu, t4 = e4.config, n3 = e4.player, o2 = this.data, i2 = [], r2 = 0;
+              if ("number" == typeof t4.maxCommentsLength && o2.length > t4.maxCommentsLength) {
+                r2 = o2.length - t4.maxCommentsLength;
+                for (var s2, a2 = 0; a2 < r2; a2++) (s2 = o2[a2]).prior && !s2.attached_ && i2.push(o2[a2]);
+              } else if (t4.dropStaleComments && n3 && n3.currentTime) {
+                var l2 = Math.floor(1e3 * n3.currentTime) - t4.interval;
+                if (l2 > 0) {
+                  for (var c2, u2 = 0; u2 < o2.length; u2++) if ((c2 = o2[u2]).prior && !c2.attached_ && i2.push(o2[u2]), c2.start > l2) {
+                    r2 = u2;
+                    break;
+                  }
+                }
+              }
+              r2 > 0 && (o2.splice(0, r2), this.data = i2.concat(o2));
+            } }, { key: "_getBulletByEvt", value: function(e4) {
+              for (var t4, n3, o2 = e4.target || e4.srcElement, i2 = this.queue, r2 = 0; r2 < i2.length; r2++) if ((n3 = i2[r2]) && n3.el && (n3.el === o2 || n3.el.contains(o2))) {
+                t4 = n3;
+                break;
+              }
+              return t4;
+            } }], function(e4, t4) {
+              for (var n3 = 0; n3 < t4.length; n3++) {
+                var o2 = t4[n3];
+                o2.enumerable = o2.enumerable || false, o2.configurable = true, "value" in o2 && (o2.writable = true), Object.defineProperty(e4, o2.key, o2);
+              }
+            }(n2.prototype, t3), n2;
+          }(a);
+          function w(e3) {
+            return (w = Object.setPrototypeOf ? Object.getPrototypeOf : function(e4) {
+              return e4.__proto__ || Object.getPrototypeOf(e4);
+            })(e3);
+          }
+          function S(e3, t3) {
+            return (S = Object.setPrototypeOf || function(e4, t4) {
+              return e4.__proto__ = t4, e4;
+            })(e3, t3);
+          }
+          function E() {
+            try {
+              var e3 = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function() {
+              }));
+            } catch (e4) {
+            }
+            return (E = function() {
+              return !!e3;
+            })();
+          }
+          var T = function(e3) {
+            var t3;
+            if ("function" != typeof e3 && null !== e3) throw TypeError("Super expression must either be null or a function");
+            function n2(e4) {
+              var t4, o2;
+              if (!(this instanceof n2)) throw TypeError("Cannot call a class as a function");
+              return o2 = w(o2 = n2), (t4 = function(e5, t5) {
+                var n3;
+                if (t5 && ("object" == ((n3 = t5) && "undefined" != typeof Symbol && n3.constructor === Symbol ? "symbol" : typeof n3) || "function" == typeof t5)) return t5;
+                if (void 0 === e5) throw ReferenceError("this hasn't been initialised - super() hasn't been called");
+                return e5;
+              }(this, E() ? Reflect.construct(o2, [], w(this).constructor) : o2.apply(this, void 0))).setLogger("control"), t4.danmu = e4, t4.main = new O(e4), e4.config.defaultOff || t4.main.start(), t4;
+            }
+            return n2.prototype = Object.create(e3 && e3.prototype, { constructor: { value: n2, writable: true, configurable: true } }), e3 && S(n2, e3), t3 = [{ key: "createSwitch", value: function() {
+              var e4 = !(arguments.length > 0) || void 0 === arguments[0] || arguments[0];
+              return this.logger && this.logger.info("createSwitch"), this.switchBtn = function() {
+                var e5 = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : "div", t4 = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : "", n3 = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : {}, o2 = arguments.length > 3 && void 0 !== arguments[3] ? arguments[3] : "", i2 = document.createElement(e5);
+                return i2.className = o2, i2.innerHTML = t4, Object.keys(n3).forEach(function(t5) {
+                  var o3 = n3[t5];
+                  "video" === e5 || "audio" === e5 ? o3 && i2.setAttribute(t5, o3) : i2.setAttribute(t5, o3);
+                }), i2;
+              }("dk-switch", '<span class="txt">弹</span>', {}, "danmu-switch ".concat(e4 ? "danmu-switch-active" : "")), this.switchBtn;
+            } }, { key: "destroy", value: function() {
+              for (var e4 in this.logger && this.logger.info("destroy"), this.main.destroy(), this) l.call(this, e4) && delete this[e4];
+            } }], function(e4, t4) {
+              for (var n3 = 0; n3 < t4.length; n3++) {
+                var o2 = t4[n3];
+                o2.enumerable = o2.enumerable || false, o2.configurable = true, "value" in o2 && (o2.writable = true), Object.defineProperty(e4, o2.key, o2);
+              }
+            }(n2.prototype, t3), n2;
+          }(a), z = function() {
+            var e3;
+            function t3(e4) {
+              if (!(this instanceof t3)) throw TypeError("Cannot call a class as a function");
+              e4 = { initDOM: function() {
+                return document.createElement("div");
+              }, initSize: 10 }, this.init(e4);
+            }
+            return e3 = [{ key: "init", value: function(e4) {
+              this.idleList = [], this.usingList = [], this._id = 0, this.options = e4, this._expand(e4.initSize);
+            } }, { key: "use", value: function() {
+              this.idleList.length || this._expand(1);
+              var e4 = this.idleList.shift();
+              return this.usingList.push(e4), e4;
+            } }, { key: "unused", value: function(e4) {
+              var t4 = this.usingList.indexOf(e4);
+              t4 < 0 || (this.usingList.splice(t4, 1), e4.style.opacity = 0, this.idleList.push(e4));
+            } }, { key: "_expand", value: function(e4) {
+              for (var t4 = 0; t4 < e4; t4++) this.idleList.push(this.options.initDOM(this._id++));
+            } }, { key: "destroy", value: function() {
+              for (var e4 = 0; e4 < this.idleList.length; e4++) this.idleList[e4].innerHTML = "", this.idleList[e4].textcontent = "", this.clearElementStyle(this.idleList[e4]);
+              for (var t4 = 0; t4 < this.usingList.length; t4++) this.usingList[t4].innerHTML = "", this.usingList[t4].textcontent = "", this.clearElementStyle(this.usingList[t4]);
+              for (var n2 in this) l.call(this, n2) && delete this[n2];
+            } }, { key: "clearElementStyle", value: function(e4) {
+              var t4 = "undefined" != typeof window ? window.navigator.userAgent : null;
+              t4 && (t4.indexOf("MSIE ") > -1 || t4.indexOf("Trident/") > -1 ? f(e4, "transform", "none") : e4.setAttribute("style", ""));
+            } }], function(e4, t4) {
+              for (var n2 = 0; n2 < t4.length; n2++) {
+                var o2 = t4[n2];
+                o2.enumerable = o2.enumerable || false, o2.configurable = true, "value" in o2 && (o2.writable = true), Object.defineProperty(e4, o2.key, o2);
+              }
+            }(t3.prototype, e3), t3;
+          }(), M = new (function() {
+            var e3;
+            function t3() {
+              var e4 = this;
+              if (!(this instanceof t3)) throw TypeError("Cannot call a class as a function");
+              if (this.__handlers = [], "undefined" != typeof ResizeObserver) try {
+                this.observer = new ResizeObserver(/* @__PURE__ */ function(e5, t4) {
+                  var n2 = this, o2 = 0;
+                  return function() {
+                    for (var i2 = arguments.length, r2 = Array(i2), s2 = 0; s2 < i2; s2++) r2[s2] = arguments[s2];
+                    clearTimeout(o2), o2 = setTimeout(function() {
+                      return e5.apply(n2, r2);
+                    }, t4);
+                  };
+                }(function(t4) {
+                  e4.__trigger(t4);
+                }, 100));
+              } catch (e5) {
+              }
+            }
+            return e3 = [{ key: "addObserver", value: function(e4, t4) {
+              if (this.observer && e4) {
+                this.observer && this.observer.observe(e4);
+                for (var n2 = this.__handlers, o2 = -1, i2 = 0; i2 < n2.length; i2++) n2[i2] && e4 === n2[i2].target && (o2 = i2);
+                o2 > -1 ? this.__handlers[o2].handler.push(t4) : this.__handlers.push({ target: e4, handler: [t4] });
+              }
+            } }, { key: "unObserver", value: function(e4) {
+              if (e4) {
+                var t4 = -1;
+                this.__handlers.map(function(n2, o2) {
+                  e4 === n2.target && (t4 = o2);
+                }), this.observer && this.observer.unobserve(e4), t4 > -1 && this.__handlers.splice(t4, 1);
+              }
+            } }, { key: "destroyObserver", value: function() {
+              this.observer && this.observer.disconnect(), this.observer = null, this.__handlers = null;
+            } }, { key: "__runHandler", value: function(e4) {
+              for (var t4 = this.__handlers, n2 = 0; n2 < t4.length; n2++) if (t4[n2] && e4 === t4[n2].target) {
+                t4[n2].handler && t4[n2].handler.map(function(e5) {
+                  try {
+                    e5();
+                  } catch (e6) {
+                    console.error(e6);
                   }
                 });
-              }, a2 = 0; a2 < e4.length; a2++) r3(a2);
-              var s2 = function(t4) {
-                o3.forEach(function(n3) {
-                  e4[t4].queue[n3].forEach(function(e5) {
-                    e5.resized = false;
-                  });
-                });
-              };
-              for (a2 = 0; a2 < e4.length; a2++) s2(a2);
-              t3.channels = e4, "b2t" === t3.direction ? t3.channelWidth = i3 : t3.channelHeight = i3;
-            }
-            function r2() {
-              var e4 = t3.danmu, n3 = e4.container, r3 = e4.bulletBtn;
-              t3.container = n3, t3.updatePos(), t3._cancelResizeTimer(), r3.main.data && r3.main.data.forEach(function(e5) {
-                e5.bookChannelId && (delete e5.bookChannelId, t3.logger && t3.logger.info("resize导致" + e5.id + "号优先弹幕预定取消"));
-              }), t3.logger && t3.logger.info("resize导致所有轨道恢复正常使用"), t3.width = t3.containerWidth, t3.height = t3.containerHeight;
-              var a2 = t3._initChannels(), s2 = a2.channelSize, l2 = a2.channels;
-              t3.channels && (t3.channels.length <= l2.length ? i2(l2, s2) : o2(l2, s2)), t3.resizing = false;
-            }
-            t3.resizing || (t3.resizing = true, e3 ? r2() : (this._cancelResizeTimer(), this.resizeId = requestAnimationFrame(r2)));
-          } }, { key: "_cancelResizeTimer", value: function() {
-            this.resizeId && (cancelAnimationFrame(this.resizeId), this.resizeId = null);
-          } }]), t2;
-        }(a.default);
-        t.default = u, e.exports = t.default;
-      }, function(e, t, n) {
-        "use strict";
-        Object.defineProperty(t, "__esModule", { value: true }), t.validAreaLineRule = function(e2) {
-          return "number" == typeof e2 && e2 >= 0 && Number.isInteger(e2);
-        };
-      }, function(e, t, n) {
-        "use strict";
-        Object.defineProperty(t, "__esModule", { value: true });
-        var i = /* @__PURE__ */ function() {
-          function e2(e3, t2) {
-            for (var n2 = 0; n2 < t2.length; n2++) {
-              var i2 = t2[n2];
-              i2.enumerable = i2.enumerable || false, i2.configurable = true, "value" in i2 && (i2.writable = true), Object.defineProperty(e3, i2.key, i2);
-            }
-          }
-          return function(t2, n2, i2) {
-            return n2 && e2(t2.prototype, n2), i2 && e2(t2, i2), t2;
-          };
-        }(), o = n(0);
-        var r = function() {
-          function e2(t2) {
-            !function(e3, t3) {
-              if (!(e3 instanceof t3)) throw new TypeError("Cannot call a class as a function");
-            }(this, e2), t2 = { initDOM: function() {
-              return document.createElement("div");
-            }, initSize: 10 }, this.init(t2);
-          }
-          return i(e2, [{ key: "init", value: function(e3) {
-            this.idleList = [], this.usingList = [], this._id = 0, this.options = e3, this._expand(e3.initSize);
-          } }, { key: "use", value: function() {
-            this.idleList.length || this._expand(1);
-            var e3 = this.idleList.shift();
-            return this.usingList.push(e3), e3;
-          } }, { key: "unused", value: function(e3) {
-            var t2 = this.usingList.indexOf(e3);
-            t2 < 0 || (this.usingList.splice(t2, 1), e3.style.opacity = 0, this.idleList.push(e3));
-          } }, { key: "_expand", value: function(e3) {
-            for (var t2 = 0; t2 < e3; t2++) this.idleList.push(this.options.initDOM(this._id++));
-          } }, { key: "destroy", value: function() {
-            for (var e3 = 0; e3 < this.idleList.length; e3++) this.idleList[e3].innerHTML = "", this.idleList[e3].textcontent = "", this.clearElementStyle(this.idleList[e3]);
-            for (var t2 = 0; t2 < this.usingList.length; t2++) this.usingList[t2].innerHTML = "", this.usingList[t2].textcontent = "", this.clearElementStyle(this.usingList[t2]);
-            for (var n2 in this) o.hasOwnProperty.call(this, n2) && delete this[n2];
-          } }, { key: "clearElementStyle", value: function(e3) {
-            var t2 = "undefined" != typeof window ? window.navigator.userAgent : null;
-            t2 && (t2.indexOf("MSIE ") > -1 || t2.indexOf("Trident/") > -1 ? (0, o.styleUtil)(e3, "transform", "none") : e3.setAttribute("style", ""));
-          } }]), e2;
-        }();
-        t.default = r, e.exports = t.default;
-      }, function(e, t, n) {
-        "use strict";
-        Object.defineProperty(t, "__esModule", { value: true }), t.destroyObserver = t.unObserver = t.addObserver = void 0;
-        var i = /* @__PURE__ */ function() {
-          function e2(e3, t2) {
-            for (var n2 = 0; n2 < t2.length; n2++) {
-              var i2 = t2[n2];
-              i2.enumerable = i2.enumerable || false, i2.configurable = true, "value" in i2 && (i2.writable = true), Object.defineProperty(e3, i2.key, i2);
-            }
-          }
-          return function(t2, n2, i2) {
-            return n2 && e2(t2.prototype, n2), i2 && e2(t2, i2), t2;
-          };
-        }(), o = n(0);
-        var r = new (function() {
-          function e2() {
-            var t2 = this;
-            if (function(e3, t3) {
-              if (!(e3 instanceof t3)) throw new TypeError("Cannot call a class as a function");
-            }(this, e2), this.__handlers = [], window.ResizeObserver) try {
-              this.observer = new window.ResizeObserver((0, o.throttle)(function(e3) {
-                t2.__trigger(e3);
-              }, 100));
-            } catch (e3) {
-            }
-          }
-          return i(e2, [{ key: "addObserver", value: function(e3, t2) {
-            if (this.observer) {
-              this.observer && this.observer.observe(e3);
-              for (var n2 = this.__handlers, i2 = -1, o2 = 0; o2 < n2.length; o2++) n2[o2] && e3 === n2[o2].target && (i2 = o2);
-              i2 > -1 ? this.__handlers[i2].handler.push(t2) : this.__handlers.push({ target: e3, handler: [t2] });
-            }
-          } }, { key: "unObserver", value: function(e3) {
-            var t2 = -1;
-            this.__handlers.map(function(n2, i2) {
-              e3 === n2.target && (t2 = i2);
-            }), this.observer && this.observer.unobserve(e3), t2 > -1 && this.__handlers.splice(t2, 1);
-          } }, { key: "destroyObserver", value: function() {
-            this.observer && this.observer.disconnect(), this.observer = null, this.__handlers = null;
-          } }, { key: "__runHandler", value: function(e3) {
-            for (var t2 = this.__handlers, n2 = 0; n2 < t2.length; n2++) if (t2[n2] && e3 === t2[n2].target) {
-              t2[n2].handler && t2[n2].handler.map(function(e4) {
-                try {
-                  e4();
-                } catch (e5) {
-                  console.error(e5);
-                }
+                break;
+              }
+            } }, { key: "__trigger", value: function(e4) {
+              var t4 = this;
+              e4.map(function(e5) {
+                t4.__runHandler(e5.target);
               });
-              break;
-            }
-          } }, { key: "__trigger", value: function(e3) {
-            var t2 = this;
-            e3.map(function(e4) {
-              t2.__runHandler(e4.target);
-            });
-          } }]), e2;
-        }())();
-        t.addObserver = function(e2, t2) {
-          r.addObserver(e2, t2);
-        }, t.unObserver = function(e2, t2) {
-          r.unObserver(e2, t2);
-        }, t.destroyObserver = function(e2, t2) {
-          r.destroyObserver(e2, t2);
-        };
-      }, function(e, t, n) {
-        var i = n(35);
-        "string" == typeof i && (i = [[e.i, i, ""]]);
-        var o = { hmr: true, transform: void 0, insertInto: void 0 };
-        n(37)(i, o);
-        i.locals && (e.exports = i.locals);
-      }, function(e, t, n) {
-        (e.exports = n(36)(false)).push([e.i, ".danmu{overflow:hidden;-webkit-user-select:none;-moz-user-select:none;user-select:none;-ms-user-select:none}.danmu>*{position:absolute;white-space:nowrap}.danmu-switch{width:32px;height:20px;border-radius:100px;background-color:#ccc;-webkit-box-sizing:border-box;box-sizing:border-box;outline:none;cursor:pointer;position:relative;text-align:center;margin:10px auto}.danmu-switch.danmu-switch-active{padding-left:12px;background-color:#f85959}.danmu-switch span.txt{width:20px;height:20px;line-height:20px;text-align:center;display:block;border-radius:100px;background-color:#fff;-webkit-box-shadow:-2px 0 0 0 rgba(0, 0, 0, .04);box-shadow:-2px 0 0 0 rgba(0, 0, 0, .04);font-family:PingFangSC;font-size:10px;font-weight:500;color:#f44336}", ""]);
-      }, function(e, t) {
-        e.exports = function(e2) {
-          var t2 = [];
-          return t2.toString = function() {
-            return this.map(function(t3) {
-              var n = function(e3, t4) {
-                var n2 = e3[1] || "", i = e3[3];
-                if (!i) return n2;
-                if (t4 && "function" == typeof btoa) {
-                  var o = (a = i, "/*# sourceMappingURL=data:application/json;charset=utf-8;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(a)))) + " */"), r = i.sources.map(function(e4) {
-                    return "/*# sourceURL=" + i.sourceRoot + e4 + " */";
-                  });
-                  return [n2].concat(r).concat([o]).join("\n");
-                }
-                var a;
-                return [n2].join("\n");
-              }(t3, e2);
-              return t3[2] ? "@media " + t3[2] + "{" + n + "}" : n;
-            }).join("");
-          }, t2.i = function(e3, n) {
-            "string" == typeof e3 && (e3 = [[null, e3, ""]]);
-            for (var i = {}, o = 0; o < this.length; o++) {
-              var r = this[o][0];
-              "number" == typeof r && (i[r] = true);
-            }
-            for (o = 0; o < e3.length; o++) {
-              var a = e3[o];
-              "number" == typeof a[0] && i[a[0]] || (n && !a[2] ? a[2] = n : n && (a[2] = "(" + a[2] + ") and (" + n + ")"), t2.push(a));
-            }
-          }, t2;
-        };
-      }, function(e, t, n) {
-        var i, o, r = {}, a = (i = function() {
-          return window && document && document.all && !window.atob;
-        }, function() {
-          return void 0 === o && (o = i.apply(this, arguments)), o;
-        }), s = function(e2) {
-          return document.querySelector(e2);
-        }, l = /* @__PURE__ */ function(e2) {
-          var t2 = {};
-          return function(e3) {
-            if ("function" == typeof e3) return e3();
-            if (void 0 === t2[e3]) {
-              var n2 = s.call(this, e3);
-              if (window.HTMLIFrameElement && n2 instanceof window.HTMLIFrameElement) try {
-                n2 = n2.contentDocument.head;
-              } catch (e4) {
-                n2 = null;
+            } }], function(e4, t4) {
+              for (var n2 = 0; n2 < t4.length; n2++) {
+                var o2 = t4[n2];
+                o2.enumerable = o2.enumerable || false, o2.configurable = true, "value" in o2 && (o2.writable = true), Object.defineProperty(e4, o2.key, o2);
               }
-              t2[e3] = n2;
+            }(t3.prototype, e3), t3;
+          }())();
+          function P(e3) {
+            return (P = Object.setPrototypeOf ? Object.getPrototypeOf : function(e4) {
+              return e4.__proto__ || Object.getPrototypeOf(e4);
+            })(e3);
+          }
+          function I(e3, t3) {
+            var n2;
+            if (t3 && ("object" == ((n2 = t3) && "undefined" != typeof Symbol && n2.constructor === Symbol ? "symbol" : typeof n2) || "function" == typeof t3)) return t3;
+            if (void 0 === e3) throw ReferenceError("this hasn't been initialised - super() hasn't been called");
+            return e3;
+          }
+          function L(e3, t3) {
+            return (L = Object.setPrototypeOf || function(e4, t4) {
+              return e4.__proto__ = t4, e4;
+            })(e3, t3);
+          }
+          function D() {
+            try {
+              var e3 = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function() {
+              }));
+            } catch (e4) {
             }
-            return t2[e3];
-          };
-        }(), u = null, c = 0, h = [], f = n(38);
-        function d(e2, t2) {
-          for (var n2 = 0; n2 < e2.length; n2++) {
-            var i2 = e2[n2], o2 = r[i2.id];
-            if (o2) {
-              o2.refs++;
-              for (var a2 = 0; a2 < o2.parts.length; a2++) o2.parts[a2](i2.parts[a2]);
-              for (; a2 < i2.parts.length; a2++) o2.parts.push(b(i2.parts[a2], t2));
-            } else {
-              var s2 = [];
-              for (a2 = 0; a2 < i2.parts.length; a2++) s2.push(b(i2.parts[a2], t2));
-              r[i2.id] = { id: i2.id, refs: 1, parts: s2 };
-            }
+            return (D = function() {
+              return !!e3;
+            })();
           }
-        }
-        function p(e2, t2) {
-          for (var n2 = [], i2 = {}, o2 = 0; o2 < e2.length; o2++) {
-            var r2 = e2[o2], a2 = t2.base ? r2[0] + t2.base : r2[0], s2 = { css: r2[1], media: r2[2], sourceMap: r2[3] };
-            i2[a2] ? i2[a2].parts.push(s2) : n2.push(i2[a2] = { id: a2, parts: [s2] });
-          }
-          return n2;
-        }
-        function g(e2, t2) {
-          var n2 = l(e2.insertInto);
-          if (!n2) throw new Error("Couldn't find a style target. This probably means that the value for the 'insertInto' parameter is invalid.");
-          var i2 = h[h.length - 1];
-          if ("top" === e2.insertAt) i2 ? i2.nextSibling ? n2.insertBefore(t2, i2.nextSibling) : n2.appendChild(t2) : n2.insertBefore(t2, n2.firstChild), h.push(t2);
-          else if ("bottom" === e2.insertAt) n2.appendChild(t2);
-          else {
-            if ("object" != typeof e2.insertAt || !e2.insertAt.before) throw new Error("[Style Loader]\n\n Invalid value for parameter 'insertAt' ('options.insertAt') found.\n Must be 'top', 'bottom', or Object.\n (https://github.com/webpack-contrib/style-loader#insertat)\n");
-            var o2 = l(e2.insertInto + " " + e2.insertAt.before);
-            n2.insertBefore(t2, o2);
-          }
-        }
-        function m(e2) {
-          if (null === e2.parentNode) return false;
-          e2.parentNode.removeChild(e2);
-          var t2 = h.indexOf(e2);
-          t2 >= 0 && h.splice(t2, 1);
-        }
-        function v(e2) {
-          var t2 = document.createElement("style");
-          return void 0 === e2.attrs.type && (e2.attrs.type = "text/css"), y(t2, e2.attrs), g(e2, t2), t2;
-        }
-        function y(e2, t2) {
-          Object.keys(t2).forEach(function(n2) {
-            e2.setAttribute(n2, t2[n2]);
-          });
-        }
-        function b(e2, t2) {
-          var n2, i2, o2, r2;
-          if (t2.transform && e2.css) {
-            if (!(r2 = t2.transform(e2.css))) return function() {
-            };
-            e2.css = r2;
-          }
-          if (t2.singleton) {
-            var a2 = c++;
-            n2 = u || (u = v(t2)), i2 = O.bind(null, n2, a2, false), o2 = O.bind(null, n2, a2, true);
-          } else e2.sourceMap && "function" == typeof URL && "function" == typeof URL.createObjectURL && "function" == typeof URL.revokeObjectURL && "function" == typeof Blob && "function" == typeof btoa ? (n2 = function(e3) {
-            var t3 = document.createElement("link");
-            return void 0 === e3.attrs.type && (e3.attrs.type = "text/css"), e3.attrs.rel = "stylesheet", y(t3, e3.attrs), g(e3, t3), t3;
-          }(t2), i2 = x.bind(null, n2, t2), o2 = function() {
-            m(n2), n2.href && URL.revokeObjectURL(n2.href);
-          }) : (n2 = v(t2), i2 = k.bind(null, n2), o2 = function() {
-            m(n2);
-          });
-          return i2(e2), function(t3) {
-            if (t3) {
-              if (t3.css === e2.css && t3.media === e2.media && t3.sourceMap === e2.sourceMap) return;
-              i2(e2 = t3);
-            } else o2();
-          };
-        }
-        e.exports = function(e2, t2) {
-          if ("undefined" != typeof DEBUG && DEBUG && "object" != typeof document) throw new Error("The style-loader cannot be used in a non-browser environment");
-          (t2 = t2 || {}).attrs = "object" == typeof t2.attrs ? t2.attrs : {}, t2.singleton || "boolean" == typeof t2.singleton || (t2.singleton = a()), t2.insertInto || (t2.insertInto = "head"), t2.insertAt || (t2.insertAt = "bottom");
-          var n2 = p(e2, t2);
-          return d(n2, t2), function(e3) {
-            for (var i2 = [], o2 = 0; o2 < n2.length; o2++) {
-              var a2 = n2[o2];
-              (s2 = r[a2.id]).refs--, i2.push(s2);
-            }
-            e3 && d(p(e3, t2), t2);
-            for (o2 = 0; o2 < i2.length; o2++) {
-              var s2;
-              if (0 === (s2 = i2[o2]).refs) {
-                for (var l2 = 0; l2 < s2.parts.length; l2++) s2.parts[l2]();
-                delete r[s2.id];
+          var B = function(e3) {
+            var n2;
+            if ("function" != typeof e3 && null !== e3) throw TypeError("Super expression must either be null or a function");
+            function o2(e4) {
+              if (!(this instanceof o2)) throw TypeError("Cannot call a class as a function");
+              n3 = P(n3 = o2), (i2 = I(this, D() ? Reflect.construct(n3, [], P(this).constructor) : n3.apply(this, void 0))).setLogger("danmu"), i2.logger && i2.logger.info("danmu.js version: ".concat("1.2.1"));
+              var n3, i2, r2 = i2.config = { overlap: false, area: { start: 0, end: 1, lines: void 0 }, hooks: void 0, live: false, comments: [], direction: "r2l", needResizeObserver: false, dropStaleComments: false, channelSize: void 0, maxCommentsLength: void 0, bulletOffset: void 0, interval: 2e3, highScorePriority: true, chaseEffect: true };
+              if (c(r2, e4), t2()(i2), i2.globalHooks = {}, r2.hooks && i2.hooks(r2.hooks), i2.hideArr = [], i2.recycler = new z(), i2.freezeId = null, r2.comments.forEach(function(e5) {
+                e5.duration = e5.duration ? e5.duration : 5e3, e5.mode || (e5.mode = "scroll");
+              }), i2.container = r2.container && 1 === r2.container.nodeType ? r2.container : null, !i2.container) return i2.emit("error", "container id can't be empty"), I(i2, false);
+              if (r2.containerStyle) {
+                var s2 = r2.containerStyle;
+                Object.keys(s2).forEach(function(e5) {
+                  i2.container.style[e5] = s2[e5];
+                });
               }
+              var a2 = i2.container, l2 = "danmu";
+              return a2.classList ? l2.replace(/(^\s+|\s+$)/g, "").split(/\s+/g).forEach(function(e5) {
+                e5 && a2.classList.add(e5);
+              }) : (a2.classList ? Array.prototype.some.call(a2.classList, function(e5) {
+                return e5 === l2;
+              }) : a2.className.match(RegExp("(\\s|^)" + l2 + "(\\s|$)"))) || (a2.className += " " + l2), i2.live = r2.live, i2.player = r2.player, i2.direction = r2.direction, i2.bulletBtn = new T(i2), i2.main = i2.bulletBtn.main, i2.isReady = true, i2.emit("ready"), i2.logger && i2.logger.info("ready"), i2.addResizeObserver(), i2;
             }
-          };
-        };
-        var _, w = (_ = [], function(e2, t2) {
-          return _[e2] = t2, _.filter(Boolean).join("\n");
-        });
-        function O(e2, t2, n2, i2) {
-          var o2 = n2 ? "" : i2.css;
-          if (e2.styleSheet) e2.styleSheet.cssText = w(t2, o2);
-          else {
-            var r2 = document.createTextNode(o2), a2 = e2.childNodes;
-            a2[t2] && e2.removeChild(a2[t2]), a2.length ? e2.insertBefore(r2, a2[t2]) : e2.appendChild(r2);
-          }
-        }
-        function k(e2, t2) {
-          var n2 = t2.css, i2 = t2.media;
-          if (i2 && e2.setAttribute("media", i2), e2.styleSheet) e2.styleSheet.cssText = n2;
-          else {
-            for (; e2.firstChild; ) e2.removeChild(e2.firstChild);
-            e2.appendChild(document.createTextNode(n2));
-          }
-        }
-        function x(e2, t2, n2) {
-          var i2 = n2.css, o2 = n2.sourceMap, r2 = void 0 === t2.convertToAbsoluteUrls && o2;
-          (t2.convertToAbsoluteUrls || r2) && (i2 = f(i2)), o2 && (i2 += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(o2)))) + " */");
-          var a2 = new Blob([i2], { type: "text/css" }), s2 = e2.href;
-          e2.href = URL.createObjectURL(a2), s2 && URL.revokeObjectURL(s2);
-        }
-      }, function(e, t) {
-        e.exports = function(e2) {
-          var t2 = "undefined" != typeof window && window.location;
-          if (!t2) throw new Error("fixUrls requires window.location");
-          if (!e2 || "string" != typeof e2) return e2;
-          var n = t2.protocol + "//" + t2.host, i = n + t2.pathname.replace(/\/[^\/]*$/, "/");
-          return e2.replace(/url\s*\(((?:[^)(]|\((?:[^)(]+|\([^)(]*\))*\))*)\)/gi, function(e3, t3) {
-            var o, r = t3.trim().replace(/^"(.*)"$/, function(e4, t4) {
-              return t4;
-            }).replace(/^'(.*)'$/, function(e4, t4) {
-              return t4;
-            });
-            return /^(#|data:|http:\/\/|https:\/\/|file:\/\/\/|\s*$)/i.test(r) ? e3 : (o = 0 === r.indexOf("//") ? r : 0 === r.indexOf("/") ? n + r : i + r.replace(/^\.\//, ""), "url(" + JSON.stringify(o) + ")");
-          });
-        };
-      }]);
+            return o2.prototype = Object.create(e3 && e3.prototype, { constructor: { value: o2, writable: true, configurable: true } }), e3 && L(o2, e3), n2 = [{ key: "status", get: function() {
+              return this.main.status;
+            } }, { key: "state", get: function() {
+              var e4 = this.main;
+              return { status: e4.status, comments: e4.data, bullets: e4.queue, displayArea: e4.channel.getRealOccupyArea() };
+            } }, { key: "containerPos", get: function() {
+              return this.main.channel.containerPos;
+            } }, { key: "hooks", value: function(e4) {
+              c(this.globalHooks, e4);
+            } }, { key: "addResizeObserver", value: function() {
+              var e4, t3 = this;
+              this.config.needResizeObserver && this.container && (e4 = this.container, M.addObserver(e4, function() {
+                t3.logger && t3.logger.info("needResizeObserver"), t3.resize();
+              }));
+            } }, { key: "start", value: function() {
+              this.logger && this.logger.info("start"), this.main && this.main.start();
+            } }, { key: "pause", value: function() {
+              this.logger && this.logger.info("pause"), this.main && this.main.pause();
+            } }, { key: "play", value: function() {
+              this.logger && this.logger.info("play"), this.main && this.main.play();
+            } }, { key: "stop", value: function() {
+              this.logger && this.logger.info("stop"), this.main && this.main.stop();
+            } }, { key: "clear", value: function() {
+              this.logger && this.logger.info("clear"), this.main && this.main.clear();
+            } }, { key: "destroy", value: function() {
+              var e4;
+              for (var t3 in e4 = this.container, M.unObserver(e4, void 0), this.logger && this.logger.info("destroy"), this.stop(), this.bulletBtn && this.bulletBtn.destroy(), this.recycler && this.recycler.destroy(), this) delete this[t3];
+              this.emit("destroy");
+            } }, { key: "sendComment", value: function(e4) {
+              var t3 = this.main, n3 = this.logger;
+              n3 && n3.info("sendComment: ".concat(e4.txt || "[DOM Element]")), t3 && (e4.duration || (e4.duration = 15e3), e4 && e4.id && e4.duration && (e4.el || e4.elLazyInit || e4.txt) && (e4.duration = e4.duration ? e4.duration : 5e3, e4.style || (e4.style = { opacity: void 0, fontSize: void 0 }), e4.style && (this.opacity && this.opacity !== e4.style.opacity && (e4.style.opacity = this.opacity), this.fontSize && this.fontSize !== e4.style.fontSize && (e4.style.fontSize = this.fontSize)), e4.prior || e4.realTime ? (t3.data.unshift(e4), e4.realTime && (t3.readData(), t3.dataHandle())) : t3.data.push(e4), t3.sortData(), t3.keepPoolWatermark()));
+            } }, { key: "setCommentID", value: function(e4, t3) {
+              var n3 = this;
+              this.logger && this.logger.info("setCommentID: oldID ".concat(e4, " newID ").concat(t3)), e4 && t3 && (this.main.data.some(function(n4) {
+                return n4.id === e4 && (n4.id = t3, true);
+              }), this.main.queue.some(function(o3) {
+                return o3.id === e4 && (o3.id = t3, o3.pauseMove(), "paused" !== n3.main.status && o3.startMove(), true);
+              }));
+            } }, { key: "setCommentDuration", value: function(e4, t3) {
+              var n3 = this;
+              this.logger && this.logger.info("setCommentDuration: id ".concat(e4, " duration ").concat(t3)), e4 && t3 && (t3 = t3 || 5e3, this.main.data.some(function(n4) {
+                return n4.id === e4 && (n4.duration = t3, true);
+              }), this.main.queue.some(function(o3) {
+                return o3.id === e4 && (o3.duration = t3, o3.pauseMove(), "paused" !== n3.main.status && o3.startMove(), true);
+              }));
+            } }, { key: "setCommentLike", value: function(e4, t3) {
+              this.logger && this.logger.info("setCommentLike: id ".concat(e4, " like ").concat(t3)), e4 && t3 && (this.main.data.some(function(n3) {
+                return n3.id === e4 && (n3.like = t3, true);
+              }), this.main.queue.some(function(n3) {
+                return n3.id === e4 && (n3.pauseMove(), n3.setLikeDom(t3.el, t3.style), "paused" !== n3.danmu.main.status && n3.startMove(), true);
+              }));
+            } }, { key: "restartComment", value: function(e4) {
+              if (this.logger && this.logger.info("restartComment: id ".concat(e4)), e4) {
+                var t3 = this.main;
+                this._releaseCtrl(e4), "closed" !== t3.status && t3.queue.some(function(n3) {
+                  return n3.id === e4 && ("paused" !== t3.status ? n3.startMove(true) : n3.status = "paused", true);
+                });
+              }
+            } }, { key: "_releaseCtrl", value: function(e4) {
+              this.freezeId && e4 === this.freezeId && (this.mouseControl = false, this.freezeId = null);
+            } }, { key: "_freezeCtrl", value: function(e4) {
+              this.mouseControl = true, this.freezeId = e4;
+            } }, { key: "freezeComment", value: function(e4) {
+              this.logger && this.logger.info("freezeComment: id ".concat(e4)), e4 && (this._freezeCtrl(e4), this.main.queue.some(function(t3) {
+                return t3.id === e4 && (t3.status = "forcedPause", t3.pauseMove(), t3.el && t3.el.style && f(t3.el, "zIndex", 10), true);
+              }));
+            } }, { key: "removeComment", value: function(e4) {
+              if (this.logger && this.logger.info("removeComment: id ".concat(e4)), e4) {
+                var t3 = this.main;
+                this._releaseCtrl(e4), t3.queue = t3.queue.filter(function(t4) {
+                  return t4.id !== e4 || (t4.remove(), false);
+                }), t3.data = t3.data.filter(function(t4) {
+                  return t4.id !== e4;
+                });
+              }
+            } }, { key: "updateComments", value: function(e4) {
+              var t3 = !(arguments.length > 1) || void 0 === arguments[1] || arguments[1];
+              this.logger && this.logger.info("updateComments: ".concat(e4.length, ", isClear ").concat(t3));
+              var n3 = this.main;
+              "boolean" == typeof t3 && t3 && (n3.data = []), n3.data = n3.data.concat(e4), n3.sortData(), n3.keepPoolWatermark();
+            } }, { key: "setAllDuration", value: function() {
+              var e4 = this, t3 = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : "scroll", n3 = arguments.length > 1 ? arguments[1] : void 0, o3 = !(arguments.length > 2) || void 0 === arguments[2] || arguments[2];
+              this.logger && this.logger.info("setAllDuration: mode ".concat(t3, " duration ").concat(n3, " force ").concat(o3)), n3 && (n3 = n3 || 5e3, o3 && (this.main.forceDuration = n3), this.main.data.forEach(function(e5) {
+                t3 === e5.mode && (e5.duration = n3);
+              }), this.main.queue.forEach(function(o4) {
+                t3 === o4.mode && (o4.duration = n3, o4.pauseMove(), "paused" !== e4.main.status && o4.startMove());
+              }));
+            } }, { key: "setPlayRate", value: function() {
+              var e4 = this, t3 = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : "scroll", n3 = arguments.length > 1 ? arguments[1] : void 0;
+              this.logger && this.logger.info("setPlayRate: ".concat(n3)), d(n3) && n3 > 0 && (this.main.playRate = n3, this.main.queue.forEach(function(n4) {
+                t3 === n4.mode && (n4.pauseMove(), "paused" !== e4.main.status && n4.startMove());
+              }));
+            } }, { key: "setOpacity", value: function(e4) {
+              this.logger && this.logger.info("setOpacity: opacity ".concat(e4)), this.container && (this.container.style.opacity = e4);
+            } }, { key: "setFontSize", value: function(e4, t3) {
+              var n3 = this, o3 = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : { reflow: true };
+              this.logger && this.logger.info("setFontSize: size ".concat(e4, " channelSize ").concat(t3)), this.fontSize = "".concat(e4, "px"), e4 && (this.main.data.forEach(function(e5) {
+                e5.style && (e5.style.fontSize = n3.fontSize);
+              }), this.main.queue.forEach(function(e5) {
+                e5.options.style || (e5.options.style = {}), e5.options.style.fontSize = n3.fontSize, e5.setFontSize(n3.fontSize), t3 && (e5.top = e5.channel_id[0] * t3, e5.topInit());
+              })), t3 && (this.config.channelSize = t3, o3.reflow && this.main.channel.resizeSync());
+            } }, { key: "setArea", value: function(e4) {
+              this.logger && this.logger.info("setArea: area ".concat(e4)), this.config.area = e4, false !== e4.reflow && this.main.channel.resizeSync();
+            } }, { key: "hide", value: function() {
+              var e4 = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : "scroll";
+              this.logger && this.logger.info("hide: mode ".concat(e4)), 0 > this.hideArr.indexOf(e4) && this.hideArr.push(e4), this.main.queue.filter(function(t3) {
+                return e4 === t3.mode || "color" === e4 && t3.color;
+              }).forEach(function(e5) {
+                return e5.remove();
+              });
+            } }, { key: "show", value: function() {
+              var e4 = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : "scroll";
+              this.logger && this.logger.info("show: mode ".concat(e4));
+              var t3 = this.hideArr.indexOf(e4);
+              t3 > -1 && this.hideArr.splice(t3, 1);
+            } }, { key: "setDirection", value: function() {
+              var e4 = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : "r2l";
+              this.logger && this.logger.info("setDirection: direction ".concat(e4)), this.direction = e4, this.emit("changeDirection", e4);
+            } }, { key: "resize", value: function() {
+              this.logger && this.logger.info("resize"), this.emit("channel_resize");
+            } }], function(e4, t3) {
+              for (var n3 = 0; n3 < t3.length; n3++) {
+                var o3 = t3[n3];
+                o3.enumerable = o3.enumerable || false, o3.configurable = true, "value" in o3 && (o3.writable = true), Object.defineProperty(e4, o3.key, o3);
+              }
+            }(o2.prototype, n2), o2;
+          }(a), q = n("./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js"), R = n.n(q), H = n("./node_modules/style-loader/dist/runtime/styleDomAPI.js"), N = n.n(H), F = n("./node_modules/style-loader/dist/runtime/insertBySelector.js"), W = n.n(F), V = n("./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js"), U = n.n(V), Y = n("./node_modules/style-loader/dist/runtime/insertStyleElement.js"), Z = n.n(Y), X = n("./node_modules/style-loader/dist/runtime/styleTagTransform.js"), J = n.n(X), $ = n("./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/style/index.scss"), G = {};
+          G.styleTagTransform = J(), G.setAttributes = U(), G.insert = W().bind(null, "head"), G.domAPI = N(), G.insertStyleElement = Z(), R()($.A, G), $.A && $.A.locals && $.A.locals;
+        }(), o;
+      }();
     });
   }
 });
 
-// node_modules/xgplayer/es/_virtual/_rollupPluginBabelHelpers.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/_virtual/_rollupPluginBabelHelpers.js
+function _iterableToArrayLimit(arr, i) {
+  var _i = null == arr ? null : "undefined" != typeof Symbol && arr[Symbol.iterator] || arr["@@iterator"];
+  if (null != _i) {
+    var _s, _e, _x, _r, _arr = [], _n = true, _d = false;
+    try {
+      if (_x = (_i = _i.call(arr)).next, 0 === i) {
+        if (Object(_i) !== _i)
+          return;
+        _n = false;
+      } else
+        for (; !(_n = (_s = _x.call(_i)).done) && (_arr.push(_s.value), _arr.length !== i); _n = true)
+          ;
+    } catch (err) {
+      _d = true, _e = err;
+    } finally {
+      try {
+        if (!_n && null != _i.return && (_r = _i.return(), Object(_r) !== _r))
+          return;
+      } finally {
+        if (_d)
+          throw _e;
+      }
+    }
+    return _arr;
+  }
+}
 function ownKeys(object, enumerableOnly) {
   var keys = Object.keys(object);
   if (Object.getOwnPropertySymbols) {
@@ -1920,19 +1721,19 @@ function _isNativeReflectConstruct() {
     return false;
   }
 }
-function _assertThisInitialized(self) {
-  if (self === void 0) {
+function _assertThisInitialized(self2) {
+  if (self2 === void 0) {
     throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
   }
-  return self;
+  return self2;
 }
-function _possibleConstructorReturn(self, call) {
+function _possibleConstructorReturn(self2, call) {
   if (call && (typeof call === "object" || typeof call === "function")) {
     return call;
   } else if (call !== void 0) {
     throw new TypeError("Derived constructors may only return object or undefined");
   }
-  return _assertThisInitialized(self);
+  return _assertThisInitialized(self2);
 }
 function _createSuper(Derived) {
   var hasNativeReflectConstruct = _isNativeReflectConstruct();
@@ -1972,12 +1773,19 @@ function _get() {
   }
   return _get.apply(this, arguments);
 }
+function _slicedToArray(arr, i) {
+  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
+}
 function _toConsumableArray(arr) {
   return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
 }
 function _arrayWithoutHoles(arr) {
   if (Array.isArray(arr))
     return _arrayLikeToArray(arr);
+}
+function _arrayWithHoles(arr) {
+  if (Array.isArray(arr))
+    return arr;
 }
 function _iterableToArray(iter) {
   if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null)
@@ -2006,6 +1814,9 @@ function _arrayLikeToArray(arr, len) {
 function _nonIterableSpread() {
   throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
+function _nonIterableRest() {
+  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
 function _toPrimitive(input, hint) {
   if (typeof input !== "object" || input === null)
     return input;
@@ -2023,10 +1834,10 @@ function _toPropertyKey(arg) {
   return typeof key === "symbol" ? key : String(key);
 }
 
-// node_modules/xgplayer/es/mediaProxy.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/mediaProxy.js
 var import_eventemitter3 = __toESM(require_eventemitter3());
 
-// node_modules/xgplayer/es/utils/debug.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/utils/debug.js
 var XG_DEBUG_OPEN = typeof window !== "undefined" && window.location && window.location.href.indexOf("xgplayerdebugger=1") > -1;
 var STYLE = {
   info: "color: #525252; background-color: #90ee90;",
@@ -2070,7 +1881,7 @@ function bindDebug(player) {
   player.logError = XG_DEBUG.logError.bind(player);
 }
 
-// node_modules/xgplayer/es/utils/xgplayerTimeRange.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/utils/xgplayerTimeRange.js
 var XgplayerTimeRange = function() {
   function XgplayerTimeRange2(bufferedList) {
     _classCallCheck(this, XgplayerTimeRange2);
@@ -2095,7 +1906,7 @@ var XgplayerTimeRange = function() {
   return XgplayerTimeRange2;
 }();
 
-// node_modules/xgplayer/es/utils/util.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/utils/util.js
 var util = {};
 util.createDom = function() {
   var el = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : "div";
@@ -2923,9 +2734,10 @@ function checkIsCurrentVideo(element, playerId, key) {
   return false;
 }
 
-// node_modules/xgplayer/es/utils/sniffer.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/utils/sniffer.js
 var VERSION_REG = {
   android: /(Android)\s([\d.]+)/,
+  harmony: /(OpenHarmony|HarmonyOS)\s([\d.]+)/,
   ios: /(Version)\/([\d.]+)/
 };
 var H264_MIMETYPES = ["avc1.42E01E, mp4a.40.2", "avc1.58A01E, mp4a.40.2", "avc1.4D401E, mp4a.40.2", "avc1.64001E, mp4a.40.2", "avc1.42E01E", "mp4v.20.8", "mp4v.20.8, mp4a.40.2", "mp4v.20.240, mp4a.40.2"];
@@ -2959,11 +2771,12 @@ var sniffer = {
     var isSymbian = /(?:SymbianOS)/.test(ua) || isWindowsPhone;
     var isTizen = /(?:Tizen)/ig.test(ua);
     var isWebOS = /(?:Web0S)/ig.test(ua);
+    var isHarmonyOS = /(?:OpenHarmony|HarmonyOS)/i.test(ua);
     var isAndroid = /(?:Android)/.test(ua);
     var isFireFox = /(?:Firefox)/.test(ua);
     var isIpad = /(?:iPad|PlayBook)/.test(ua) || navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1;
-    var isTablet = isIpad || isAndroid && !/(?:Mobile)/.test(ua) || isFireFox && /(?:Tablet)/.test(ua);
-    var isPhone = /(?:iPhone)/.test(ua) && !isTablet;
+    var isTablet = isIpad || isAndroid && !/(?:Mobile)/.test(ua) || (isHarmonyOS || isFireFox) && /(?:Tablet)/.test(ua);
+    var isPhone = /(?:Phone)/.test(ua) && !isTablet;
     var isPc = !isPhone && !isAndroid && !isSymbian && !isTablet;
     return {
       isTablet,
@@ -2975,6 +2788,7 @@ var sniffer = {
       isSymbian,
       isWindowsPhone,
       isFireFox,
+      isHarmonyOS,
       isTizen,
       isWebOS
     };
@@ -2987,6 +2801,8 @@ var sniffer = {
     var reg = "";
     if (/(?:iPhone)|(?:iPad|PlayBook)/.test(ua)) {
       reg = VERSION_REG.ios;
+    } else if (/(?:OpenHarmony|HarmonyOS)/i.test(ua)) {
+      reg = VERSION_REG.harmony;
     } else {
       reg = VERSION_REG.android;
     }
@@ -3078,10 +2894,10 @@ var sniffer = {
   }
 };
 
-// node_modules/xgplayer/es/version.js
-var version = "3.0.23";
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/version.js
+var version = "3.0.24";
 
-// node_modules/xgplayer/es/error.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/error.js
 var ERROR_TYPE_MAP = {
   1: "media",
   2: "media",
@@ -3154,7 +2970,7 @@ var Errors = _createClass(
   }
 );
 
-// node_modules/xgplayer/es/events.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/events.js
 var events_exports = {};
 __export(events_exports, {
   ABORT: () => ABORT,
@@ -3283,7 +3099,7 @@ var STATS_EVENTS = {
 };
 var FPS_STUCK = "fps_stuck";
 
-// node_modules/xgplayer/es/mediaProxy.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/mediaProxy.js
 function emitVideoEvent(eventKey, e) {
   if (!this || !this.emit) {
     return;
@@ -3909,7 +3725,7 @@ var MediaProxy = function(_EventEmitter) {
   return MediaProxy2;
 }(import_eventemitter3.default);
 
-// node_modules/xgplayer/es/utils/database.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/utils/database.js
 var INDEXDB = function() {
   function INDEXDB2() {
     var mydb = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : {
@@ -3930,21 +3746,21 @@ var INDEXDB = function() {
     key: "openDB",
     value: function openDB(callback) {
       var _this = this;
-      var self = this;
+      var self2 = this;
       var version2 = this.myDB.version || 1;
-      var request = self.indexedDB.open(self.myDB.name, version2);
+      var request = self2.indexedDB.open(self2.myDB.name, version2);
       request.onerror = function(e) {
       };
       request.onsuccess = function(e) {
         _this.myDB.db = e.target.result;
-        callback.call(self);
+        callback.call(self2);
       };
       request.onupgradeneeded = function(e) {
         var db = e.target.result;
         e.target.transaction;
-        if (!db.objectStoreNames.contains(self.myDB.ojstore.name)) {
-          db.createObjectStore(self.myDB.ojstore.name, {
-            keyPath: self.myDB.ojstore.keypath
+        if (!db.objectStoreNames.contains(self2.myDB.ojstore.name)) {
+          db.createObjectStore(self2.myDB.ojstore.name, {
+            keyPath: self2.myDB.ojstore.keypath
           });
         }
       };
@@ -3952,8 +3768,8 @@ var INDEXDB = function() {
   }, {
     key: "deletedb",
     value: function deletedb() {
-      var self = this;
-      self.indexedDB.deleteDatabase(this.myDB.name);
+      var self2 = this;
+      self2.indexedDB.deleteDatabase(this.myDB.name);
     }
   }, {
     key: "closeDB",
@@ -3989,15 +3805,15 @@ var INDEXDB = function() {
   }, {
     key: "getDataByKey",
     value: function getDataByKey(storename, key, callback) {
-      var self = this;
+      var self2 = this;
       var store2 = this.myDB.db.transaction(storename, "readwrite").objectStore(storename);
       var request = store2.get(key);
       request.onerror = function() {
-        callback.call(self, null);
+        callback.call(self2, null);
       };
       request.onsuccess = function(e) {
         var result = e.target.result;
-        callback.call(self, result);
+        callback.call(self2, result);
       };
     }
   }, {
@@ -4016,13 +3832,13 @@ var INDEXDB = function() {
   return INDEXDB2;
 }();
 
-// node_modules/xgplayer/es/constant.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/constant.js
 var FULLSCREEN_EVENTS = ["fullscreenchange", "webkitfullscreenchange", "mozfullscreenchange", "MSFullscreenChange"];
 var GET_FULLSCREEN_API = ["requestFullscreen", "webkitRequestFullscreen", "mozRequestFullScreen", "msRequestFullscreen"];
 var EXIT_FULLSCREEN_API = ["exitFullscreen", "webkitExitFullscreen", "mozCancelFullScreen", "msExitFullscreen"];
 var PLATER_ID = "data-xgplayerid";
 
-// node_modules/xgplayer/es/plugin/hooksDescriptor.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugin/hooksDescriptor.js
 function callHandler(obj, handler, next) {
   for (var _len = arguments.length, args = new Array(_len > 3 ? _len - 3 : 0), _key = 3; _key < _len; _key++) {
     args[_key - 3] = arguments[_key];
@@ -4210,7 +4026,7 @@ function runHooks(obj, hookName, handler) {
   }
 }
 
-// node_modules/xgplayer/es/plugin/basePlugin.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugin/basePlugin.js
 function showErrorMsg(pluginName, msg) {
   XG_DEBUG.logError("[".concat(pluginName, "] event or callback cant be undefined or null when call ").concat(msg));
 }
@@ -4476,7 +4292,7 @@ var BasePlugin = function() {
   return BasePlugin2;
 }();
 
-// node_modules/xgplayer/es/plugin/plugin.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugin/plugin.js
 var import_delegate = __toESM(require_delegate());
 var ROOT_TYPES = {
   CONTROLS: "controls",
@@ -5033,8 +4849,8 @@ var Plugin = function(_BasePlugin) {
   return Plugin2;
 }(BasePlugin);
 
-// node_modules/xgplayer/es/plugin/resizeObserver.js
-var ResizeObserver = function() {
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugin/resizeObserver.js
+var ResizeObserver2 = function() {
   function ResizeObserver22() {
     var _this = this;
     _classCallCheck(this, ResizeObserver22);
@@ -5131,7 +4947,7 @@ var ResizeObserver = function() {
 var resizeObserver = null;
 function addObserver(target, handler) {
   if (!resizeObserver) {
-    resizeObserver = new ResizeObserver();
+    resizeObserver = new ResizeObserver2();
   }
   resizeObserver.addObserver(target, handler);
   return resizeObserver;
@@ -5141,7 +4957,7 @@ function unObserver(target, handler) {
   (_resizeObserver = resizeObserver) === null || _resizeObserver === void 0 ? void 0 : _resizeObserver.unObserver(target, handler);
 }
 
-// node_modules/xgplayer/es/plugin/pluginsManager.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugin/pluginsManager.js
 var pluginsManager = {
   pluginGroup: {},
   init: function init(player) {
@@ -5447,7 +5263,7 @@ var pluginsManager = {
   }
 };
 
-// node_modules/xgplayer/es/stateClassMap.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/stateClassMap.js
 var STATE_CLASS = {
   DEFAULT: "xgplayer",
   DEFAULT_SKIN: "xgplayer-skin-default",
@@ -5480,7 +5296,7 @@ var STATE_CLASS = {
   MINI: "xgplayer-mini"
 };
 
-// node_modules/xgplayer/es/defaultConfig.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/defaultConfig.js
 function getDefaultConfig() {
   return {
     id: "",
@@ -5565,7 +5381,7 @@ function getDefaultConfig() {
   };
 }
 
-// node_modules/xgplayer/es/plugin/preset.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugin/preset.js
 var usePreset = function usePreset2(player, Preset) {
   var _player$config$plugin, _player$config$ignore;
   var presetInst;
@@ -5593,7 +5409,7 @@ var usePreset = function usePreset2(player, Preset) {
   player.config.i18n = i18n;
 };
 
-// node_modules/xgplayer/es/plugins/controls/index.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/controls/index.js
 var Controls = function(_Plugin) {
   _inherits(Controls2, _Plugin);
   var _super = _createSuper(Controls2);
@@ -5780,7 +5596,7 @@ var Controls = function(_Plugin) {
   return Controls2;
 }(Plugin);
 
-// node_modules/xgplayer/es/lang/en.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/lang/en.js
 var EN = {
   LANG: "en",
   TEXT: {
@@ -5844,6 +5660,7 @@ var EN = {
     CSSFULLSCREEN_TIPS: "Cssfullscreen",
     EXITCSSFULLSCREEN_TIPS: "Exit cssfullscreen",
     TEXTTRACK: "Caption",
+    TEXTTRACK_OFF: "Off",
     PIP: "PIP",
     SCREENSHOT: "Screenshot",
     LIVE: "LIVE",
@@ -5858,7 +5675,7 @@ var EN = {
   }
 };
 
-// node_modules/xgplayer/es/lang/i18n.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/lang/i18n.js
 var XGI18nLang = {
   lang: {},
   langKeys: [],
@@ -5978,7 +5795,7 @@ var I18N = {
   init: init2
 };
 
-// node_modules/xgplayer/es/state.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/state.js
 var STATES = {
   INITIAL: 1,
   READY: 2,
@@ -5991,7 +5808,7 @@ var STATES = {
 };
 var STATE_ARRAY = ["ERROR", "INITIAL", "READY", "ATTACHING", "ATTACHED", "NOTALLOW", "RUNNING", "ENDED", "DESTROYED"];
 
-// node_modules/xgplayer/es/instManager.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/instManager.js
 var import_eventemitter32 = __toESM(require_eventemitter3());
 var store = {};
 var instance = null;
@@ -6142,7 +5959,7 @@ function checkPlayerRoot(root) {
   return null;
 }
 
-// node_modules/xgplayer/es/player.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/player.js
 var PlAYER_HOOKS = ["play", "pause", "replay", "retry"];
 var REAL_TIME_SPEED = 0;
 var AVG_SPEED = 0;
@@ -6151,6 +5968,7 @@ var Player = function(_MediaProxy) {
   _inherits(Player2, _MediaProxy);
   var _super = _createSuper(Player2);
   function Player2(options) {
+    var _this$onReady, _this2;
     var _this;
     _classCallCheck(this, Player2);
     var _config = util.deepMerge(getDefaultConfig(), options);
@@ -6319,16 +6137,18 @@ var Player = function(_MediaProxy) {
       return _possibleConstructorReturn(_this);
     }
     var _this$config2 = _this.config, _this$config2$definit = _this$config2.definition, definition = _this$config2$definit === void 0 ? {} : _this$config2$definit, url = _this$config2.url;
-    if (!url && definition.list && definition.list.length > 0) {
-      var defaultDefinitionObj = definition.list.find(function(e) {
+    if (Array.isArray(definition === null || definition === void 0 ? void 0 : definition.list) && definition.list.length > 0) {
+      var curDefinition = definition.list.find(function(e) {
         return e.definition && e.definition === definition.defaultDefinition;
       });
-      if (!defaultDefinitionObj) {
+      if (!curDefinition) {
         definition.defaultDefinition = definition.list[0].definition;
-        defaultDefinitionObj = definition.list[0];
+        curDefinition = definition.list[0];
       }
-      _this.config.url = defaultDefinitionObj.url;
-      _this.curDefinition = defaultDefinitionObj;
+      _this.curDefinition = curDefinition;
+      if (!url) {
+        _this.config.url = curDefinition.url;
+      }
     }
     _this._bindEvents();
     _this._registerPresets();
@@ -6339,7 +6159,7 @@ var Player = function(_MediaProxy) {
     util.setTimeout(_assertThisInitialized(_this), function() {
       _this.emit(READY);
     }, 0);
-    _this.onReady && _this.onReady();
+    (_this$onReady = (_this2 = _this).onReady) === null || _this$onReady === void 0 ? void 0 : _this$onReady.call(_this2);
     if (_this.config.videoInit || _this.config.autoplay) {
       if (!_this.hasStart || _this.state < STATES.ATTACHED) {
         _this.start();
@@ -6350,7 +6170,7 @@ var Player = function(_MediaProxy) {
   _createClass(Player2, [{
     key: "_initDOM",
     value: function _initDOM() {
-      var _instManager, _this2 = this;
+      var _instManager, _this3 = this;
       this.root = this.config.id ? document.getElementById(this.config.id) : null;
       if (!this.root) {
         var el = this.config.el;
@@ -6403,15 +6223,15 @@ var Player = function(_MediaProxy) {
           "padding-top": "".concat(_height * 100 / _width, "%")
         };
         Object.keys(style).forEach(function(key) {
-          _this2.root.style[key] = style[key];
+          _this3.root.style[key] = style[key];
         });
       } else {
         ["width", "height"].forEach(function(key) {
-          if (_this2.config[key]) {
-            if (typeof _this2.config[key] !== "number") {
-              _this2.root.style[key] = _this2.config[key];
+          if (_this3.config[key]) {
+            if (typeof _this3.config[key] !== "number") {
+              _this3.root.style[key] = _this3.config[key];
             } else {
-              _this2.root.style[key] = "".concat(_this2.config[key], "px");
+              _this3.root.style[key] = "".concat(_this3.config[key], "px");
             }
           }
         });
@@ -6439,12 +6259,12 @@ var Player = function(_MediaProxy) {
   }, {
     key: "_bindEvents",
     value: function _bindEvents() {
-      var _this3 = this;
+      var _this4 = this;
       ["focus", "blur"].forEach(function(item) {
-        _this3.on(item, _this3["on" + item.charAt(0).toUpperCase() + item.slice(1)]);
+        _this4.on(item, _this4["on" + item.charAt(0).toUpperCase() + item.slice(1)]);
       });
       FULLSCREEN_EVENTS.forEach(function(item) {
-        document && document.addEventListener(item, _this3.onFullscreenChange);
+        document && document.addEventListener(item, _this4.onFullscreenChange);
       });
       if (sniffer.os.isIos) {
         this.media.addEventListener("webkitbeginfullscreen", this._onWebkitbeginfullscreen);
@@ -6452,8 +6272,8 @@ var Player = function(_MediaProxy) {
       }
       this.once(LOADED_DATA, this.resize);
       this.playFunc = function() {
-        if (!_this3.config.closeFocusVideoFocus) {
-          _this3.media.focus();
+        if (!_this4.config.closeFocusVideoFocus) {
+          _this4.media.focus();
         }
       };
       this.once(PLAY, this.playFunc);
@@ -6461,10 +6281,10 @@ var Player = function(_MediaProxy) {
   }, {
     key: "_unbindEvents",
     value: function _unbindEvents() {
-      var _this4 = this;
+      var _this5 = this;
       this.root.removeEventListener("mousemove", this.mousemoveFunc);
       FULLSCREEN_EVENTS.forEach(function(item) {
-        document.removeEventListener(item, _this4.onFullscreenChange);
+        document.removeEventListener(item, _this5.onFullscreenChange);
       });
       this.playFunc && this.off(PLAY, this.playFunc);
       this.off(CANPLAY, this.canPlayFunc);
@@ -6483,7 +6303,7 @@ var Player = function(_MediaProxy) {
   }, {
     key: "_startInit",
     value: function _startInit(url) {
-      var _this5 = this;
+      var _this6 = this;
       var options = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
       if (!this.media) {
         return;
@@ -6536,13 +6356,13 @@ var Player = function(_MediaProxy) {
       this.hasStart = true;
       this.setState(STATES.ATTACHED);
       util.setTimeout(this, function() {
-        _this5.emit(COMPLETE);
+        _this6.emit(COMPLETE);
       }, 0);
     }
   }, {
     key: "_registerPlugins",
     value: function _registerPlugins() {
-      var _this6 = this;
+      var _this7 = this;
       var isInit = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : true;
       this._loadingPlugins = [];
       var ignores = this.config.ignores || [];
@@ -6561,19 +6381,19 @@ var Player = function(_MediaProxy) {
             return;
           }
           if (plugin.lazy && plugin.loader) {
-            var loadingPlugin = pluginsManager.lazyRegister(_this6, plugin);
+            var loadingPlugin = pluginsManager.lazyRegister(_this7, plugin);
             if (plugin.forceBeforeInit) {
               loadingPlugin.then(function() {
-                _this6._loadingPlugins.splice(_this6._loadingPlugins.indexOf(loadingPlugin), 1);
+                _this7._loadingPlugins.splice(_this7._loadingPlugins.indexOf(loadingPlugin), 1);
               }).catch(function(e) {
                 XG_DEBUG.logError("_registerPlugins:loadingPlugin", e);
-                _this6._loadingPlugins.splice(_this6._loadingPlugins.indexOf(loadingPlugin), 1);
+                _this7._loadingPlugins.splice(_this7._loadingPlugins.indexOf(loadingPlugin), 1);
               });
-              _this6._loadingPlugins.push(loadingPlugin);
+              _this7._loadingPlugins.push(loadingPlugin);
             }
             return;
           }
-          return _this6.registerPlugin(plugin);
+          return _this7.registerPlugin(plugin);
         } catch (err) {
           XG_DEBUG.logError("_registerPlugins:", err);
         }
@@ -6582,9 +6402,9 @@ var Player = function(_MediaProxy) {
   }, {
     key: "_registerPresets",
     value: function _registerPresets() {
-      var _this7 = this;
+      var _this8 = this;
       this.config.presets.forEach(function(preset) {
-        usePreset(_this7, preset);
+        usePreset(_this8, preset);
       });
     }
   }, {
@@ -6734,7 +6554,7 @@ var Player = function(_MediaProxy) {
   }, {
     key: "start",
     value: function start(url) {
-      var _this8 = this;
+      var _this9 = this;
       if (this.state > STATES.ATTACHING) {
         return;
       }
@@ -6749,14 +6569,14 @@ var Player = function(_MediaProxy) {
       this.setState(STATES.ATTACHING);
       this._registerPlugins(false);
       return pluginsManager.beforeInit(this).then(function() {
-        if (!_this8.config) {
+        if (!_this9.config) {
           return;
         }
         if (!url) {
-          url = _this8.url || _this8.config.url;
+          url = _this9.url || _this9.config.url;
         }
-        var _furl = _this8.preProcessUrl(url);
-        var ret = _this8._startInit(_furl.url, {
+        var _furl = _this9.preProcessUrl(url);
+        var ret = _this9._startInit(_furl.url, {
           playSessionId
         });
         return ret;
@@ -6770,7 +6590,7 @@ var Player = function(_MediaProxy) {
   }, {
     key: "switchURL",
     value: function switchURL(url, options) {
-      var _this9 = this;
+      var _this10 = this;
       var _src = url;
       if (util.typeOf(url) === "Object") {
         _src = url.url;
@@ -6782,32 +6602,32 @@ var Player = function(_MediaProxy) {
       this.src = _src;
       return new Promise(function(resolve, reject) {
         var _error = function _error2(e) {
-          _this9.off("timeupdate", _canplay);
-          _this9.off("canplay", _canplay);
+          _this10.off("timeupdate", _canplay);
+          _this10.off("canplay", _canplay);
           reject(e);
         };
         var _canplay = function _canplay2() {
-          _this9._seekToStartTime();
+          _this10._seekToStartTime();
           if (isPaused) {
-            _this9.pause();
+            _this10.pause();
           }
-          _this9.off("error", _error);
+          _this10.off("error", _error);
           resolve(true);
         };
-        _this9.once("error", _error);
+        _this10.once("error", _error);
         if (!_src) {
-          _this9.errorHandler("error", {
+          _this10.errorHandler("error", {
             code: 6,
             message: "empty_src"
           });
           return;
         }
         if (sniffer.os.isAndroid) {
-          _this9.once("timeupdate", _canplay);
+          _this10.once("timeupdate", _canplay);
         } else {
-          _this9.once("canplay", _canplay);
+          _this10.once("canplay", _canplay);
         }
-        _this9.play();
+        _this10.play();
       });
     }
   }, {
@@ -6818,7 +6638,7 @@ var Player = function(_MediaProxy) {
   }, {
     key: "mediaPlay",
     value: function mediaPlay() {
-      var _this10 = this;
+      var _this11 = this;
       if (!this.hasStart && this.state < STATES.ATTACHED) {
         this.removeClass(STATE_CLASS.NO_START);
         this.addClass(STATE_CLASS.ENTER);
@@ -6833,28 +6653,28 @@ var Player = function(_MediaProxy) {
       var playPromise = _get(_getPrototypeOf(Player2.prototype), "play", this).call(this);
       if (playPromise !== void 0 && playPromise && playPromise.then) {
         playPromise.then(function() {
-          _this10.removeClass(STATE_CLASS.NOT_ALLOW_AUTOPLAY);
-          _this10.addClass(STATE_CLASS.PLAYING);
-          if (_this10.state < STATES.RUNNING) {
+          _this11.removeClass(STATE_CLASS.NOT_ALLOW_AUTOPLAY);
+          _this11.addClass(STATE_CLASS.PLAYING);
+          if (_this11.state < STATES.RUNNING) {
             XG_DEBUG.logInfo(">>>>playPromise.then");
-            _this10.setState(STATES.RUNNING);
-            _this10.emit(AUTOPLAY_STARTED);
+            _this11.setState(STATES.RUNNING);
+            _this11.emit(AUTOPLAY_STARTED);
           }
         }).catch(function(e) {
           XG_DEBUG.logWarn(">>>>playPromise.catch", e.name);
-          if (_this10.media && _this10.media.error) {
-            _this10.onError();
-            _this10.removeClass(STATE_CLASS.ENTER);
+          if (_this11.media && _this11.media.error) {
+            _this11.onError();
+            _this11.removeClass(STATE_CLASS.ENTER);
             return;
           }
           if (e.name === "NotAllowedError") {
-            _this10._errorTimer = util.setTimeout(_this10, function() {
-              _this10._errorTimer = null;
-              _this10.emit(AUTOPLAY_PREVENTED);
-              _this10.addClass(STATE_CLASS.NOT_ALLOW_AUTOPLAY);
-              _this10.removeClass(STATE_CLASS.ENTER);
-              _this10.pause();
-              _this10.setState(STATES.NOTALLOW);
+            _this11._errorTimer = util.setTimeout(_this11, function() {
+              _this11._errorTimer = null;
+              _this11.emit(AUTOPLAY_PREVENTED);
+              _this11.addClass(STATE_CLASS.NOT_ALLOW_AUTOPLAY);
+              _this11.removeClass(STATE_CLASS.ENTER);
+              _this11.pause();
+              _this11.setState(STATES.NOTALLOW);
             }, 0);
           }
         });
@@ -6884,24 +6704,24 @@ var Player = function(_MediaProxy) {
   }, {
     key: "play",
     value: function play() {
-      var _this11 = this;
+      var _this12 = this;
       this.removeClass(STATE_CLASS.PAUSED);
       return runHooks(this, "play", function() {
-        return _this11.mediaPlay();
+        return _this12.mediaPlay();
       });
     }
   }, {
     key: "pause",
     value: function pause() {
-      var _this12 = this;
+      var _this13 = this;
       runHooks(this, "pause", function() {
-        _get(_getPrototypeOf(Player2.prototype), "pause", _this12).call(_this12);
+        _get(_getPrototypeOf(Player2.prototype), "pause", _this13).call(_this13);
       });
     }
   }, {
     key: "seek",
     value: function seek(time, status) {
-      var _this13 = this;
+      var _this14 = this;
       if (!this.media || Number.isNaN(Number(time)) || !this.hasStart) {
         return;
       }
@@ -6911,20 +6731,20 @@ var Player = function(_MediaProxy) {
       !this._isPauseBeforeSeek && (this._isPauseBeforeSeek = this.paused ? 2 : 1);
       this._onceSeekCanplay && this.off(SEEKED, this._onceSeekCanplay);
       this._onceSeekCanplay = function() {
-        _this13.removeClass(STATE_CLASS.ENTER);
-        _this13.isSeeking = false;
+        _this14.removeClass(STATE_CLASS.ENTER);
+        _this14.isSeeking = false;
         switch (_status) {
           case "play":
-            _this13.play();
+            _this14.play();
             break;
           case "pause":
-            _this13.pause();
+            _this14.pause();
             break;
           default:
-            _this13._isPauseBeforeSeek > 1 || _this13.paused ? _this13.pause() : _this13.play();
+            _this14._isPauseBeforeSeek > 1 || _this14.paused ? _this14.pause() : _this14.play();
         }
-        _this13._isPauseBeforeSeek = 0;
-        _this13._onceSeekCanplay = null;
+        _this14._isPauseBeforeSeek = 0;
+        _this14._onceSeekCanplay = null;
       };
       this.once(SEEKED, this._onceSeekCanplay);
       if (this.state < STATES.RUNNING) {
@@ -6938,13 +6758,13 @@ var Player = function(_MediaProxy) {
   }, {
     key: "getInitDefinition",
     value: function getInitDefinition() {
-      var _this14 = this;
+      var _this15 = this;
       var _this$config5 = this.config, definition = _this$config5.definition, url = _this$config5.url;
       if (!url && definition && definition.list && definition.list.length > 0 && definition.defaultDefinition) {
         definition.list.map(function(item) {
           if (item.definition === definition.defaultDefinition) {
-            _this14.config.url = item.url;
-            _this14.curDefinition = item;
+            _this15.config.url = item.url;
+            _this15.curDefinition = item;
           }
         });
       }
@@ -6952,12 +6772,12 @@ var Player = function(_MediaProxy) {
   }, {
     key: "changeDefinition",
     value: function changeDefinition(to, from) {
-      var _this15 = this;
+      var _this16 = this;
       var definition = this.config.definition;
       if (Array.isArray(definition === null || definition === void 0 ? void 0 : definition.list)) {
         definition.list.forEach(function(item) {
           if ((to === null || to === void 0 ? void 0 : to.definition) === item.definition) {
-            _this15.curDefinition = item;
+            _this16.curDefinition = item;
           }
         });
       }
@@ -6977,7 +6797,7 @@ var Player = function(_MediaProxy) {
       }, to));
       if (ret && ret.then) {
         ret.then(function() {
-          _this15.emit(AFTER_DEFINITION_CHANGE, {
+          _this16.emit(AFTER_DEFINITION_CHANGE, {
             from,
             to
           });
@@ -7001,7 +6821,7 @@ var Player = function(_MediaProxy) {
   }, {
     key: "resetState",
     value: function resetState() {
-      var _this16 = this;
+      var _this17 = this;
       var NOT_ALLOW_AUTOPLAY = STATE_CLASS.NOT_ALLOW_AUTOPLAY, PLAYING2 = STATE_CLASS.PLAYING, NO_START = STATE_CLASS.NO_START, PAUSED = STATE_CLASS.PAUSED, REPLAY2 = STATE_CLASS.REPLAY, ENTER = STATE_CLASS.ENTER, ENDED2 = STATE_CLASS.ENDED, ERROR22 = STATE_CLASS.ERROR, LOADING2 = STATE_CLASS.LOADING;
       var clsList = [NOT_ALLOW_AUTOPLAY, PLAYING2, NO_START, PAUSED, REPLAY2, ENTER, ENDED2, ERROR22, LOADING2];
       this.hasStart = false;
@@ -7012,7 +6832,7 @@ var Player = function(_MediaProxy) {
       this._accPlayed.t = 0;
       this._accPlayed.loopAcc = 0;
       clsList.forEach(function(cls) {
-        _this16.removeClass(cls);
+        _this17.removeClass(cls);
       });
       this.addClass(STATE_CLASS.NO_START);
       this.emit(RESET);
@@ -7020,7 +6840,7 @@ var Player = function(_MediaProxy) {
   }, {
     key: "reset",
     value: function reset() {
-      var _this17 = this;
+      var _this18 = this;
       var unregisterPlugins = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : [];
       var isResetConfig = arguments.length > 1 ? arguments[1] : void 0;
       this.resetState();
@@ -7029,13 +6849,13 @@ var Player = function(_MediaProxy) {
         return;
       }
       unregisterPlugins.map(function(pn) {
-        _this17.deregister(pn);
+        _this18.deregister(pn);
       });
       if (isResetConfig) {
         var de2 = getDefaultConfig();
         Object.keys(this.config).forEach(function(k) {
-          if (_this17.config[k] !== "undefined" && (k === "plugins" || k === "presets" || k === "el" || k === "id")) {
-            _this17.config[k] = de2[k];
+          if (_this18.config[k] !== "undefined" && (k === "plugins" || k === "presets" || k === "el" || k === "id")) {
+            _this18.config[k] = de2[k];
           }
         });
       }
@@ -7043,7 +6863,7 @@ var Player = function(_MediaProxy) {
   }, {
     key: "destroy",
     value: function destroy2() {
-      var _instManager2, _this18 = this;
+      var _instManager2, _this19 = this;
       var innerContainer = this.innerContainer, root = this.root, media = this.media;
       if (!root || !media) {
         return;
@@ -7072,8 +6892,8 @@ var Player = function(_MediaProxy) {
       }
       !innerContainer && media instanceof window.Node && root.contains(media) && !this.config.remainMediaAfterDestroy && root.removeChild(media);
       ["topBar", "leftBar", "rightBar", "innerContainer"].map(function(item) {
-        _this18[item] && root.removeChild(_this18[item]);
-        _this18[item] = null;
+        _this19[item] && root.removeChild(_this19[item]);
+        _this19[item] = null;
       });
       var cList = root.className.split(" ");
       if (cList.length > 0) {
@@ -7085,45 +6905,45 @@ var Player = function(_MediaProxy) {
       }
       this.removeAttribute("data-xgfill");
       ["isSeeking", "isCanplay", "isActive", "cssfullscreen", "fullscreen"].forEach(function(key) {
-        _this18[key] = false;
+        _this19[key] = false;
       });
     }
   }, {
     key: "replay",
     value: function replay() {
-      var _this19 = this;
+      var _this20 = this;
       this.removeClass(STATE_CLASS.ENDED);
       this.currentTime = 0;
       this.isSeeking = false;
       runHooks(this, "replay", function() {
-        _this19.once(SEEKED, function() {
-          var playPromise = _this19.mediaPlay();
+        _this20.once(SEEKED, function() {
+          var playPromise = _this20.mediaPlay();
           if (playPromise && playPromise.catch) {
             playPromise.catch(function(err) {
               console.log(err);
             });
           }
         });
-        _this19.emit(REPLAY);
-        _this19.onPlay();
+        _this20.emit(REPLAY);
+        _this20.onPlay();
       });
     }
   }, {
     key: "retry",
     value: function retry() {
-      var _this20 = this;
+      var _this21 = this;
       this.removeClass(STATE_CLASS.ERROR);
       this.addClass(STATE_CLASS.LOADING);
       runHooks(this, "retry", function() {
-        var cur = _this20.currentTime;
-        var url = _this20.config.url;
-        var _srcRet = !util.isMSE(_this20.media) ? _this20.preProcessUrl(url) : {
+        var cur = _this21.currentTime;
+        var url = _this21.config.url;
+        var _srcRet = !util.isMSE(_this21.media) ? _this21.preProcessUrl(url) : {
           url
         };
-        _this20.src = _srcRet.url;
-        !_this20.config.isLive && (_this20.currentTime = cur);
-        _this20.once(CANPLAY, function() {
-          _this20.mediaPlay();
+        _this21.src = _srcRet.url;
+        !_this21.config.isLive && (_this21.currentTime = cur);
+        _this21.once(CANPLAY, function() {
+          _this21.mediaPlay();
         });
       });
     }
@@ -7225,6 +7045,8 @@ var Player = function(_MediaProxy) {
           if (document[key]) {
             var ret = document[key]();
             if (ret && ret.then) {
+              ret.catch(function() {
+              });
               return ret;
             } else {
               return Promise.resolve();
@@ -7232,7 +7054,11 @@ var Player = function(_MediaProxy) {
           }
         }
         if (media && media.webkitSupportsFullscreen) {
-          media.webkitExitFullScreen();
+          var _ret = media.webkitExitFullScreen();
+          if (_ret && _ret.catch) {
+            _ret.catch(function() {
+            });
+          }
           return Promise.resolve();
         }
         return Promise.reject(new Error("call exitFullscreen fail"));
@@ -7358,7 +7184,7 @@ var Player = function(_MediaProxy) {
   }, {
     key: "onFocus",
     value: function onFocus() {
-      var _this21 = this;
+      var _this22 = this;
       var data = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : {
         autoHide: true,
         delay: 3e3
@@ -7376,8 +7202,8 @@ var Player = function(_MediaProxy) {
       }
       var time = data && data.delay ? data.delay : this.config.inactive;
       this.userTimer = util.setTimeout(this, function() {
-        _this21.userTimer = null;
-        _this21.blur();
+        _this22.userTimer = null;
+        _this22.blur();
       }, time);
     }
   }, {
@@ -7410,7 +7236,7 @@ var Player = function(_MediaProxy) {
   }, {
     key: "onLoadeddata",
     value: function onLoadeddata() {
-      var _this22 = this;
+      var _this23 = this;
       this.isError = false;
       this.isSeeking = false;
       if (this.__startTime > 0) {
@@ -7418,7 +7244,7 @@ var Player = function(_MediaProxy) {
           this._seekToStartTime();
         } else {
           this.once(DURATION_CHANGE, function() {
-            _this22._seekToStartTime();
+            _this23._seekToStartTime();
           });
         }
       }
@@ -7489,27 +7315,27 @@ var Player = function(_MediaProxy) {
   }, {
     key: "onWaiting",
     value: function onWaiting() {
-      var _this23 = this;
+      var _this24 = this;
       if (this.waitTimer) {
         util.clearTimeout(this, this.waitTimer);
       }
       this.updateAcc("waiting");
       this.waitTimer = util.setTimeout(this, function() {
-        _this23.addClass(STATE_CLASS.LOADING);
-        _this23.emit(LOADING);
-        util.clearTimeout(_this23, _this23.waitTimer);
-        _this23.waitTimer = null;
+        _this24.addClass(STATE_CLASS.LOADING);
+        _this24.emit(LOADING);
+        util.clearTimeout(_this24, _this24.waitTimer);
+        _this24.waitTimer = null;
       }, this.config.minWaitDelay);
     }
   }, {
     key: "onPlaying",
     value: function onPlaying() {
-      var _this24 = this;
+      var _this25 = this;
       this.isError = false;
       var NO_START = STATE_CLASS.NO_START, PAUSED = STATE_CLASS.PAUSED, ENDED2 = STATE_CLASS.ENDED, ERROR22 = STATE_CLASS.ERROR, REPLAY2 = STATE_CLASS.REPLAY, LOADING2 = STATE_CLASS.LOADING;
       var clsList = [NO_START, PAUSED, ENDED2, ERROR22, REPLAY2, LOADING2];
       clsList.forEach(function(cls) {
-        _this24.removeClass(cls);
+        _this25.removeClass(cls);
       });
       if (!this._accPlayed.t && !this.paused && !this.ended) {
         this._accPlayed.t = (/* @__PURE__ */ new Date()).getTime();
@@ -7597,7 +7423,7 @@ var Player = function(_MediaProxy) {
   }, {
     key: "resizePosition",
     value: function resizePosition() {
-      var _this25 = this;
+      var _this26 = this;
       var _this$videoPos = this.videoPos, vy = _this$videoPos.vy, vx = _this$videoPos.vx, h = _this$videoPos.h, w = _this$videoPos.w;
       var rotate = this.videoPos.rotate;
       if (rotate < 0 && h < 0 && w < 0) {
@@ -7654,7 +7480,7 @@ var Player = function(_MediaProxy) {
       styles.transform = formStyle;
       styles.webkitTransform = formStyle;
       Object.keys(styles).map(function(key) {
-        _this25.media.style[key] = styles[key];
+        _this26.media.style[key] = styles[key];
       });
     }
   }, {
@@ -7679,14 +7505,14 @@ var Player = function(_MediaProxy) {
   }, {
     key: "setConfig",
     value: function setConfig(config) {
-      var _this26 = this;
+      var _this27 = this;
       if (!config) {
         return;
       }
       Object.keys(config).map(function(key) {
         if (key !== "plugins") {
-          _this26.config[key] = config[key];
-          var plugin = _this26.plugins[key.toLowerCase()];
+          _this27.config[key] = config[key];
+          var plugin = _this27.plugins[key.toLowerCase()];
           if (plugin && util.typeOf(plugin.setConfig) === "Function") {
             plugin.setConfig(config[key]);
           }
@@ -7696,20 +7522,20 @@ var Player = function(_MediaProxy) {
   }, {
     key: "playNext",
     value: function playNext(config) {
-      var _this27 = this;
+      var _this28 = this;
       this.resetState();
       this.setConfig(config);
       this._currentTime = 0;
       this._duration = 0;
       runHooks(this, "playnext", function() {
-        _this27.start();
-        _this27.emit(PLAYNEXT, config);
+        _this28.start();
+        _this28.emit(PLAYNEXT, config);
       });
     }
   }, {
     key: "resize",
     value: function resize() {
-      var _this28 = this;
+      var _this29 = this;
       if (!this.media || !this.root) {
         return;
       }
@@ -7749,7 +7575,7 @@ var Player = function(_MediaProxy) {
       }
       if (!this.fullscreen && !this.cssfullscreen) {
         Object.keys(_style).forEach(function(key) {
-          _this28.root.style[key] = _style[key];
+          _this29.root.style[key] = _style[key];
         });
       }
       if (videoFillMode === "fillHeight" && fit < videoFit || videoFillMode === "fillWidth" && fit > videoFit) {
@@ -7849,15 +7675,15 @@ var Player = function(_MediaProxy) {
       return this.config.definition.list || [];
     },
     set: function set(list) {
-      var _this29 = this;
+      var _this30 = this;
       var definition = this.config.definition;
       var curDef = null;
       var targetDef = null;
       definition.list = list;
       this.emit("resourceReady", list);
       list.forEach(function(item) {
-        var _this29$curDefinition;
-        if (((_this29$curDefinition = _this29.curDefinition) === null || _this29$curDefinition === void 0 ? void 0 : _this29$curDefinition.definition) === item.definition) {
+        var _this30$curDefinition;
+        if (((_this30$curDefinition = _this30.curDefinition) === null || _this30$curDefinition === void 0 ? void 0 : _this30$curDefinition.definition) === item.definition) {
           curDef = item;
         }
         if (definition.defaultDefinition === item.definition) {
@@ -8034,6 +7860,14 @@ var Player = function(_MediaProxy) {
       return hook.call.apply(hook, [this].concat(Array.prototype.slice.call(arguments)));
     }
   }, {
+    key: "runHooks",
+    value: function runHooks$1() {
+      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+      return runHooks.call.apply(runHooks, [this].concat(Array.prototype.slice.call(arguments)));
+    }
+  }, {
     key: "useHooks",
     value: function useHooks$1(hookName, handler) {
       return useHooks.call.apply(useHooks, [this].concat(Array.prototype.slice.call(arguments)));
@@ -8046,16 +7880,16 @@ var Player = function(_MediaProxy) {
   }, {
     key: "usePluginHooks",
     value: function usePluginHooks$1(pluginName, hookName, handler) {
-      for (var _len = arguments.length, args = new Array(_len > 3 ? _len - 3 : 0), _key = 3; _key < _len; _key++) {
-        args[_key - 3] = arguments[_key];
+      for (var _len2 = arguments.length, args = new Array(_len2 > 3 ? _len2 - 3 : 0), _key2 = 3; _key2 < _len2; _key2++) {
+        args[_key2 - 3] = arguments[_key2];
       }
       return usePluginHooks.call.apply(usePluginHooks, [this].concat(Array.prototype.slice.call(arguments)));
     }
   }, {
     key: "removePluginHooks",
     value: function removePluginHooks$1(pluginName, hookName, handler) {
-      for (var _len2 = arguments.length, args = new Array(_len2 > 3 ? _len2 - 3 : 0), _key2 = 3; _key2 < _len2; _key2++) {
-        args[_key2 - 3] = arguments[_key2];
+      for (var _len3 = arguments.length, args = new Array(_len3 > 3 ? _len3 - 3 : 0), _key3 = 3; _key3 < _len3; _key3++) {
+        args[_key3 - 3] = arguments[_key3];
       }
       return removePluginHooks.call.apply(removePluginHooks, [this].concat(Array.prototype.slice.call(arguments)));
     }
@@ -8134,7 +7968,7 @@ _defineProperty(Player, "defaultPreset", null);
 _defineProperty(Player, "XgVideoProxy", null);
 Player.instManager = InstManager.getInstance();
 
-// node_modules/xgplayer/es/plugins/common/iconTools.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/common/iconTools.js
 function xgIconTips(plugin, textKey, isShow) {
   try {
     return ' <div class="xg-tips '.concat(isShow ? "hide" : " ", '" lang-key="').concat(plugin.i18nKeys[textKey], '">\n    ').concat(plugin.i18n[textKey], "\n    </div>");
@@ -8143,7 +7977,7 @@ function xgIconTips(plugin, textKey, isShow) {
   }
 }
 
-// node_modules/xgplayer/es/plugins/common/iconPlugin.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/common/iconPlugin.js
 var Icon = function(_Plugin) {
   _inherits(Icon2, _Plugin);
   var _super = _createSuper(Icon2);
@@ -8185,7 +8019,7 @@ var Icon = function(_Plugin) {
   return Icon2;
 }(Plugin);
 
-// node_modules/xgplayer/es/plugins/assets/requestCssFull.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/assets/requestCssFull.js
 function CssFullSceenSvg() {
   return new DOMParser().parseFromString(`<svg xmlns="http://www.w3.org/2000/svg" width="31" height="40" viewBox="0 -5 31 40">
   <path fill="#fff" transform="scale(1.3, 1.3)" class='path_full' d="M9,10v1a.9.9,0,0,1-1,1,.9.9,0,0,1-1-1V9A.9.9,0,0,1,8,8h2a.9.9,0,0,1,1,1,.9.9,0,0,1-1,1Zm6,4V13a1,1,0,0,1,2,0v2a.9.9,0,0,1-1,1H14a1,1,0,0,1,0-2Zm3-7H6V17H18Zm2,0V17a2,2,0,0,1-2,2H6a2,2,0,0,1-2-2V7A2,2,0,0,1,6,5H18A2,2,0,0,1,20,7Z"></path>
@@ -8193,12 +8027,12 @@ function CssFullSceenSvg() {
 `, "image/svg+xml").firstChild;
 }
 
-// node_modules/xgplayer/es/plugins/assets/exitCssFull.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/assets/exitCssFull.js
 function ExitCssFullSceenSvg() {
   return new DOMParser().parseFromString('<svg xmlns="http://www.w3.org/2000/svg" width="31" height="40" viewBox="0 -5 31 40">\n  <path fill="#fff" transform="scale(1.3, 1.3)" d="M9,10V9a.9.9,0,0,1,1-1,.9.9,0,0,1,1,1v2a.9.9,0,0,1-1,1H8a.9.9,0,0,1-1-1,.9.9,0,0,1,1-1Zm6,4v1a1,1,0,0,1-2,0V13a.9.9,0,0,1,1-1h2a1,1,0,0,1,0,2Zm3-7H6V17H18Zm2,0V17a2,2,0,0,1-2,2H6a2,2,0,0,1-2-2V7A2,2,0,0,1,6,5H18A2,2,0,0,1,20,7Z"></path>\n</svg>\n', "image/svg+xml").firstChild;
 }
 
-// node_modules/xgplayer/es/plugins/cssFullScreen/index.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/cssFullScreen/index.js
 var CssFullScreen = function(_IconPlugin) {
   _inherits(CssFullScreen2, _IconPlugin);
   var _super = _createSuper(CssFullScreen2);
@@ -8326,12 +8160,12 @@ var CssFullScreen = function(_IconPlugin) {
   return CssFullScreen2;
 }(Icon);
 
-// node_modules/xgplayer/es/plugins/assets/back.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/assets/back.js
 function BackSVG() {
   return new DOMParser().parseFromString('<svg width="32px" height="40px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">\n    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">\n        <path d="M11.2374369,14 L17.6187184,7.61871843 C17.9604272,7.27700968 17.9604272,6.72299032 17.6187184,6.38128157 C17.2770097,6.03957281 16.7229903,6.03957281 16.3812816,6.38128157 L9.38128157,13.3812816 C9.03957281,13.7229903 9.03957281,14.2770097 9.38128157,14.6187184 L16.3812816,21.6187184 C16.7229903,21.9604272 17.2770097,21.9604272 17.6187184,21.6187184 C17.9604272,21.2770097 17.9604272,20.7229903 17.6187184,20.3812816 L11.2374369,14 L11.2374369,14 Z" fill="#FFFFFF"></path>\n    </g>\n</svg>', "image/svg+xml").firstChild;
 }
 
-// node_modules/xgplayer/es/plugins/fullscreen/backicon.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/fullscreen/backicon.js
 var TopBackIcon = function(_Plugin) {
   _inherits(TopBackIcon2, _Plugin);
   var _super = _createSuper(TopBackIcon2);
@@ -8399,17 +8233,17 @@ var TopBackIcon = function(_Plugin) {
   return TopBackIcon2;
 }(Plugin);
 
-// node_modules/xgplayer/es/plugins/assets/requestFull.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/assets/requestFull.js
 function FullScreenSvg() {
   return new DOMParser().parseFromString('<svg xmlns="http://www.w3.org/2000/svg" width="28" height="40" viewBox="2 -4 28 40">\n  <path fill="#fff" transform="scale(0.0320625 0.0320625)" d="M598 214h212v212h-84v-128h-128v-84zM726 726v-128h84v212h-212v-84h128zM214 426v-212h212v84h-128v128h-84zM298 598v128h128v84h-212v-212h84z"></path>\n</svg>\n', "image/svg+xml").firstChild;
 }
 
-// node_modules/xgplayer/es/plugins/assets/exitFull.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/assets/exitFull.js
 function ExitFullScreenSvg() {
   return new DOMParser().parseFromString('<svg xmlns="http://www.w3.org/2000/svg" width="28" height="40" viewBox="2 -4 28 40">\n  <path fill="#fff" transform="scale(0.0320625 0.0320625)" d="M682 342h128v84h-212v-212h84v128zM598 810v-212h212v84h-128v128h-84zM342 342v-128h84v212h-212v-84h128zM214 682v-84h212v212h-84v-128h-128z"></path>\n</svg>\n', "image/svg+xml").firstChild;
 }
 
-// node_modules/xgplayer/es/plugins/fullscreen/index.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/fullscreen/index.js
 var Fullscreen = function(_IconPlugin) {
   _inherits(Fullscreen2, _IconPlugin);
   var _super = _createSuper(Fullscreen2);
@@ -8617,17 +8451,17 @@ var Fullscreen = function(_IconPlugin) {
   return Fullscreen2;
 }(Icon);
 
-// node_modules/xgplayer/es/plugins/assets/play.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/assets/play.js
 function PlayIcon() {
   return new DOMParser().parseFromString('<svg class="play" xmlns="http://www.w3.org/2000/svg" width="28" height="40" viewBox="3 -4 28 40">\n  <path fill="#fff" transform="scale(0.0320625 0.0320625)" d="M576,363L810,512L576,661zM342,214L576,363L576,661L342,810z"></path>\n</svg>\n', "image/svg+xml").firstChild;
 }
 
-// node_modules/xgplayer/es/plugins/assets/pause.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/assets/pause.js
 function PauseIcon() {
   return new DOMParser().parseFromString('<svg class="pause" xmlns="http://www.w3.org/2000/svg" width="28" height="40" viewBox="3 -4 28 40">\n  <path fill="#fff" transform="scale(0.0320625 0.0320625)" d="M598,214h170v596h-170v-596zM256 810v-596h170v596h-170z"></path>\n</svg>\n', "image/svg+xml").firstChild;
 }
 
-// node_modules/xgplayer/es/plugins/play/index.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/play/index.js
 var Play = function(_IconPlugin) {
   _inherits(Play2, _IconPlugin);
   var _super = _createSuper(Play2);
@@ -8751,7 +8585,7 @@ var Play = function(_IconPlugin) {
   return Play2;
 }(Icon);
 
-// node_modules/xgplayer/es/plugins/progress/innerList.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/progress/innerList.js
 var import_delegate2 = __toESM(require_delegate());
 var TPL = [{
   tag: "xg-cache",
@@ -9034,7 +8868,7 @@ var InnerList = function() {
   return InnerList2;
 }();
 
-// node_modules/xgplayer/es/plugins/progress/index.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/progress/index.js
 var FRAGMENT_FOCUS_CLASS = {
   POINT: "inner-focus-point",
   HIGHLIGHT: "inner-focus-highlight"
@@ -9713,7 +9547,7 @@ var Progress = function(_Plugin) {
   return Progress2;
 }(Plugin);
 
-// node_modules/xgplayer/es/plugins/time/index.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/time/index.js
 var Time = function(_Plugin) {
   _inherits(Time2, _Plugin);
   var _super = _createSuper(Time2);
@@ -9943,22 +9777,22 @@ var Time = function(_Plugin) {
   return Time2;
 }(Plugin);
 
-// node_modules/xgplayer/es/plugins/assets/volumeLarge.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/assets/volumeLarge.js
 function volumeLargeSvg() {
   return new DOMParser().parseFromString('<svg xmlns="http://www.w3.org/2000/svg" width="28" height="40" viewBox="0 -10 28 40">\n  <path fill="#fff" transform="scale(0.0220625 0.0220625)" d="M358.4 358.4h-204.8v307.2h204.8l256 256v-819.2l-256 256z"></path>\n  <path fill="#fff" transform="scale(0.0220625 0.0220625)" d="M940.632 837.632l-72.192-72.192c65.114-64.745 105.412-154.386 105.412-253.44s-40.299-188.695-105.396-253.424l-0.016-0.016 72.192-72.192c83.639 83.197 135.401 198.37 135.401 325.632s-51.762 242.434-135.381 325.612l-0.020 0.020zM795.648 693.248l-72.704-72.704c27.756-27.789 44.921-66.162 44.921-108.544s-17.165-80.755-44.922-108.546l0.002 0.002 72.704-72.704c46.713 46.235 75.639 110.363 75.639 181.248s-28.926 135.013-75.617 181.227l-0.021 0.021z"></path>\n</svg>\n', "image/svg+xml").firstChild;
 }
 
-// node_modules/xgplayer/es/plugins/assets/volumeSmall.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/assets/volumeSmall.js
 function volumeSmallSvg() {
   return new DOMParser().parseFromString('<svg xmlns="http://www.w3.org/2000/svg" width="28" height="40" viewBox="0 -10 28 40">\n  <path fill="#fff" transform="scale(0.0220625 0.0220625)" d="M358.4 358.4h-204.8v307.2h204.8l256 256v-819.2l-256 256z"></path>\n  <path fill="#fff" transform="scale(0.0220625 0.0220625)" d="M795.648 693.248l-72.704-72.704c27.756-27.789 44.921-66.162 44.921-108.544s-17.165-80.755-44.922-108.546l0.002 0.002 72.704-72.704c46.713 46.235 75.639 110.363 75.639 181.248s-28.926 135.013-75.617 181.227l-0.021 0.021zM795.648 693.248l-72.704-72.704c27.756-27.789 44.921-66.162 44.921-108.544s-17.165-80.755-44.922-108.546l0.002 0.002 72.704-72.704c46.713 46.235 75.639 110.363 75.639 181.248s-28.926 135.013-75.617 181.227l-0.021 0.021z"></path>\n</svg>\n', "image/svg+xml").firstChild;
 }
 
-// node_modules/xgplayer/es/plugins/assets/volumeMuted.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/assets/volumeMuted.js
 function volumeMutedSvg() {
   return new DOMParser().parseFromString('<svg xmlns="http://www.w3.org/2000/svg" width="28" height="40" viewBox="0 -10 28 40">\n  <path fill="#fff" transform="scale(0.0220625 0.0220625)" d="M358.4 358.4h-204.8v307.2h204.8l256 256v-819.2l-256 256z"></path>\n  <path fill="#fff" transform="scale(0.0220625 0.0220625)" d="M920.4 439.808l-108.544-109.056-72.704 72.704 109.568 108.544-109.056 108.544 72.704 72.704 108.032-109.568 108.544 109.056 72.704-72.704-109.568-108.032 109.056-108.544-72.704-72.704-108.032 109.568z"></path>\n</svg>\n', "image/svg+xml").firstChild;
 }
 
-// node_modules/xgplayer/es/plugins/volume/index.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/volume/index.js
 var Volume = function(_Plugin) {
   _inherits(Volume2, _Plugin);
   var _super = _createSuper(Volume2);
@@ -10269,7 +10103,7 @@ var Volume = function(_Plugin) {
   return Volume2;
 }(Plugin);
 
-// node_modules/xgplayer/es/plugins/logger/index.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/logger/index.js
 function now() {
   return (/* @__PURE__ */ new Date()).getTime();
 }
@@ -10576,12 +10410,12 @@ var XGLogger = function(_BasePlugin) {
   return XGLogger2;
 }(Plugin);
 
-// node_modules/xgplayer/es/plugins/assets/replay.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/assets/replay.js
 function ReplaySvg() {
   return new DOMParser().parseFromString('<svg class="xgplayer-replay-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 78 78" width="78" height="78">\n  <path fill="#fff" transform="translate(20, 20)" d="M8.22708362,13.8757234 L11.2677371,12.6472196 C11.7798067,12.4403301 12.3626381,12.6877273 12.5695276,13.1997969 L12.9441342,14.1269807 C13.1510237,14.6390502 12.9036264,15.2218816 12.3915569,15.4287712 L6.8284538,17.6764107 L5.90126995,18.0510173 C5.38920044,18.2579068 4.80636901,18.0105096 4.5994795,17.49844 L1.97723335,11.0081531 C1.77034384,10.4960836 2.0177411,9.91325213 2.52981061,9.70636262 L3.45699446,9.33175602 C3.96906396,9.12486652 4.5518954,9.37226378 4.75878491,9.88433329 L5.67885163,12.1615783 C7.99551726,6.6766934 13.3983951,3 19.5,3 C27.7842712,3 34.5,9.71572875 34.5,18 C34.5,26.2842712 27.7842712,33 19.5,33 C15.4573596,33 11.6658607,31.3912946 8.87004692,28.5831991 C8.28554571,27.9961303 8.28762719,27.0463851 8.87469603,26.4618839 C9.46176488,25.8773827 10.4115101,25.8794641 10.9960113,26.466533 C13.2344327,28.7147875 16.263503,30 19.5,30 C26.127417,30 31.5,24.627417 31.5,18 C31.5,11.372583 26.127417,6 19.5,6 C14.4183772,6 9.94214483,9.18783811 8.22708362,13.8757234 Z"></path>\n</svg>\n', "image/svg+xml").firstChild;
 }
 
-// node_modules/xgplayer/es/plugins/replay/index.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/replay/index.js
 var Replay = function(_Plugin) {
   _inherits(Replay2, _Plugin);
   var _super = _createSuper(Replay2);
@@ -10685,7 +10519,7 @@ var Replay = function(_Plugin) {
   return Replay2;
 }(Plugin);
 
-// node_modules/xgplayer/es/plugins/poster/index.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/poster/index.js
 var Poster = function(_Plugin) {
   _inherits(Poster2, _Plugin);
   var _super = _createSuper(Poster2);
@@ -10704,12 +10538,20 @@ var Poster = function(_Plugin) {
   }, {
     key: "hide",
     value: function hide() {
-      util.addClass(this.root, "hide");
+      if (!this.isHide) {
+        if (!this.config.useVideoPoster) {
+          util.addClass(this.root, "hide");
+        }
+        this.isHide = true;
+      }
     }
   }, {
     key: "show",
-    value: function show(value) {
-      util.removeClass(this.root, "hide");
+    value: function show() {
+      this.isHide = false;
+      if (!this.config.useVideoPoster) {
+        util.removeClass(this.root, "hide");
+      }
     }
   }, {
     key: "beforeCreate",
@@ -10722,49 +10564,57 @@ var Poster = function(_Plugin) {
     key: "afterCreate",
     value: function afterCreate() {
       var _this = this;
+      if (this.config.useVideoPoster && this.config.poster) {
+        this.player.media.poster = this.config.poster;
+      }
       this.on(ENDED, function() {
         if (_this.isEndedShow) {
-          util.removeClass(_this.root, "hide");
+          _this.show();
         }
+      });
+      this.on(PLAYING, function() {
+        _this.hide();
       });
       if (this.config.hideCanplay) {
         this.once(TIME_UPDATE, function() {
           _this.onTimeUpdate();
         });
         this.on(URL_CHANGE, function() {
-          util.removeClass(_this.root, "hide");
-          util.addClass(_this.root, "xg-showplay");
+          _this.show();
+          if (!_this.config.useVideoPoster) {
+            util.addClass(_this.root, "xg-showplay");
+          }
           _this.once(TIME_UPDATE, function() {
             _this.onTimeUpdate();
           });
         });
       } else {
         this.on(PLAY, function() {
-          util.addClass(_this.root, "hide");
+          _this.hide();
         });
+      }
+    }
+  }, {
+    key: "onTimeUpdate",
+    value: function onTimeUpdate() {
+      var _this2 = this;
+      if (!this.player.currentTime) {
+        this.once(TIME_UPDATE, function() {
+          _this2.onTimeUpdate();
+        });
+      } else {
+        util.removeClass(this.root, "xg-showplay");
       }
     }
   }, {
     key: "setConfig",
     value: function setConfig(config) {
-      var _this2 = this;
+      var _this3 = this;
       Object.keys(config).forEach(function(key) {
-        _this2.config[key] = config[key];
+        _this3.config[key] = config[key];
       });
       var poster = this.config.poster;
       this.update(poster);
-    }
-  }, {
-    key: "onTimeUpdate",
-    value: function onTimeUpdate() {
-      var _this3 = this;
-      if (!this.player.currentTime) {
-        this.once(TIME_UPDATE, function() {
-          _this3.onTimeUpdate();
-        });
-      } else {
-        util.removeClass(this.root, "xg-showplay");
-      }
     }
   }, {
     key: "update",
@@ -10773,7 +10623,11 @@ var Poster = function(_Plugin) {
         return;
       }
       this.config.poster = poster;
-      this.root.style.backgroundImage = "url(".concat(poster, ")");
+      if (this.config.useVideoPoster) {
+        this.player.media.poster = poster;
+      } else {
+        this.root.style.backgroundImage = "url(".concat(poster, ")");
+      }
     }
   }, {
     key: "getBgSize",
@@ -10797,7 +10651,10 @@ var Poster = function(_Plugin) {
   }, {
     key: "render",
     value: function render() {
-      var _this$config = this.config, poster = _this$config.poster, hideCanplay = _this$config.hideCanplay, fillMode = _this$config.fillMode, notHidden = _this$config.notHidden;
+      var _this$config = this.config, poster = _this$config.poster, hideCanplay = _this$config.hideCanplay, fillMode = _this$config.fillMode, notHidden = _this$config.notHidden, useVideoPoster = _this$config.useVideoPoster;
+      if (useVideoPoster) {
+        return "";
+      }
       var _bg = this.getBgSize(fillMode);
       var style = poster ? "background-image:url(".concat(poster, ");").concat(_bg) : _bg;
       var className = notHidden ? "xg-not-hidden" : hideCanplay ? "xg-showplay" : "";
@@ -10816,6 +10673,7 @@ var Poster = function(_Plugin) {
         hideCanplay: false,
         notHidden: false,
         poster: "",
+        useVideoPoster: false,
         fillMode: "fixWidth"
       };
     }
@@ -10823,7 +10681,7 @@ var Poster = function(_Plugin) {
   return Poster2;
 }(Plugin);
 
-// node_modules/xgplayer/es/plugins/start/index.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/start/index.js
 var AnimateMap = {};
 function addAnimate(key, seconds) {
   var callback = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : {
@@ -11100,7 +10958,7 @@ var Start = function(_Plugin) {
   return Start2;
 }(Plugin);
 
-// node_modules/xgplayer/es/plugins/enter/index.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/enter/index.js
 var Enter = function(_Plugin) {
   _inherits(Enter2, _Plugin);
   var _super = _createSuper(Enter2);
@@ -11143,7 +11001,7 @@ var Enter = function(_Plugin) {
   return Enter2;
 }(Plugin);
 
-// node_modules/xgplayer/es/plugins/miniScreen/miniScreenIcon.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/miniScreen/miniScreenIcon.js
 var MiniScreenIcon = function(_Plugin) {
   _inherits(MiniScreenIcon2, _Plugin);
   var _super = _createSuper(MiniScreenIcon2);
@@ -11196,7 +11054,7 @@ var MiniScreenIcon = function(_Plugin) {
   return MiniScreenIcon2;
 }(Plugin);
 
-// node_modules/xgplayer/es/utils/draggabilly.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/utils/draggabilly.js
 var import_eventemitter33 = __toESM(require_eventemitter3());
 function getStyleSize(value) {
   var num = parseFloat(value);
@@ -11606,7 +11464,7 @@ var Draggabilly = function(_EventEmitter) {
   return Draggabilly2;
 }(import_eventemitter33.default);
 
-// node_modules/xgplayer/es/plugins/miniScreen/index.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/miniScreen/index.js
 var MiniScreen = function(_Plugin) {
   _inherits(MiniScreen2, _Plugin);
   var _super = _createSuper(MiniScreen2);
@@ -11819,7 +11677,7 @@ var MiniScreen = function(_Plugin) {
   return MiniScreen2;
 }(Plugin);
 
-// node_modules/xgplayer/es/plugins/pc/index.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/pc/index.js
 var import_delegate3 = __toESM(require_delegate());
 var MOUSE_EVENTS = {
   mouseenter: "onMouseEnter",
@@ -11838,6 +11696,10 @@ var PCPlugin = function(_BasePlugin) {
     }
     _this = _super.call.apply(_super, [this].concat(args));
     _defineProperty(_assertThisInitialized(_this), "onMouseMove", function(e) {
+      if (_this._isMobileTouchActive()) {
+        e === null || e === void 0 ? void 0 : e.stopImmediatePropagation();
+        return;
+      }
       var _assertThisInitialize = _assertThisInitialized(_this), player = _assertThisInitialize.player, playerConfig = _assertThisInitialize.playerConfig;
       if (!player.isActive) {
         player.focus({
@@ -11847,6 +11709,10 @@ var PCPlugin = function(_BasePlugin) {
       }
     });
     _defineProperty(_assertThisInitialized(_this), "onMouseEnter", function(e) {
+      if (_this._isMobileTouchActive()) {
+        e === null || e === void 0 ? void 0 : e.stopImmediatePropagation();
+        return;
+      }
       var _assertThisInitialize2 = _assertThisInitialized(_this), playerConfig = _assertThisInitialize2.playerConfig, player = _assertThisInitialize2.player;
       !playerConfig.closeFocusVideoFocus && player.media.focus();
       if (playerConfig.closeDelayBlur) {
@@ -11859,6 +11725,10 @@ var PCPlugin = function(_BasePlugin) {
       _this.emit(ENTER_PLAYER);
     });
     _defineProperty(_assertThisInitialized(_this), "onMouseLeave", function(e) {
+      if (_this._isMobileTouchActive()) {
+        e === null || e === void 0 ? void 0 : e.stopImmediatePropagation();
+        return;
+      }
       var _this$playerConfig = _this.playerConfig, closePlayerBlur = _this$playerConfig.closePlayerBlur, leavePlayerTime = _this$playerConfig.leavePlayerTime, closeDelayBlur = _this$playerConfig.closeDelayBlur;
       if (!closePlayerBlur && !closeDelayBlur) {
         if (leavePlayerTime) {
@@ -11963,6 +11833,13 @@ var PCPlugin = function(_BasePlugin) {
       !enableContextmenu && media && media.addEventListener("contextmenu", this.onContextmenu, false);
     }
   }, {
+    key: "_isMobileTouchActive",
+    value: function _isMobileTouchActive() {
+      var _this$player2, _this$player2$plugins;
+      var mobilePlugin = (_this$player2 = this.player) === null || _this$player2 === void 0 ? void 0 : (_this$player2$plugins = _this$player2.plugins) === null || _this$player2$plugins === void 0 ? void 0 : _this$player2$plugins.mobile;
+      return !!mobilePlugin && mobilePlugin._isTouchActive === true;
+    }
+  }, {
     key: "switchPlayPause",
     value: function switchPlayPause(e) {
       var player = this.player;
@@ -11995,7 +11872,7 @@ var PCPlugin = function(_BasePlugin) {
     key: "destroy",
     value: function destroy2() {
       var _this4 = this;
-      var _this$player2 = this.player, video = _this$player2.video, root = _this$player2.root;
+      var _this$player3 = this.player, video = _this$player3.video, root = _this$player3.root;
       this.clickTimer && clearTimeout(this.clickTimer);
       root.removeEventListener("click", this.onVideoClick, false);
       root.removeEventListener("dblclick", this.onVideoDblClick, false);
@@ -12018,7 +11895,7 @@ var PCPlugin = function(_BasePlugin) {
   return PCPlugin2;
 }(BasePlugin);
 
-// node_modules/xgplayer/es/plugins/mobile/touch.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/mobile/touch.js
 var EVENTS2 = {
   PRESS: "press",
   PRESS_END: "pressend",
@@ -12232,12 +12109,12 @@ var Touche = function() {
   return Touche2;
 }();
 
-// node_modules/xgplayer/es/plugins/assets/seekicon.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/assets/seekicon.js
 function SeekTipIcon() {
   return new DOMParser().parseFromString('<svg width="20" height="9" viewBox="0 0 8 9" fill="none" xmlns="http://www.w3.org/2000/svg"\n  xmlns:xlink="http://www.w3.org/1999/xlink">\n  <path opacity="0.54"\n    d="M7.5 3.63397C8.16667 4.01887 8.16667 4.98113 7.5 5.36603L1.5 8.83013C0.833334 9.21503 0 8.7339 0 7.9641L0 1.0359C0 0.266098 0.833333 -0.215027 1.5 0.169873L7.5 3.63397Z"\n    fill="white" />\n  <path transform="translate(5 0)" d="M7.5 3.63397C8.16667 4.01887 8.16667 4.98113 7.5 5.36603L1.5 8.83013C0.833334 9.21503 0 8.7339 0 7.9641L0 1.0359C0 0.266098 0.833333 -0.215027 1.5 0.169873L7.5 3.63397Z" fill="white"/>\n</svg>', "image/svg+xml").firstChild;
 }
 
-// node_modules/xgplayer/es/plugins/mobile/index.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/mobile/index.js
 var ACTIONS = {
   AUTO: "auto",
   SEEKING: "seeking",
@@ -12255,6 +12132,11 @@ var MobilePlugin = function(_Plugin) {
     _defineProperty(_assertThisInitialized(_this), "onTouchStart", function(e) {
       var _assertThisInitialize = _assertThisInitialized(_this), player = _assertThisInitialize.player, config = _assertThisInitialize.config, pos = _assertThisInitialize.pos, playerConfig = _assertThisInitialize.playerConfig;
       var touche = _this.getTouche(e);
+      _this._isTouchActive = true;
+      if (_this.touchActiveTimer) {
+        clearTimeout(_this.touchActiveTimer);
+        _this.touchActiveTimer = null;
+      }
       if (touche && !config.disableGesture && _this.duration > 0 && !player.ended) {
         pos.isStart = true;
         _this.timer && clearTimeout(_this.timer);
@@ -12317,6 +12199,12 @@ var MobilePlugin = function(_Plugin) {
     });
     _defineProperty(_assertThisInitialized(_this), "onTouchEnd", function(e) {
       var _assertThisInitialize3 = _assertThisInitialized(_this), player = _assertThisInitialize3.player, pos = _assertThisInitialize3.pos, playerConfig = _assertThisInitialize3.playerConfig;
+      if (_this.touchActiveTimer) {
+        clearTimeout(_this.touchActiveTimer);
+      }
+      _this.touchActiveTimer = setTimeout(function() {
+        _this._isTouchActive = false;
+      }, 10);
       setTimeout(function() {
         player.getPlugin("progress") && player.getPlugin("progress").resetSeekState();
       }, 10);
@@ -12372,6 +12260,7 @@ var MobilePlugin = function(_Plugin) {
       scope: -1
     };
     _this.timer = null;
+    _this._isTouchActive = false;
     return _this;
   }
   _createClass(MobilePlugin2, [{
@@ -12885,7 +12774,7 @@ var MobilePlugin = function(_Plugin) {
   return MobilePlugin2;
 }(Plugin);
 
-// node_modules/xgplayer/es/plugins/keyboard/index.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/keyboard/index.js
 var import_delegate4 = __toESM(require_delegate());
 function preventDefault(e) {
   e.preventDefault();
@@ -13309,12 +13198,12 @@ var Keyboard = function(_BasePlugin) {
   return Keyboard2;
 }(BasePlugin);
 
-// node_modules/xgplayer/es/plugins/assets/loading.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/assets/loading.js
 function loadingIcon() {
   return new DOMParser().parseFromString('<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="-5 -5 110 110">\n  <path d="M100,50A50,50,0,1,1,50,0" stroke-width="5" stroke="#ddd" stroke-dasharray="236" fill="none"></path>\n</svg>\n', "image/svg+xml").firstChild;
 }
 
-// node_modules/xgplayer/es/plugins/loading/index.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/loading/index.js
 var Loading = function(_Plugin) {
   _inherits(Loading2, _Plugin);
   var _super = _createSuper(Loading2);
@@ -13355,7 +13244,7 @@ var Loading = function(_Plugin) {
   return Loading2;
 }(Plugin);
 
-// node_modules/xgplayer/es/plugins/time/timesegments.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/time/timesegments.js
 var import_delegate5 = __toESM(require_delegate());
 var TimeSegmentsControls = function(_BasePlugin) {
   _inherits(TimeSegmentsControls2, _BasePlugin);
@@ -13568,12 +13457,12 @@ var TimeSegmentsControls = function(_BasePlugin) {
   return TimeSegmentsControls2;
 }(BasePlugin);
 
-// node_modules/xgplayer/es/plugins/assets/rotate.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/assets/rotate.js
 function RotateSvg() {
   return new DOMParser().parseFromString('<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="-4 -6 40 40" fill="none">\n  <g>\n    <path transform="scale(1.5 1.5)" d="M11.6665 9.16663H4.1665C2.78579 9.16663 1.6665 10.2859 1.6665 11.6666V15.8333C1.6665 17.214 2.78579 18.3333 4.1665 18.3333H11.6665C13.0472 18.3333 14.1665 17.214 14.1665 15.8333V11.6666C14.1665 10.2859 13.0472 9.16663 11.6665 9.16663Z" fill="white"/>\n    <path transform="scale(1.5 1.5)" fill-rule="evenodd" clip-rule="evenodd" d="M3.88148 4.06298C3.75371 4.21005 3.67667 4.40231 3.67749 4.61242C3.67847 4.87253 3.79852 5.10435 3.98581 5.25646L6.99111 8.05895C7.32771 8.37283 7.85502 8.35443 8.16891 8.01782C8.48279 7.68122 8.46437 7.15391 8.12778 6.84003L6.62061 5.43457L9.8198 5.4224C9.82848 5.42239 9.8372 5.42221 9.84591 5.4219C10.9714 5.38233 12.0885 5.6285 13.0931 6.13744C14.0976 6.64635 14.957 7.40148 15.5908 8.33234C16.2246 9.2632 16.6122 10.3394 16.7177 11.4606C16.823 12.5819 16.6427 13.7115 16.1934 14.7442C16.0098 15.1661 16.203 15.6571 16.6251 15.8408C17.0471 16.0243 17.5381 15.8311 17.7216 15.4091C18.2833 14.1183 18.5087 12.7063 18.3771 11.3047C18.2453 9.90318 17.7607 8.55792 16.9684 7.39433C16.1761 6.23073 15.1021 5.28683 13.8463 4.65065C12.5946 4.01651 11.203 3.70872 9.80072 3.75583L6.43415 3.76862L7.96326 2.12885C8.27715 1.79225 8.25872 1.26494 7.92213 0.951061C7.58553 0.63718 7.05822 0.655585 6.74433 0.99219L3.90268 4.0395C3.89545 4.04724 3.88841 4.05509 3.88154 4.06303L3.88148 4.06298Z" fill="white"/>\n  </g>\n  <defs>\n    <clipPath>\n      <rect width="40" height="40" fill="white"/>\n    </clipPath>\n  </defs>\n</svg>\n', "image/svg+xml").firstChild;
 }
 
-// node_modules/xgplayer/es/plugins/rotate/index.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/rotate/index.js
 var Rotate = function(_IconPlugin) {
   _inherits(Rotate2, _IconPlugin);
   var _super = _createSuper(Rotate2);
@@ -13714,17 +13603,17 @@ var Rotate = function(_IconPlugin) {
   return Rotate2;
 }(Icon);
 
-// node_modules/xgplayer/es/plugins/assets/pipIcon.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/assets/pipIcon.js
 function PipIcon() {
   return new DOMParser().parseFromString('<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">\n  <path fill-rule="evenodd" clip-rule="evenodd"\n    d="M16.5 4.3H3.5C3.38954 4.3 3.3 4.38954 3.3 4.5V15.5C3.3 15.6105 3.38954 15.7 3.5 15.7H8.50005L8.50006 17.5H3.5C2.39543 17.5 1.5 16.6046 1.5 15.5V4.5C1.5 3.39543 2.39543 2.5 3.5 2.5H16.5C17.6046 2.5 18.5 3.39543 18.5 4.5V8.5H16.7V4.5C16.7 4.38954 16.6105 4.3 16.5 4.3ZM12 11.5C11.4477 11.5 11 11.9477 11 12.5L11 16.5C11 17.0523 11.4478 17.5 12 17.5H17.5C18.0523 17.5 18.5 17.0523 18.5 16.5L18.5 12.5C18.5 11.9477 18.0523 11.5 17.5 11.5H12Z"\n    fill="white" />\n</svg>', "image/svg+xml").firstChild;
 }
 
-// node_modules/xgplayer/es/plugins/assets/pipIconExit.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/assets/pipIconExit.js
 function PipIconExit() {
   return new DOMParser().parseFromString('<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">\n  <path fill-rule="evenodd" clip-rule="evenodd"\n    d="M16.5 4.3H3.5C3.38954 4.3 3.3 4.38954 3.3 4.5V15.5C3.3 15.6105 3.38954 15.7 3.5 15.7H8.50005L8.50006 17.5H3.5C2.39543 17.5 1.5 16.6046 1.5 15.5V4.5C1.5 3.39543 2.39543 2.5 3.5 2.5H16.5C17.6046 2.5 18.5 3.39543 18.5 4.5V8.5H16.7V4.5C16.7 4.38954 16.6105 4.3 16.5 4.3ZM12 11.5C11.4477 11.5 11 11.9477 11 12.5L11 16.5C11 17.0523 11.4478 17.5 12 17.5H17.5C18.0523 17.5 18.5 17.0523 18.5 16.5L18.5 12.5C18.5 11.9477 18.0523 11.5 17.5 11.5H12Z"\n    fill="white" />\n  <path fill-rule="evenodd" clip-rule="evenodd"\n    d="M9.4998 7.7C9.77595 7.7 9.9998 7.47614 9.9998 7.2V6.5C9.9998 6.22386 9.77595 6 9.4998 6H5.5402L5.52754 6.00016H5.5C5.22386 6.00016 5 6.22401 5 6.50016V10.4598C5 10.7359 5.22386 10.9598 5.5 10.9598H6.2C6.47614 10.9598 6.7 10.7359 6.7 10.4598V8.83005L8.76983 10.9386C8.96327 11.1357 9.27984 11.1386 9.47691 10.9451L9.97645 10.4548C10.1735 10.2613 10.1764 9.94476 9.983 9.7477L7.97289 7.7H9.4998Z"\n    fill="white" />\n</svg>', "image/svg+xml").firstChild;
 }
 
-// node_modules/xgplayer/es/plugins/pip/index.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/pip/index.js
 var PresentationMode = {
   PIP: "picture-in-picture",
   INLINE: "inline",
@@ -14037,12 +13926,12 @@ var PIP = function(_IconPlugin) {
   return PIP2;
 }(Icon);
 
-// node_modules/xgplayer/es/plugins/assets/playNext.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/assets/playNext.js
 function Next() {
   return new DOMParser().parseFromString('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="40" viewBox="10 0 24 40">\n  <path transform="scale(0.038 0.028)" d="M800 380v768h-128v-352l-320 320v-704l320 320v-352z"></path>\n</svg>\n', "image/svg+xml").firstChild;
 }
 
-// node_modules/xgplayer/es/plugins/playNext/index.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/playNext/index.js
 var PlayNextIcon = function(_Plugin) {
   _inherits(PlayNextIcon2, _Plugin);
   var _super = _createSuper(PlayNextIcon2);
@@ -14139,15 +14028,280 @@ var PlayNextIcon = function(_Plugin) {
   return PlayNextIcon2;
 }(Plugin);
 
-// node_modules/xgplayer/es/plugins/download/index.js
-var import_downloadjs = __toESM(require_download());
-
-// node_modules/xgplayer/es/plugins/assets/download.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/assets/download.js
 function DownloadSvg() {
   return new DOMParser().parseFromString('<svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24">\n  <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">\n    <g transform="translate(-488.000000, -340.000000)" fill="#FFFFFF">\n      <g id="Group-2">\n        <g id="volme_big-copy" transform="translate(488.000000, 340.000000)">\n          <rect id="Rectangle-18" x="11" y="4" width="2" height="12" rx="1"></rect>\n          <rect id="Rectangle-2" x="3" y="18" width="18" height="2" rx="1"></rect>\n          <rect id="Rectangle-2" transform="translate(4.000000, 17.500000) rotate(90.000000) translate(-4.000000, -17.500000) " x="1.5" y="16.5" width="5" height="2" rx="1"></rect><rect id="Rectangle-2-Copy-3" transform="translate(20.000000, 17.500000) rotate(90.000000) translate(-20.000000, -17.500000) " x="17.5" y="16.5" width="5" height="2" rx="1"></rect>\n          <path d="M9.48791171,8.26502656 L9.48791171,14.2650266 C9.48791171,14.8173113 9.04019646,15.2650266 8.48791171,15.2650266 C7.93562696,15.2650266 7.48791171,14.8173113 7.48791171,14.2650266 L7.48791171,7.26502656 C7.48791171,6.71274181 7.93562696,6.26502656 8.48791171,6.26502656 L15.4879117,6.26502656 C16.0401965,6.26502656 16.4879117,6.71274181 16.4879117,7.26502656 C16.4879117,7.81731131 16.0401965,8.26502656 15.4879117,8.26502656 L9.48791171,8.26502656 Z" id="Combined-Shape" transform="translate(11.987912, 10.765027) scale(1, -1) rotate(45.000000) translate(-11.987912, -10.765027) "></path>\n        </g>\n      </g>\n    </g>\n  </g>\n</svg>\n', "image/svg+xml").firstChild;
 }
 
-// node_modules/xgplayer/es/plugins/download/index.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/download/saveAs.js
+var DEFAULT_CONFIG = {
+  mimeType: "application/octet-stream",
+  fileName: "download",
+  timeout: 3e4
+};
+var BrowserUtils = {
+  supportsBlob: function supportsBlob() {
+    return typeof Blob !== "undefined";
+  },
+  supportsObjectURL: function supportsObjectURL() {
+    return typeof URL !== "undefined" && URL.createObjectURL;
+  },
+  isSafari: function isSafari() {
+    return sniffer.browser === "safari";
+  },
+  isIEWithMsSaveBlob: function isIEWithMsSaveBlob() {
+    return navigator.msSaveBlob;
+  },
+  supportsDownloadAttribute: function supportsDownloadAttribute() {
+    var anchor = document.createElement("a");
+    return "download" in anchor;
+  }
+};
+var DataURLUtils = {
+  isDataURL: function isDataURL(str) {
+    return /^data:([\w+-]+\/[\w+.-]+)?[,;]/.test(str);
+  },
+  dataURLToBlob: function dataURLToBlob(dataURL) {
+    var parts = dataURL.split(/[:;,]/);
+    var type = parts[1];
+    var indexDecoder = dataURL.indexOf("charset") > 0 ? 3 : 2;
+    var decoder = parts[indexDecoder] === "base64" ? atob : decodeURIComponent;
+    var binData = decoder(parts.pop());
+    var uiArr = new Uint8Array(binData.length);
+    for (var i = 0; i < binData.length; i++) {
+      uiArr[i] = binData.charCodeAt(i);
+    }
+    var BlobConstructor = window.Blob || window.MozBlob || window.WebKitBlob || function(parts2, opts) {
+      return parts2;
+    };
+    return new BlobConstructor([uiArr], {
+      type
+    });
+  },
+  hasNonASCII: function hasNonASCII(str) {
+    return /([\x80-\xff])/.test(str);
+  },
+  stringToUint8Array: function stringToUint8Array(str) {
+    var arr = new Uint8Array(str.length);
+    for (var i = 0; i < str.length; i++) {
+      arr[i] = str.charCodeAt(i);
+    }
+    return arr;
+  }
+};
+var DownloadUtils = {
+  downloadWithAnchor: function downloadWithAnchor(url, fileName) {
+    var anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.setAttribute("download", fileName);
+    anchor.className = "download-js-link";
+    anchor.innerHTML = "downloading...";
+    anchor.style.display = "none";
+    var clickHandler = function clickHandler2(e) {
+      e.stopPropagation();
+      this.removeEventListener("click", clickHandler2);
+    };
+    anchor.addEventListener("click", clickHandler);
+    document.body.appendChild(anchor);
+    setTimeout(function() {
+      anchor.click();
+      document.body.removeChild(anchor);
+      if (url.startsWith("blob:")) {
+        setTimeout(function() {
+          return URL.revokeObjectURL(url);
+        }, 250);
+      }
+    }, 66);
+    return true;
+  },
+  downloadWithSafari: function downloadWithSafari(url, fileName) {
+    if (url instanceof Blob) {
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var dataURL = e.target.result;
+        DownloadUtils.downloadWithSafari(dataURL, fileName);
+      };
+      reader.readAsDataURL(url);
+      return true;
+    }
+    if (DataURLUtils.isDataURL(url)) {
+      url = "data:" + url.replace(/^data:([\w\/\-\+]+)/, DEFAULT_CONFIG.mimeType);
+    }
+    if (!window.open(url)) {
+      var confirmed = confirm("Displaying New Document\n\nUse Save As... to download, then click back to return to this page.");
+      if (confirmed) {
+        location.href = url;
+      }
+    }
+    return true;
+  },
+  downloadWithIframe: function downloadWithIframe(url, fileName) {
+    if (url instanceof Blob) {
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var dataURL = e.target.result;
+        DownloadUtils.downloadWithIframe(dataURL, fileName);
+      };
+      reader.readAsDataURL(url);
+      return true;
+    }
+    var iframe = document.createElement("iframe");
+    document.body.appendChild(iframe);
+    if (DataURLUtils.isDataURL(url)) {
+      url = "data:" + url.replace(/^data:([\w\/\-\+]+)/, DEFAULT_CONFIG.mimeType);
+    }
+    iframe.src = url;
+    setTimeout(function() {
+      return document.body.removeChild(iframe);
+    }, 333);
+    return true;
+  }
+};
+var RequestUtils = {
+  createRequest: function createRequest(url) {
+    var options = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
+    var xhr = new XMLHttpRequest();
+    if (options.timeout) {
+      xhr.timeout = options.timeout;
+    }
+    if (typeof options.withCredentials === "boolean") {
+      xhr.withCredentials = options.withCredentials;
+    }
+    return xhr;
+  },
+  setHeaders: function setHeaders(xhr) {
+    var headers = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
+    Object.entries(headers).forEach(function(_ref) {
+      var _ref2 = _slicedToArray(_ref, 2), key = _ref2[0], value = _ref2[1];
+      xhr.setRequestHeader(key, value);
+    });
+  },
+  downloadFromURL: function downloadFromURL(url, fileName) {
+    var options = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : {};
+    return new Promise(function(resolve, reject) {
+      var xhr = RequestUtils.createRequest(url, options);
+      xhr.open("GET", url, true);
+      xhr.responseType = "blob";
+      if (options.headers) {
+        RequestUtils.setHeaders(xhr, options.headers);
+      }
+      if (options.withCredentials) {
+        xhr.withCredentials = true;
+      }
+      xhr.onload = function(e) {
+        if (e.target.status === 200) {
+          saveAs(e.target.response, fileName, options.mimeType || DEFAULT_CONFIG.mimeType);
+          resolve(e.target.response);
+        } else {
+          reject(new Error("HTTP ".concat(e.target.status, ": ").concat(e.target.statusText)));
+        }
+      };
+      xhr.onerror = function() {
+        reject(new Error("Network error occurred"));
+      };
+      xhr.ontimeout = function() {
+        reject(new Error("Request timeout"));
+      };
+      if (options.beforeRequest) {
+        options.beforeRequest(xhr);
+      }
+      setTimeout(function() {
+        return xhr.send();
+      }, 0);
+    });
+  }
+};
+function saveAs(data, fileNameOrOptions, mimeType) {
+  var options = {};
+  var fileName = DEFAULT_CONFIG.fileName;
+  var actualMimeType = DEFAULT_CONFIG.mimeType;
+  if (typeof fileNameOrOptions === "string") {
+    fileName = fileNameOrOptions || DEFAULT_CONFIG.fileName;
+    actualMimeType = mimeType || DEFAULT_CONFIG.mimeType;
+  } else if (_typeof(fileNameOrOptions) === "object" && fileNameOrOptions !== null) {
+    options = _objectSpread2(_objectSpread2({}, DEFAULT_CONFIG), fileNameOrOptions);
+    fileName = options.fileName || DEFAULT_CONFIG.fileName;
+    actualMimeType = options.mimeType || DEFAULT_CONFIG.mimeType;
+  }
+  if (String(this) === "true") {
+    var temp = data;
+    data = fileNameOrOptions;
+    fileNameOrOptions = temp;
+    actualMimeType = mimeType || DEFAULT_CONFIG.mimeType;
+  }
+  if (typeof data === "string" && !fileNameOrOptions && !mimeType && data.length < 2048) {
+    var url = data;
+    var extractedFileName = url.split("/").pop().split("?")[0];
+    fileName = extractedFileName || DEFAULT_CONFIG.fileName;
+    var anchor = document.createElement("a");
+    anchor.href = url;
+    if (anchor.href.indexOf(url) !== -1) {
+      return RequestUtils.downloadFromURL(url, fileName, options);
+    }
+  }
+  if (DataURLUtils.isDataURL(data)) {
+    if (data.length > 1024 * 1024 * 1.999 && BrowserUtils.supportsBlob()) {
+      var _blob = DataURLUtils.dataURLToBlob(data);
+      actualMimeType = _blob.type || actualMimeType;
+      return saveAs(_blob, fileName, actualMimeType);
+    } else {
+      return BrowserUtils.isIEWithMsSaveBlob() ? navigator.msSaveBlob(DataURLUtils.dataURLToBlob(data), fileName) : DownloadUtils.downloadWithAnchor(data, fileName);
+    }
+  }
+  if (typeof data === "string" && DataURLUtils.hasNonASCII(data)) {
+    var uint8Array = DataURLUtils.stringToUint8Array(data);
+    var BlobConstructor = window.Blob || window.MozBlob || window.WebKitBlob || function(parts, opts) {
+      return parts;
+    };
+    data = new BlobConstructor([uint8Array], {
+      type: actualMimeType
+    });
+  }
+  var blob;
+  if (data instanceof Blob) {
+    blob = data;
+  } else {
+    var _BlobConstructor = window.Blob || window.MozBlob || window.WebKitBlob || function(parts, opts) {
+      return parts;
+    };
+    blob = new _BlobConstructor([data], {
+      type: actualMimeType
+    });
+  }
+  if (BrowserUtils.isIEWithMsSaveBlob()) {
+    return navigator.msSaveBlob(blob, fileName);
+  }
+  if (BrowserUtils.supportsObjectURL()) {
+    var objectURL = URL.createObjectURL(blob);
+    return DownloadUtils.downloadWithAnchor(objectURL, fileName);
+  }
+  if (BrowserUtils.isSafari()) {
+    return DownloadUtils.downloadWithSafari(blob, fileName);
+  }
+  if (typeof blob === "string" || blob.constructor === String) {
+    try {
+      var dataURL = "data:" + actualMimeType + ";base64," + btoa(blob);
+      return DownloadUtils.downloadWithAnchor(dataURL, fileName);
+    } catch (e) {
+      var _dataURL = "data:" + actualMimeType + "," + encodeURIComponent(blob);
+      return DownloadUtils.downloadWithAnchor(_dataURL, fileName);
+    }
+  }
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    DownloadUtils.downloadWithAnchor(e.target.result, fileName);
+  };
+  reader.readAsDataURL(blob);
+  return DownloadUtils.downloadWithIframe(blob, fileName);
+}
+function saveAsWithAuth(url) {
+  var options = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
+  var config = _objectSpread2(_objectSpread2({}, DEFAULT_CONFIG), options);
+  var fileName = config.fileName || url.split("/").pop().split("?")[0] || "download";
+  return RequestUtils.downloadFromURL(url, fileName, config);
+}
+
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/download/index.js
 var Download = function(_IconPlugin) {
   _inherits(Download2, _IconPlugin);
   var _super = _createSuper(Download2);
@@ -14168,7 +14322,7 @@ var Download = function(_IconPlugin) {
         dUrl = url[0].src;
       }
       var newUrl = _this.getAbsoluteURL(dUrl);
-      (0, import_downloadjs.default)(newUrl);
+      saveAsWithAuth(newUrl, Object.assign({}, _this.config.saveAsOptions || {}));
       _this.isLock = true;
       _this.timer = window.setTimeout(function() {
         _this.isLock = false;
@@ -14240,14 +14394,15 @@ var Download = function(_IconPlugin) {
       return {
         position: POSITIONS.CONTROLS_RIGHT,
         index: 3,
-        disable: true
+        disable: true,
+        saveAsOptions: {}
       };
     }
   }]);
   return Download2;
 }(Icon);
 
-// node_modules/xgplayer/es/plugins/screenShot/index.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/screenShot/index.js
 var ScreenShot = function(_IconPlugin) {
   _inherits(ScreenShot2, _IconPlugin);
   var _super = _createSuper(ScreenShot2);
@@ -14439,7 +14594,7 @@ var ScreenShot = function(_IconPlugin) {
   return ScreenShot2;
 }(Icon);
 
-// node_modules/xgplayer/es/plugins/common/optionList.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/common/optionList.js
 var OptionList = function() {
   function OptionList2(args) {
     _classCallCheck(this, OptionList2);
@@ -14555,7 +14710,7 @@ var OptionList = function() {
   return OptionList2;
 }();
 
-// node_modules/xgplayer/es/plugins/common/optionsIcon.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/common/optionsIcon.js
 var LIST_TYPES = {
   SIDE: "side",
   MIDDLE: "middle",
@@ -14860,7 +15015,7 @@ var OptionsIcon = function(_Plugin) {
   return OptionsIcon2;
 }(Plugin);
 
-// node_modules/xgplayer/es/plugins/definition/index.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/definition/index.js
 var DefinitionIcon = function(_OptionsIcon) {
   _inherits(DefinitionIcon2, _OptionsIcon);
   var _super = _createSuper(DefinitionIcon2);
@@ -15019,7 +15174,7 @@ var DefinitionIcon = function(_OptionsIcon) {
   return DefinitionIcon2;
 }(OptionsIcon);
 
-// node_modules/xgplayer/es/plugins/playbackRate/index.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/playbackRate/index.js
 var PlaybackRate = function(_OptionsIcon) {
   _inherits(PlaybackRate2, _OptionsIcon);
   var _super = _createSuper(PlaybackRate2);
@@ -15154,7 +15309,7 @@ var PlaybackRate = function(_OptionsIcon) {
   return PlaybackRate2;
 }(OptionsIcon);
 
-// node_modules/xgplayer/es/plugins/error/index.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/error/index.js
 var ErrorPlugin = function(_Plugin) {
   _inherits(ErrorPlugin2, _Plugin);
   var _super = _createSuper(ErrorPlugin2);
@@ -15225,7 +15380,7 @@ var ErrorPlugin = function(_Plugin) {
   return ErrorPlugin2;
 }(Plugin);
 
-// node_modules/xgplayer/es/plugins/prompt/index.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/prompt/index.js
 var Prompt = function(_Plugin) {
   _inherits(Prompt2, _Plugin);
   var _super = _createSuper(Prompt2);
@@ -15331,7 +15486,7 @@ var Prompt = function(_Plugin) {
   return Prompt2;
 }(Plugin);
 
-// node_modules/xgplayer/es/plugins/progressPreview/dotsApi.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/progressPreview/dotsApi.js
 var import_delegate6 = __toESM(require_delegate());
 var ISPOT = {
   time: 0,
@@ -15598,7 +15753,7 @@ function initDotsAPI(plugin) {
   });
 }
 
-// node_modules/xgplayer/es/plugins/progressPreview/index.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/progressPreview/index.js
 var CALLBACK_MAP = {
   dragmove: "onProgressMove",
   dragstart: "onProgressDragStart",
@@ -16070,7 +16225,7 @@ var ProgressPreview = function(_Plugin) {
   return ProgressPreview2;
 }(Plugin);
 
-// node_modules/xgplayer/es/plugins/common/thumbnail.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/common/thumbnail.js
 var Thumbnail = function(_BasePlugin) {
   _inherits(Thumbnail2, _BasePlugin);
   var _super = _createSuper(Thumbnail2);
@@ -16257,7 +16412,7 @@ var Thumbnail = function(_BasePlugin) {
   return Thumbnail2;
 }(Plugin);
 
-// node_modules/xgplayer/es/plugins/progress/miniProgress.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/progress/miniProgress.js
 function getBgColor(color) {
   return color ? "background:".concat(color, ";") : "";
 }
@@ -16365,7 +16520,7 @@ var MiniProgress = function(_Plugin) {
   return MiniProgress2;
 }(Plugin);
 
-// node_modules/xgplayer/es/plugins/dynamicBg/index.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/dynamicBg/index.js
 var MODES = {
   REAL_TIME: "realtime",
   FIRST_FRAME: "firstframe",
@@ -16732,7 +16887,7 @@ var DynamicBg = function(_Plugin) {
   return DynamicBg2;
 }(Plugin);
 
-// node_modules/xgplayer/es/lang/zh-cn.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/lang/zh-cn.js
 var ZH = {
   LANG: "zh-cn",
   TEXT: {
@@ -16796,6 +16951,7 @@ var ZH = {
     CSSFULLSCREEN_TIPS: "进入样式全屏",
     EXITCSSFULLSCREEN_TIPS: "退出样式全屏",
     TEXTTRACK: "字幕",
+    TEXTTRACK_OFF: "关闭",
     PIP: "画中画",
     SCREENSHOT: "截图",
     LIVE: "正在直播",
@@ -16810,7 +16966,7 @@ var ZH = {
   }
 };
 
-// node_modules/xgplayer/es/plugins/stats/index.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/stats/index.js
 var import_delegate7 = __toESM(require_delegate());
 var INFO = "info";
 var STATS_EVENTS2 = STATS_EVENTS;
@@ -17001,7 +17157,7 @@ var Stats = function(_BasePlugin) {
   return Stats2;
 }(BasePlugin);
 
-// node_modules/xgplayer/es/plugins/gapJump/index.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/gapJump/index.js
 var GapJump = function(_BasePlugin) {
   _inherits(GapJump2, _BasePlugin);
   var _super = _createSuper(GapJump2);
@@ -17139,7 +17295,7 @@ var GapJump = function(_BasePlugin) {
 }(Plugin);
 GapJump.BROWSER_GAP_TOLERANCE = 1e-3;
 
-// node_modules/xgplayer/es/plugins/waitingTimeoutJump/index.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/waitingTimeoutJump/index.js
 var WaitingTimeoutJump = function(_BasePlugin) {
   _inherits(WaitingTimeoutJump2, _BasePlugin);
   var _super = _createSuper(WaitingTimeoutJump2);
@@ -17222,7 +17378,7 @@ var WaitingTimeoutJump = function(_BasePlugin) {
   return WaitingTimeoutJump2;
 }(Plugin);
 
-// node_modules/xgplayer/es/plugins/testspeed/index.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/testspeed/index.js
 var DEFAULT_SPEED_TYPE = "cdn";
 var SPEED_TYPE = ["cdn"];
 var TestSpeed = function(_BasePlugin) {
@@ -17425,7 +17581,7 @@ var TestSpeed = function(_BasePlugin) {
   return TestSpeed2;
 }(Plugin);
 
-// node_modules/xgplayer/es/plugins/fpsDetect/index.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/fpsDetect/index.js
 var FpsDetect = function(_BasePlugin) {
   _inherits(FpsDetect2, _BasePlugin);
   var _super = _createSuper(FpsDetect2);
@@ -17580,7 +17736,7 @@ var FpsDetect = function(_BasePlugin) {
   return FpsDetect2;
 }(Plugin);
 
-// node_modules/xgplayer/es/presets/default.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/presets/default.js
 I18N.use(ZH);
 var DefaultPreset = _createClass(function DefaultPreset2(options, playerConfig) {
   var _this$plugins, _this$plugins2, _this$plugins3;
@@ -17612,7 +17768,7 @@ var DefaultPreset = _createClass(function DefaultPreset2(options, playerConfig) 
   this.i18n = [];
 });
 
-// node_modules/xgplayer/es/index.umd.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/index.umd.js
 var PresetPlayer = function(_Player) {
   _inherits(PresetPlayer2, _Player);
   var _super = _createSuper(PresetPlayer2);
@@ -17639,7 +17795,7 @@ _defineProperty(PresetPlayer, "FullscreenIcon", Fullscreen);
 _defineProperty(PresetPlayer, "CssFullscreenIcon", CssFullScreen);
 _defineProperty(PresetPlayer, "VolumeIcon", Volume);
 
-// node_modules/xgplayer/es/presets/default-en.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/presets/default-en.js
 var DefaultPreset3 = _createClass(function DefaultPreset22(options, playerConfig) {
   var _this$plugins, _this$plugins2, _this$plugins3;
   _classCallCheck(this, DefaultPreset22);
@@ -17667,7 +17823,7 @@ var DefaultPreset3 = _createClass(function DefaultPreset22(options, playerConfig
   this.i18n = [];
 });
 
-// node_modules/xgplayer/es/presets/live.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/presets/live.js
 var DefaultPreset4 = _createClass(function DefaultPreset23() {
   var _this$plugins, _this$plugins2;
   _classCallCheck(this, DefaultPreset23);
@@ -17687,7 +17843,7 @@ var DefaultPreset4 = _createClass(function DefaultPreset23() {
   this.i18n = [ZH];
 });
 
-// node_modules/xgplayer/es/presets/mobile.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/presets/mobile.js
 var DefaultPreset5 = _createClass(function DefaultPreset24() {
   _classCallCheck(this, DefaultPreset24);
   var contolsIcons = [MobilePlugin, Progress, Play, Fullscreen, Time, Rotate, PlayNextIcon, DefinitionIcon, PlaybackRate, Download, ScreenShot, Volume, PIP];
@@ -17697,7 +17853,7 @@ var DefaultPreset5 = _createClass(function DefaultPreset24() {
   this.i18n = [ZH];
 });
 
-// node_modules/xgplayer/es/lang/zh-hk.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/lang/zh-hk.js
 var zhHk = {
   LANG: "zh-hk",
   TEXT: {
@@ -17761,6 +17917,7 @@ var zhHk = {
     CSSFULLSCREEN_TIPS: "進入樣式全屏",
     EXITCSSFULLSCREEN_TIPS: "退出樣式全屏",
     TEXTTRACK: "字幕",
+    TEXTTRACK_OFF: "關閉",
     PIP: "畫中畫",
     SCREENSHOT: "截圖",
     LIVE: "正在直播",
@@ -17775,7 +17932,7 @@ var zhHk = {
   }
 };
 
-// node_modules/xgplayer/es/lang/jp.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/lang/jp.js
 var jp = {
   LANG: "jp",
   TEXT: {
@@ -17839,6 +17996,7 @@ var jp = {
     CSSFULLSCREEN_TIPS: "シアターモード",
     EXITCSSFULLSCREEN_TIPS: "シアターモードを終了",
     TEXTTRACK: "字幕",
+    TEXTTRACK_OFF: "オフ",
     PIP: "ミニプレーヤー",
     SCREENSHOT: "スクリーンショット",
     LIVE: "生放送",
@@ -17853,7 +18011,7 @@ var jp = {
   }
 };
 
-// node_modules/xgplayer/es/lang/br.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/lang/br.js
 var br = {
   LANG: "br",
   TEXT: {
@@ -17931,7 +18089,7 @@ var br = {
   }
 };
 
-// node_modules/xgplayer/es/lang/de.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/lang/de.js
 var de = {
   LANG: "de",
   TEXT: {
@@ -18009,7 +18167,7 @@ var de = {
   }
 };
 
-// node_modules/xgplayer/es/lang/es.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/lang/es.js
 var es = {
   LANG: "es",
   TEXT: {
@@ -18087,7 +18245,7 @@ var es = {
   }
 };
 
-// node_modules/xgplayer/es/lang/fr.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/lang/fr.js
 var fr = {
   LANG: "fr",
   TEXT: {
@@ -18165,7 +18323,7 @@ var fr = {
   }
 };
 
-// node_modules/xgplayer/es/lang/id.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/lang/id.js
 var id = {
   LANG: "id",
   TEXT: {
@@ -18243,7 +18401,7 @@ var id = {
   }
 };
 
-// node_modules/xgplayer/es/lang/it.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/lang/it.js
 var it = {
   LANG: "it",
   TEXT: {
@@ -18321,7 +18479,7 @@ var it = {
   }
 };
 
-// node_modules/xgplayer/es/lang/kr.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/lang/kr.js
 var kr = {
   LANG: "kr",
   TEXT: {
@@ -18399,7 +18557,7 @@ var kr = {
   }
 };
 
-// node_modules/xgplayer/es/lang/ms-my.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/lang/ms-my.js
 var msMy = {
   LANG: "ms-my",
   TEXT: {
@@ -18477,7 +18635,7 @@ var msMy = {
   }
 };
 
-// node_modules/xgplayer/es/lang/ru.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/lang/ru.js
 var ru = {
   LANG: "ru",
   TEXT: {
@@ -18555,7 +18713,7 @@ var ru = {
   }
 };
 
-// node_modules/xgplayer/es/lang/th.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/lang/th.js
 var th = {
   LANG: "th",
   TEXT: {
@@ -18633,7 +18791,7 @@ var th = {
   }
 };
 
-// node_modules/xgplayer/es/lang/vn.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/lang/vn.js
 var vn = {
   LANG: "vn",
   TEXT: {
@@ -18711,15 +18869,15 @@ var vn = {
   }
 };
 
-// node_modules/xgplayer/es/plugins/danmu/index.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/danmu/index.js
 var import_danmu = __toESM(require_dist());
 
-// node_modules/xgplayer/es/plugins/assets/panel.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/assets/panel.js
 function PanelIcon() {
   return new DOMParser().parseFromString('<svg xmlns="http://www.w3.org/2000/svg" viewBox="-5 -11 40 40" width="40" height="40">\n  <path fill="#f85959" transform="scale(0.8 0.8)" d="M36.5,18.73a1.19,1.19,0,0,0,1-1.14V16.33a1.2,1.2,0,0,0-1-1.13l-.61-.08a1.75,1.75,0,0,1-1.3-.86l-.21-.36-.2-.36A1.72,1.72,0,0,1,34,12l.23-.58a1.18,1.18,0,0,0-.5-1.42l-1.1-.62a1.18,1.18,0,0,0-1.47.3l-.39.51a1.82,1.82,0,0,1-1.41.72c-.44,0-1.88-.27-2.22-.7l-.39-.49a1.18,1.18,0,0,0-1.48-.28l-1.09.64a1.19,1.19,0,0,0-.47,1.43l.25.59a1.87,1.87,0,0,1-.08,1.58c-.26.37-1.17,1.5-1.71,1.58l-.63.09a1.19,1.19,0,0,0-1,1.14l0,1.27a1.17,1.17,0,0,0,1,1.12l.61.08a1.74,1.74,0,0,1,1.3.87l.21.36.2.35A1.69,1.69,0,0,1,24,22.08l-.23.59a1.19,1.19,0,0,0,.5,1.42l1.1.62a1.19,1.19,0,0,0,1.48-.31l.38-.5a1.83,1.83,0,0,1,1.41-.72c.44,0,1.88.25,2.22.69l.39.49a1.18,1.18,0,0,0,1.48.28L33.86,24a1.19,1.19,0,0,0,.47-1.43L34.09,22a1.84,1.84,0,0,1,.07-1.58c.26-.37,1.17-1.5,1.72-1.58ZM31,18.94a2.76,2.76,0,0,1-4.65-1.2A2.71,2.71,0,0,1,27,15.13a2.76,2.76,0,0,1,4.64,1.2A2.7,2.7,0,0,1,31,18.94Z"/>\n  <path fill="#f85959" transform="scale(0.8 0.8)" d="M32,0H3.59A3.59,3.59,0,0,0,0,3.59v17A3.59,3.59,0,0,0,3.59,24.2H19.72a12.59,12.59,0,0,1-.81-1.2A11.73,11.73,0,0,1,35.54,7.28V3.59A3.59,3.59,0,0,0,32,0ZM13,14.18H4.29a1.52,1.52,0,0,1,0-3H13a1.52,1.52,0,0,1,0,3ZM16.45,8H4.29a1.51,1.51,0,0,1,0-3H16.45a1.51,1.51,0,1,1,0,3Z"/>\n</svg>\n', "image/svg+xml").firstChild;
 }
 
-// node_modules/xgplayer/es/plugins/danmu/danmuPanel.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/danmu/danmuPanel.js
 var DanmuPanel = function(_Plugin) {
   _inherits(DanmuPanel2, _Plugin);
   var _super = _createSuper(DanmuPanel2);
@@ -18795,7 +18953,7 @@ var DanmuPanel = function(_Plugin) {
   return DanmuPanel2;
 }(Plugin);
 
-// node_modules/xgplayer/es/plugins/danmu/danmuIcon.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/danmu/danmuIcon.js
 var DANMU_OPEN = '<dk-switch class="danmu-switch">\n<span class="txt">弹</span>\n</dk-switch>';
 var DanmuIcon = function(_Plugin) {
   _inherits(DanmuIcon2, _Plugin);
@@ -18889,7 +19047,7 @@ var DanmuIcon = function(_Plugin) {
   return DanmuIcon2;
 }(Plugin);
 
-// node_modules/xgplayer/es/plugins/danmu/index.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/danmu/index.js
 var MIN_INTERVAL = 300;
 var Danmu = function(_Plugin) {
   _inherits(Danmu2, _Plugin);
@@ -19193,7 +19351,7 @@ var Danmu = function(_Plugin) {
   return Danmu2;
 }(Plugin);
 
-// node_modules/xgplayer-subtitles/es/_virtual/_rollupPluginBabelHelpers.js
+// node_modules/.pnpm/xgplayer-subtitles@3.0.24_core-js@2.4.0/node_modules/xgplayer-subtitles/es/_virtual/_rollupPluginBabelHelpers.js
 function ownKeys2(object, enumerableOnly) {
   var keys = Object.keys(object);
   if (Object.getOwnPropertySymbols) {
@@ -19307,19 +19465,19 @@ function _isNativeReflectConstruct2() {
     return false;
   }
 }
-function _assertThisInitialized2(self) {
-  if (self === void 0) {
+function _assertThisInitialized2(self2) {
+  if (self2 === void 0) {
     throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
   }
-  return self;
+  return self2;
 }
-function _possibleConstructorReturn2(self, call) {
+function _possibleConstructorReturn2(self2, call) {
   if (call && (typeof call === "object" || typeof call === "function")) {
     return call;
   } else if (call !== void 0) {
     throw new TypeError("Derived constructors may only return object or undefined");
   }
-  return _assertThisInitialized2(self);
+  return _assertThisInitialized2(self2);
 }
 function _createSuper2(Derived) {
   var hasNativeReflectConstruct = _isNativeReflectConstruct2();
@@ -19376,10 +19534,10 @@ function _toPropertyKey2(arg) {
   return typeof key === "symbol" ? key : String(key);
 }
 
-// node_modules/xgplayer-subtitles/es/index.js
+// node_modules/.pnpm/xgplayer-subtitles@3.0.24_core-js@2.4.0/node_modules/xgplayer-subtitles/es/index.js
 var import_eventemitter34 = __toESM(require_eventemitter3());
 
-// node_modules/xgplayer-subtitles/es/parser.js
+// node_modules/.pnpm/xgplayer-subtitles@3.0.24_core-js@2.4.0/node_modules/xgplayer-subtitles/es/parser.js
 var VTT_CHECK = /^WEBVTT/i;
 var VTT_STYLE = /^STYLE+$/;
 var VTT_CUE = /^\:\:cue/;
@@ -19751,7 +19909,7 @@ var SubTitleParser = function() {
   return SubTitleParser2;
 }();
 
-// node_modules/xgplayer-subtitles/es/error.js
+// node_modules/.pnpm/xgplayer-subtitles@3.0.24_core-js@2.4.0/node_modules/xgplayer-subtitles/es/error.js
 var ERROR2 = [{
   code: 0,
   msg: "SUCCESS"
@@ -19795,7 +19953,7 @@ function _ERROR(code) {
   return ret;
 }
 
-// node_modules/xgplayer-subtitles/es/xhr.js
+// node_modules/.pnpm/xgplayer-subtitles@3.0.24_core-js@2.4.0/node_modules/xgplayer-subtitles/es/xhr.js
 var XHR = _createClass2(function XHR2() {
   var _ref = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : {}, url = _ref.url, _ref$method = _ref.method, method = _ref$method === void 0 ? "GET" : _ref$method, _ref$type = _ref.type, type = _ref$type === void 0 ? "arraybuffer" : _ref$type, _ref$timeout = _ref.timeout, timeout = _ref$timeout === void 0 ? 1e4 : _ref$timeout, _ref$data = _ref.data, data = _ref$data === void 0 ? {} : _ref$data;
   var context = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
@@ -19861,7 +20019,7 @@ var XHR = _createClass2(function XHR2() {
   });
 });
 
-// node_modules/xgplayer-subtitles/es/proxyPromise.js
+// node_modules/.pnpm/xgplayer-subtitles@3.0.24_core-js@2.4.0/node_modules/xgplayer-subtitles/es/proxyPromise.js
 var ProxyPromise = function() {
   function ProxyPromise2() {
     _classCallCheck2(this, ProxyPromise2);
@@ -19896,7 +20054,7 @@ var ProxyPromise = function() {
   return ProxyPromise2;
 }();
 
-// node_modules/xgplayer-subtitles/es/utils.js
+// node_modules/.pnpm/xgplayer-subtitles@3.0.24_core-js@2.4.0/node_modules/xgplayer-subtitles/es/utils.js
 function hasClass(el, className) {
   if (!el) {
     return false;
@@ -20176,8 +20334,8 @@ function splitWords(str) {
   return retArr;
 }
 
-// node_modules/xgplayer-subtitles/es/observer.js
-var ResizeObserver2 = function() {
+// node_modules/.pnpm/xgplayer-subtitles@3.0.24_core-js@2.4.0/node_modules/xgplayer-subtitles/es/observer.js
+var ResizeObserver3 = function() {
   function ResizeObserver22() {
     var _this = this;
     _classCallCheck2(this, ResizeObserver22);
@@ -20263,7 +20421,7 @@ var ResizeObserver2 = function() {
 var resizeObserver2 = null;
 function addObserver2(target, handler) {
   if (!resizeObserver2) {
-    resizeObserver2 = new ResizeObserver2();
+    resizeObserver2 = new ResizeObserver3();
   }
   resizeObserver2.addObserver(target, handler);
 }
@@ -20274,7 +20432,7 @@ function unObserver2(target, handler) {
   resizeObserver2.unObserver(target, handler);
 }
 
-// node_modules/xgplayer-subtitles/es/constants.js
+// node_modules/.pnpm/xgplayer-subtitles@3.0.24_core-js@2.4.0/node_modules/xgplayer-subtitles/es/constants.js
 var EVENTS3 = {
   RESIZE: "resize",
   CHANGE: "change",
@@ -20282,7 +20440,7 @@ var EVENTS3 = {
   UPDATE: "update"
 };
 
-// node_modules/xgplayer-subtitles/es/index.js
+// node_modules/.pnpm/xgplayer-subtitles@3.0.24_core-js@2.4.0/node_modules/xgplayer-subtitles/es/index.js
 function formatUrl(url) {
   var ret = [];
   if (url && typeOf(url) === "String") {
@@ -20490,7 +20648,7 @@ var Subtitle = function(_EventEmitter) {
   _createClass2(Subtitle2, [{
     key: "version",
     get: function get() {
-      return "3.0.23";
+      return "3.0.24";
     }
   }, {
     key: "setSubTitles",
@@ -21352,7 +21510,7 @@ var Subtitle = function(_EventEmitter) {
   return Subtitle2;
 }(import_eventemitter34.default);
 
-// node_modules/xgplayer/es/plugins/track/nativeSubTitle.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/track/nativeSubTitle.js
 var import_eventemitter35 = __toESM(require_eventemitter3());
 var NativeSubTitle = function(_EventEmitter) {
   _inherits(NativeSubTitle2, _EventEmitter);
@@ -21446,7 +21604,7 @@ var NativeSubTitle = function(_EventEmitter) {
   return NativeSubTitle2;
 }(import_eventemitter35.default);
 
-// node_modules/xgplayer/es/plugins/track/index.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/track/index.js
 var DEFAULT_TYPE = {
   CLOSE: "close",
   OPEN: "open",
@@ -21549,6 +21707,12 @@ var TextTrack = function(_OptionsIcon) {
       var _this$config = this.config, list = _this$config.list, mode = _this$config.mode;
       var defaultIndex = formatList(list);
       _get(_getPrototypeOf(TextTrack2.prototype), "afterCreate", this).call(this);
+      if (!this.config.closeText) {
+        this.config.closeText = {
+          text: this.i18n.TEXTTRACK_OFF,
+          iconText: this.i18n.TEXTTRACK
+        };
+      }
       this.curIndex = -1;
       this.lastIndex = -1;
       this.curItem = null;
@@ -21885,10 +22049,6 @@ var TextTrack = function(_OptionsIcon) {
           line: "double",
           fontColor: "#fff"
         },
-        closeText: {
-          text: "不开启",
-          iconText: "字幕"
-        },
         needCloseText: true,
         className: "xgplayer-texttrack",
         hidePortrait: false,
@@ -21902,7 +22062,7 @@ var TextTrack = function(_OptionsIcon) {
   return TextTrack2;
 }(OptionsIcon);
 
-// node_modules/xgplayer/es/plugins/heatmap/index.js
+// node_modules/.pnpm/xgplayer@3.0.24_core-js@2.4.0/node_modules/xgplayer/es/plugins/heatmap/index.js
 var HeatMap = function(_Plugin) {
   _inherits(HeatMap2, _Plugin);
   var _super = _createSuper(HeatMap2);
@@ -22249,9 +22409,4 @@ export {
   ZH as langZhCn,
   zhHk as langZhHk
 };
-/*! Bundled license information:
-
-danmu.js/dist/index.js:
-  (*! Built @Mon, 13 Feb 2023 08:23:50 GMT *)
-*/
 //# sourceMappingURL=xgplayer.js.map
