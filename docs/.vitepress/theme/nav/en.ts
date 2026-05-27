@@ -1,4 +1,5 @@
 import { DefaultTheme } from 'vitepress'
+// @ts-ignore
 import { devDependencies } from '../../../../package.json'
 export const enNav: DefaultTheme.NavItem[] = [
     {text: '🏠 Home', link: '/en/', activeMatch: '/en/'},
