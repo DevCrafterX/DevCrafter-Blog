@@ -29,11 +29,11 @@ export const enNav: DefaultTheme.NavItem[] = [
         {
           text: '🗺️ WebGIS',
           items: [
-            {text: 'Overview', link: '/en/Webgis/index.md'},
-            {text: 'Baidu Map', link: '/en/Webgis/baidu.md'},
-            {text: 'AMap', link: '/en/Webgis/gaode.md'},
-            {text: 'Tianditu', link: '/en/Webgis/tianditu.md'},
-            {text: 'ECharts Map', link: '/en/Webgis/echarts-map.md'},
+            {text: 'Overview', link: '/en/webgis/index.md'},
+            {text: 'Baidu Map', link: '/en/webgis/baidu.md'},
+            {text: 'AMap', link: '/en/webgis/gaode.md'},
+            {text: 'Tianditu', link: '/en/webgis/tianditu.md'},
+            {text: 'ECharts Map', link: '/en/webgis/echarts-map.md'},
           ]
         },
         {
