@@ -1,5 +1,11 @@
 # 📅 Changelog
 
+## 2026-05-27
+
+### ✨ 新增功能
+
+- **Deploy project changes**: Change the deployment project to DevCrafterX/DevCrafter-Blog
+
 ## 2026-02-18
 
 ### ✨ New Features
