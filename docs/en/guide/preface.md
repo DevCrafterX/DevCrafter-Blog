@@ -79,13 +79,13 @@ Therefore, I decided to create this blog:
 
 This blog is suitable for the following people:
 
-| Audience | Content Recommendation |
-|----------|------------------------|
-| **Frontend Beginners** | HTML/CSS basics, JavaScript introduction, learning path |
-| **Frontend Developers** | Vue/React/TypeScript, WebGIS map development |
-| **Full-stack Developers** | Node.js, Python, MySQL, project practice |
-| **Technical Learners** | Regular expressions, ECharts visualization, Git version control |
-| **Tool Seekers** | Developer navigation, AI tools collection, productivity tools |
+| Audience                  | Content Recommendation                                          |
+| ------------------------- | --------------------------------------------------------------- |
+| **Frontend Beginners**    | HTML/CSS basics, JavaScript introduction, learning path         |
+| **Frontend Developers**   | Vue/React/TypeScript, WebGIS map development                    |
+| **Full-stack Developers** | Node.js, Python, MySQL, project practice                        |
+| **Technical Learners**    | Regular expressions, ECharts visualization, Git version control |
+| **Tool Seekers**          | Developer navigation, AI tools collection, productivity tools   |
 
 ## 🤝 Contributing
 
@@ -102,13 +102,13 @@ Welcome to participate in the following ways:
 
 ## 📮 Contact
 
-- 🌐 **Blog**: [https://devcrafter-gzf.github.io/DevCrafter-Blog/](https://devcrafter-gzf.github.io/DevCrafter-Blog/)
-- 💻 **GitHub**: [https://github.com/DevCrafter-GZF/DevCrafter-Blog](https://github.com/DevCrafter-GZF/DevCrafter-Blog)
-- 💬 **Discussion**: Welcome to exchange technical issues through [GitHub Issues](https://github.com/DevCrafter-GZF/DevCrafter-Blog/issues)
+- 🌐 **Blog**: [https://DevCrafterX.github.io/DevCrafter-Blog/](https://DevCrafterX.github.io/DevCrafter-Blog/)
+- 💻 **GitHub**: [https://github.com/DevCrafterX/DevCrafter-Blog](https://github.com/DevCrafterX/DevCrafter-Blog)
+- 💬 **Discussion**: Welcome to exchange technical issues through [GitHub Issues](https://github.com/DevCrafterX/DevCrafter-Blog/issues)
 
 > [!IMPORTANT]
 > **Start Exploring**
-> 
+>
 > It is recommended to start with [Quick Start](/guide/start.html) to understand the blog structure, or check [Directory](/guide/directory.html) to browse complete content, or browse [Navigation](/navigation/index.html) directly to find the resources you need.
 
 **Happy Coding!** 🎉

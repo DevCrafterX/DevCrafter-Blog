@@ -3,7 +3,6 @@
 > [!NOTE]
 > Welcome to DevCrafter Blog, I am the creator and maintainer of this blog.
 
-
 ## 👋 Hello, I'm DevCrafter
 
 A developer passionate about technology, committed to:
@@ -12,7 +11,6 @@ A developer passionate about technology, committed to:
 - 🛠️ **Practical Sharing** - Transforming learning outcomes into reusable knowledge
 - 🌐 **Open Source Contribution** - Participating in open source communities, giving back to the technical ecosystem
 - 📝 **Knowledge Documentation** - Organizing thoughts through writing, forming systems
-
 
 ## 🎯 Tech Stack
 
@@ -41,7 +39,6 @@ A developer passionate about technology, committed to:
 
 :::
 
-
 ## 🌟 About This Blog
 
 The original intention of creating DevCrafter Blog:
@@ -50,12 +47,12 @@ The original intention of creating DevCrafter Blog:
 
 **Blog Features:**
 
-| Feature | Description |
-|---------|-------------|
-| **Bilingual Support** | Chinese and English, convenient for different readers |
-| **Practical Orientation** | Focus on real-world practice, solve real problems |
-| **Continuous Updates** | Follow technology development, keep content fresh |
-| **Open Source** | Welcome feedback, jointly improve |
+| Feature                   | Description                                           |
+| ------------------------- | ----------------------------------------------------- |
+| **Bilingual Support**     | Chinese and English, convenient for different readers |
+| **Practical Orientation** | Focus on real-world practice, solve real problems     |
+| **Continuous Updates**    | Follow technology development, keep content fresh     |
+| **Open Source**           | Welcome feedback, jointly improve                     |
 
 **Content Coverage:**
 
@@ -67,13 +64,11 @@ The original intention of creating DevCrafter Blog:
 - 🚀 **Project Cases** - NetEase Cloud Music, e-commerce admin, etc.
 - 🧭 **Developer Navigation** - Categorized development resources and AI tools
 
-
 ## 📮 Contact
 
-- 🌐 **Blog**: [https://devcrafter-gzf.github.io/DevCrafter-Blog/](https://devcrafter-gzf.github.io/DevCrafter-Blog/)
-- 💻 **GitHub**: [https://github.com/DevCrafter-GZF/DevCrafter-Blog](https://github.com/DevCrafter-GZF/DevCrafter-Blog)
-- 📧 **Feedback**: Welcome to submit suggestions or issues via [GitHub Issues](https://github.com/DevCrafter-GZF/DevCrafter-Blog/issues)
-
+- 🌐 **Blog**: [https://DevCrafterX.github.io/DevCrafter-Blog/](https://DevCrafterX.github.io/DevCrafter-Blog/)
+- 💻 **GitHub**: [https://github.com/DevCrafterX/DevCrafter-Blog](https://github.com/DevCrafterX/DevCrafter-Blog)
+- 📧 **Feedback**: Welcome to submit suggestions or issues via [GitHub Issues](https://github.com/DevCrafterX/DevCrafter-Blog/issues)
 
 ## 🤝 Welcome to Exchange
 
@@ -88,6 +83,5 @@ Welcome to contact at any time!
 
 > [!TIP]
 > The best way to learn is to teach others, looking forward to progressing with you!
-
 
 **Thank you for visiting!** 🎉

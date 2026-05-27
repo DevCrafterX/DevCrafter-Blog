@@ -79,13 +79,13 @@
 
 本博客适合以下人群：
 
-| 人群        | 内容推荐                           |
-|-----------|--------------------------------|
+| 人群           | 内容推荐                                 |
+| -------------- | ---------------------------------------- |
 | **前端初学者** | HTML/CSS 基础、JavaScript 入门、学习路线 |
-| **前端开发者** | Vue/React/TypeScript、WebGIS 地图开发 |
-| **全栈开发者** | Node.js、Python、MySQL、项目实战 |
+| **前端开发者** | Vue/React/TypeScript、WebGIS 地图开发    |
+| **全栈开发者** | Node.js、Python、MySQL、项目实战         |
 | **技术学习者** | 正则表达式、ECharts 可视化、Git 版本控制 |
-| **工具寻找者** | 程序员导航、AI 工具集、开发效率工具 |
+| **工具寻找者** | 程序员导航、AI 工具集、开发效率工具      |
 
 ## 🤝 参与贡献
 
@@ -102,9 +102,9 @@
 
 ## 📮 联系方式
 
-- 🌐 **博客地址**: [https://devcrafter-gzf.github.io/DevCrafter-Blog/](https://devcrafter-gzf.github.io/DevCrafter-Blog/)
-- 💻 **GitHub**: [https://github.com/DevCrafter-GZF/DevCrafter-Blog](https://github.com/DevCrafter-GZF/DevCrafter-Blog)
-- 💬 **交流讨论**: 欢迎通过 [GitHub Issues](https://github.com/DevCrafter-GZF/DevCrafter-Blog/issues) 交流技术问题
+- 🌐 **博客地址**: [https://DevCrafterX.github.io/DevCrafter-Blog/](https://DevCrafterX.github.io/DevCrafter-Blog/)
+- 💻 **GitHub**: [https://github.com/DevCrafterX/DevCrafter-Blog](https://github.com/DevCrafterX/DevCrafter-Blog)
+- 💬 **交流讨论**: 欢迎通过 [GitHub Issues](https://github.com/DevCrafterX/DevCrafter-Blog/issues) 交流技术问题
 
 > [!IMPORTANT]
 > **开始探索**

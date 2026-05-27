@@ -47,12 +47,12 @@
 
 **博客特点：**
 
-| 特点       | 说明            |
-|----------|---------------|
-| **双语支持** | 中英文对照，方便不同读者  |
-| **实用导向** | 注重实战，解决实际问题   |
+| 特点         | 说明                       |
+| ------------ | -------------------------- |
+| **双语支持** | 中英文对照，方便不同读者   |
+| **实用导向** | 注重实战，解决实际问题     |
 | **持续更新** | 跟随技术发展，保持内容新鲜 |
-| **开源开放** | 欢迎反馈，共同完善     |
+| **开源开放** | 欢迎反馈，共同完善         |
 
 **内容涵盖：**
 
@@ -66,9 +66,9 @@
 
 ## 📮 联系方式
 
-- 🌐 **博客**: [https://devcrafter-gzf.github.io/DevCrafter-Blog/](https://devcrafter-gzf.github.io/DevCrafter-Blog/)
-- 💻 **GitHub**: [https://github.com/DevCrafter-GZF/DevCrafter-Blog](https://github.com/DevCrafter-GZF/DevCrafter-Blog)
-- 📧 **反馈**: 欢迎通过 [GitHub Issues](https://github.com/DevCrafter-GZF/DevCrafter-Blog/issues) 提交建议或问题
+- 🌐 **博客**: [https://DevCrafterX.github.io/DevCrafter-Blog/](https://DevCrafterX.github.io/DevCrafter-Blog/)
+- 💻 **GitHub**: [https://github.com/DevCrafterX/DevCrafter-Blog](https://github.com/DevCrafterX/DevCrafter-Blog)
+- 📧 **反馈**: 欢迎通过 [GitHub Issues](https://github.com/DevCrafterX/DevCrafter-Blog/issues) 提交建议或问题
 
 ## 🤝 欢迎交流
 
@@ -83,6 +83,5 @@
 
 > [!TIP]
 > 最好的学习方式就是教别人，期待与你一起进步！
-
 
 **感谢你的访问！** 🎉
