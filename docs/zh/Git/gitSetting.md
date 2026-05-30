@@ -253,7 +253,7 @@ ssh -T git@gitee.com
 
 ::: details 点击查看常用 .gitignore 模板
 
-```gitignore
+```text
 # 依赖目录
 node_modules/
 vendor/
